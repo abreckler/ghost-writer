@@ -139,7 +139,7 @@
       referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify({
         "prompt": text,
-        "max_tokens": 16 // default value (One token is roughly 4 characters for normal English text)
+        "max_tokens": 100 // default value (One token is roughly 4 characters for normal English text)
       }) // body data type must match "Content-Type" header
     });
     var json = await response.json();
