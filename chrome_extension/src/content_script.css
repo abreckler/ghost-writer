@@ -1,0 +1,104 @@
+/**
+ * Place your custom CSS styles here.
+ **/
+.gwf {
+  position: absolute;
+}
+
+.gwf .gwf-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  outline: none;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  border-radius: 50%;
+  background: rgb(244, 87, 116);
+  background: -moz-linear-gradient(135deg);
+  background: -webkit-linear-gradient(135deg);
+  background: linear-gradient(135deg);
+  box-shadow: 0px 0px 18px 5px rgba(0, 0, 0, 0.2);
+  transition: 0.2s opacity ease-in-out;
+  -webkit-transition: 0.2s opacity ease-in-out;
+}
+
+.gwf .gwf-btn.active {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.gwf .gwf-btn:after {
+  display: block;
+  position: absolute;
+  top: 0;
+  content: "";
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  background-color: transparent;
+  z-index: -2;
+  -webkit-transition: -webkit-transform 0.2s, opacity 0.2s;
+  -moz-transition: -moz-transform 0.2s, opacity 0.2s;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.gwf .gwf-btn:active:after {
+  -webkit-transform: scale(1.3);
+  -moz-transform: scale(1.3);
+  -ms-transform: scale(1.3);
+  transform: scale(1.3);
+  opacity: 0;
+}
+
+.gwf .gwf-btn svg {
+  height: 25px;
+  width: 25px;
+  position: absolute;
+  fill: #FFFFFF;
+}
+
+.gwf .panel {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.15);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 340px;
+  text-align: left;
+  overflow: hidden;
+  visibility: hidden;
+  transform: scale(0);
+  transform-origin: 100% 100%;
+  transition: all 0.2s;
+  opacity: 0;
+}
+
+.gwf .panel.active {
+  height: auto;
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transition: transform 0.2s, visibility 0s 0s, opacity 0.2s;
+}
+
+.gwf .panel-header {
+  padding: 20px;
+  font-size: 15px;
+  background-color: #1D70A2;
+  color: #fff;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+.gwf .panel-body {
+  padding: 10px 20px;
+  background-color: #fff;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  font-size: 11px;
+  color: #aaa;
+}
