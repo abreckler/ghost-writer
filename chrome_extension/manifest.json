@@ -26,7 +26,8 @@
       ],
       "all_frames": false,
       "css": [
-        "src/content_script.css"
+        "src/css/content_script.css",
+        "src/css/three-dots.min.css"
       ],
       "js": [
         "src/content_script.js"
