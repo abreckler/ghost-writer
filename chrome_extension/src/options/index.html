@@ -2,336 +2,251 @@
 
 <head>
   <title>Options</title>
-  <style>
-    body {
-      font-family: arial, helvetica, sans-serif;
-    }
 
-    .banner {
-      width: 100%;
-      float: left;
-    }
-
-    .banner_left {
-      padding: 8px;
-      float: left;
-    }
-
-    .banner_right {
-      padding: 8px;
-    }
-
-    .body_wrapper {
-      width: 100%;
-      float: left;
-    }
-
-    .body_left {
-      border: 0;
-      padding: 0;
-      margin: 0;
-      width: 50%;
-      float: left;
-    }
-
-    .body_right {
-      border: 0;
-      padding: 0;
-      margin: 0;
-      width: 46%;
-      float: left;
-    }
-
-    .body_inner {
-      padding: 0 32px;
-    }
-
-    .browser_action {
-      vertical-align: middle;
-      margin: 0 2px 3px 2px;
-    }
-
-    .ctrl_label {
-      width: 100px;
-      float: left;
-    }
-
-    .ctrl_wrap {
-      margin: 18px 8px;
-    }
-
-    .ctrl {
-      width: 200px;
-    }
-
-    #hotkey {
-      font-size: 16px;
-      width: 15em;
-      margin-left: 12px;
-    }
-
-    #test {}
-
-    #defaults {
-      margin-left: 24px;
-    }
-  </style>
-  <script src="keycodes.js"></script>
-  <script src="tabs.js"></script>
-  <script src="options.js"></script>
+  <link rel="stylesheet" type="text/css" href="options.css" >
 </head>
 
 <body>
 
-  <div class="banner">
+  <div class="banner container">
     <div class="banner_left">
       <img src="SpeakSel128.png" class="logo" alt="">
     </div>
     <div class="banner_right">
-      <h1>Speak Selection</h1>
+      <h1>Ghost Writer</h1>
       <p>
-        This extension lets you auto-complete texts using OpenAI's deep-learning algorithm.
+        This extension lets you auto-complete texts using <a href="https://beta.openai.com">OpenAI</a>'s deep-learning algorithm.
       </p>
     </div>
   </div>
 
-  <div class="body_wrapper">
-    <div class="body_right">
-      <form class="body_inner">
+  <div class="container">
+    <form class="body_inner" id="param_form" name="param_form">
 
-        <h2>Ghost Intelligence Params</h2>
+      <h2>Parameters</h2>
 
-        <div class="param-table">
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">prompt</div>
-              <div class="param-type">string or array</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to &lt;|endoftext|&gt;</div>
-            </div>
-            <div class="param-row-body">
-              <input name="prompt" />
-              <div class="markdown-content">
-                <p>The prompt(s) to generate completions for, encoded as a string, a list of strings, or a list of token
-                  lists.</p>
-                <p>Note that &lt;|endoftext|&gt; is the document separator that the model sees during training, so if a
-                  prompt is not specified the model will generate as if from the beginning of a new document.</p>
-              </div>
-            </div>
+      <div class="param-table">
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">max_tokens</div>
+            <div class="param-type">integer</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to 16</div>
           </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">max_tokens</div>
-              <div class="param-type">integer</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to 16</div>
-            </div>
-            <div class="param-row-body">
-              <input name="max_tokens" />
-              <div class="markdown-content">
-                <p>The maximum number of tokens to generate. Requests can use up to 2048 tokens shared between prompt
-                  and completion. (One token is roughly 4 characters for normal English text)</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">temperature</div>
-              <div class="param-type">number</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to 1</div>
-            </div>
-            <div class="param-row-body">
-              <input name="temperature" />
-              <div class="markdown-content">
-                <p>What <a href="https://towardsdatascience.com/how-to-sample-from-language-models-682bceb97277"
-                    target="_blank" rel="noopener noreferrer">sampling temperature</a> to use. Higher values means the
-                  model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones
-                  with a well-defined answer.</p>
-                <p>We generally recommend altering this or <code>top_p</code> but not both.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">top_p</div>
-              <div class="param-type">number</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to 1</div>
-            </div>
-            <div class="param-row-body">
-              <input name="top_p" />
-              <div class="markdown-content">
-                <p>An alternative to sampling with temperature, called nucleus sampling, where the model considers the
-                  results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10%
-                  probability mass are considered.</p>
-                <p>We generally recommend altering this or <code>temperature</code> but not both.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">n</div>
-              <div class="param-type">integer</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to 1</div>
-            </div>
-            <div class="param-row-body">
-              <input name="n" />
-              <div class="markdown-content">
-                <p>How many completions to generate for each prompt.</p>
-                <p><strong>Note:</strong> Because this parameter generates many completions, it can quickly consume your
-                  token quota. Use carefully and ensure that you have reasonable settings for <code>max_tokens</code>
-                  and <code>stop</code>.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">stream</div>
-              <div class="param-type">boolean</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to false</div>
-            </div>
-            <div class="param-row-body">
-              <input name="stream" />
-              <div class="markdown-content">
-                <p>Whether to stream back partial progress. If set, tokens will be sent as data-only <a
-                    href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format"
-                    target="_blank" rel="noopener noreferrer">server-sent events</a> as they become available, with the
-                  stream terminated by a <code>data: [DONE]</code> message.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">logprobs</div>
-              <div class="param-type">integer</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to null</div>
-            </div>
-            <div class="param-row-body">
-              <input name="logprobs" />
-              <div class="markdown-content">
-                <p>Include the log probabilities on the <code>logprobs</code> most likely tokens, as well the chosen
-                  tokens. For example, if <code>logprobs</code> is 10, the API will return a list of the 10 most likely
-                  tokens. the API will always return the <code>logprob</code> of the sampled token, so there may be up
-                  to <code>logprobs+1</code> elements in the response.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">echo</div>
-              <div class="param-type">boolean</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to false</div>
-            </div>
-            <div class="param-row-body">
-              <input name="echo" />
-              <div class="markdown-content">
-                <p>Echo back the prompt in addition to the completion</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">stop</div>
-              <div class="param-type">string or array</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to null</div>
-            </div>
-            <div class="param-row-body">
-              <input name="stop" />
-              <div class="markdown-content">
-                <p>Up to 4 sequences where the API will stop generating further tokens. The returned text will not
-                  contain the stop sequence.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">presence_penalty</div>
-              <div class="param-type">number</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to 0</div>
-            </div>
-            <div class="param-row-body">
-              <input name="presence_penalty" />
-              <div class="markdown-content">
-                <p>Number between 0 and 1 that penalizes new tokens based on whether they appear in the text so far.
-                  Increases the model's likelihood to talk about new topics.</p>
-                <p><a href="/docs/api-reference/parameter-details">See more information about frequency and presence
-                    penalties.</a>.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">frequency_penalty</div>
-              <div class="param-type">number</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to 0</div>
-            </div>
-            <div class="param-row-body">
-              <input name="frequency_penalty" />
-              <div class="markdown-content">
-                <p>Number between 0 and 1 that penalizes new tokens based on their existing frequency in the text so
-                  far. Decreases the model's likelihood to repeat the same line verbatim.</p>
-                <p><a href="/docs/api-reference/parameter-details">See more information about frequency and presence
-                    penalties.</a>.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">best_of</div>
-              <div class="param-type">integer</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to 1</div>
-            </div>
-            <div class="param-row-body">
-              <input name="best_of" />
-              <div class="markdown-content">
-                <p>Generates <code>best_of</code> completions server-side and returns the "best" (the one with the
-                  lowest log probability per token). Results cannot be streamed.</p>
-                <p>When used with <code>n</code>, <code>best_of</code> controls the number of candidate completions and
-                  <code>n</code> specifies how many to return – <code>best_of</code> must be greater than
-                  <code>n</code>.</p>
-                <p><strong>Note:</strong> Because this parameter generates many completions, it can quickly consume your
-                  token quota. Use carefully and enure that you have reasonable settings for <code>max_tokens</code> and
-                  <code>stop</code>.</p>
-              </div>
-            </div>
-          </div>
-          <div class="param-row">
-            <div class="param-row-header api-ref-anchor-link-hover">
-              <div class="param-name">logit_bias</div>
-              <div class="param-type">map</div>
-              <div class="param-optl">Optional</div>
-              <div class="param-default">Defaults to null</div>
-            </div>
-            <div class="param-row-body">
-              <input name="logit_bias" />
-              <div class="markdown-content">
-                <p>Modify the likelihood of specified tokens appearing in the completion.</p>
-                <p>Accepts a json object that maps tokens (specified by their token ID in the GPT tokenizer) to an
-                  associated bias value from -100 to 100. You can use this <a
-                    href="https://repl.it/@schnerd/gpt2-tokenizer" target="_blank" rel="noopener noreferrer">tokenizer
-                    tool</a> (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the
-                  bias is added to the logits generated by the model prior to sampling. The exact effect will vary per
-                  model, but values between -1 and 1 should decrease or increase likelihood of selection; values like
-                  -100 or 100 should result in a ban or exclusive selection of the relevant token.</p>
-                <p>As an example, you can pass <code>{"50256": -100}</code> to prevent the &lt;|endoftext|&gt; token
-                  from being generated.</p>
-              </div>
+          <div class="param-row-body">
+            <input id="param_max_tokens" name="max_tokens" type="number" min="1" max="100" step="1" />
+
+            <div class="markdown-content">
+              <p>The maximum number of tokens to generate. Requests can use up to 2048 tokens shared between prompt
+                and completion. (One token is roughly 4 characters for normal English text)</p>
             </div>
           </div>
         </div>
-      </form>
-    </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">temperature</div>
+            <div class="param-type">number</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to 1</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_temperature" name="temperature" type="number" min="0" max="1.0" step="0.1" />
+
+            <div class="markdown-content">
+              <p>What <a href="https://towardsdatascience.com/how-to-sample-from-language-models-682bceb97277"
+                  target="_blank" rel="noopener noreferrer">sampling temperature</a> to use. Higher values means the
+                model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones
+                with a well-defined answer.</p>
+              <p>We generally recommend altering this or <code>top_p</code> but not both.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">top_p</div>
+            <div class="param-type">number</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to 1</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_top_p" name="top_p" type="number" min="0" max="1.0" step="0.1" />
+
+            <div class="markdown-content">
+              <p>An alternative to sampling with temperature, called nucleus sampling, where the model considers the
+                results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10%
+                probability mass are considered.</p>
+              <p>We generally recommend altering this or <code>temperature</code> but not both.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">n</div>
+            <div class="param-type">integer</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to 1</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_n" name="n" type="number" min="0" max="4" step="1" />
+            <div class="markdown-content">
+              <p>How many completions to generate for each prompt.</p>
+              <p><strong>Note:</strong> Because this parameter generates many completions, it can quickly consume your
+                token quota. Use carefully and ensure that you have reasonable settings for <code>max_tokens</code>
+                and <code>stop</code>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">stream</div>
+            <div class="param-type">boolean</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to false</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_stream" name="stream" type="checkbox" value="1" />
+
+            <div class="markdown-content">
+              <p>Whether to stream back partial progress. If set, tokens will be sent as data-only <a
+                  href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format"
+                  target="_blank" rel="noopener noreferrer">server-sent events</a> as they become available, with the
+                stream terminated by a <code>data: [DONE]</code> message.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">logprobs</div>
+            <div class="param-type">integer</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to null</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_logprobs" name="logprobs" type="number" min="0" max="10" step="1" />
+
+            <div class="markdown-content">
+              <p>Include the log probabilities on the <code>logprobs</code> most likely tokens, as well the chosen
+                tokens. For example, if <code>logprobs</code> is 10, the API will return a list of the 10 most likely
+                tokens. the API will always return the <code>logprob</code> of the sampled token, so there may be up
+                to <code>logprobs+1</code> elements in the response.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">echo</div>
+            <div class="param-type">boolean</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to false</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_echo" name="echo" type="checkbox" value="1" />
+
+            <div class="markdown-content">
+              <p>Echo back the prompt in addition to the completion</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">stop</div>
+            <div class="param-type">string or array</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to null</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_stop" name="stop" type="text" />
+
+            <div class="markdown-content">
+              <p>Up to 4 sequences where the API will stop generating further tokens.
+                The returned text will not contain the stop sequence.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">presence_penalty</div>
+            <div class="param-type">number</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to 0</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_presence_penalty" name="presence_penalty" type="number" min="0" max="1.0" step="0.1" />
+
+            <div class="markdown-content">
+              <p>Number between 0 and 1 that penalizes new tokens based on whether they appear in the text so far.
+                Increases the model's likelihood to talk about new topics.</p>
+              <p><a href="https://beta.openai.com/docs/api-reference/parameter-details">See more information about frequency and presence penalties.</a>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">frequency_penalty</div>
+            <div class="param-type">number</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to 0</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_frequency_penalty" name="frequency_penalty" type="number" min="0" max="1.0" step="0.1" />
+
+            <div class="markdown-content">
+              <p>Number between 0 and 1 that penalizes new tokens based on their existing frequency in the text so
+                far. Decreases the model's likelihood to repeat the same line verbatim.</p>
+              <p><a href="https://beta.openai.com/docs/api-reference/parameter-details">See more information about frequency and presence penalties.</a>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">best_of</div>
+            <div class="param-type">integer</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to 1</div>
+          </div>
+          <div class="param-row-body">
+            <input id="param_best_of" name="best_of" type="number" min="0" max="10" step="1" disabled value="1" />
+
+            <div class="markdown-content">
+              <p>Generates <code>best_of</code> completions server-side and returns the "best" (the one with the lowest log probability per token). Results cannot be streamed.</p>
+              <p>When used with <code>n</code>, <code>best_of</code> controls the number of candidate completions and <code>n</code> specifies how many to return – <code>best_of</code> must be greater than <code>n</code>.</p>
+              <p><strong>Note:</strong> Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and enure that you have reasonable settings for <code>max_tokens</code> and <code>stop</code>.</p>
+            </div>
+          </div>
+        </div>
+        <div class="param-row">
+          <div class="param-row-header api-ref-anchor-link-hover">
+            <div class="param-name">logit_bias</div>
+            <div class="param-type">map</div>
+            <div class="param-optl">Optional</div>
+            <div class="param-default">Defaults to null</div>
+          </div>
+          <div class="param-row-body">
+            <textarea id="param_logit_bias" name="logit_bias" disabled></textarea>
+
+            <div class="markdown-content">
+              <p>Modify the likelihood of specified tokens appearing in the completion.</p>
+              <p>Accepts a json object that maps tokens (specified by their token ID in the GPT tokenizer) to an
+                associated bias value from -100 to 100. You can use this <a
+                  href="https://repl.it/@schnerd/gpt2-tokenizer" target="_blank" rel="noopener noreferrer">tokenizer
+                  tool</a> (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the
+                bias is added to the logits generated by the model prior to sampling. The exact effect will vary per
+                model, but values between -1 and 1 should decrease or increase likelihood of selection; values like
+                -100 or 100 should result in a ban or exclusive selection of the relevant token.</p>
+              <p>As an example, you can pass <code>{"50256": -100}</code> to prevent the &lt;|endoftext|&gt; token
+                from being generated.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; padding-top: 20px">
+        <button type="submit">Save</button>
+      </div>
+    </form>
   </div>
 
+  <script src="options.js"></script>
 </body>
 
 </html>

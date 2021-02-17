@@ -5,7 +5,8 @@
    *  2. The extension gets triggered and shows small widget for auto-complete
    *  3. Save extension
    */
-  const API_KEY = 'sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4';
+  var API_KEY = null;
+  var EXT_CONF = {};
   var ghostFace; // root element of component
   var triggerBtn; // trigger button for ghost writer
   var ghostAnswerPanel; // panel that holds answers from ghost writer
@@ -81,40 +82,40 @@
   }
 
   function copyTextToClipboard(text) {
-		var textArea = document.createElement("textarea");
+    var textArea = document.createElement("textarea");
 
-		textArea.style.position = 'fixed';
-		textArea.style.top = 0;
-		textArea.style.left = 0;
+    textArea.style.position = 'fixed';
+    textArea.style.top = 0;
+    textArea.style.left = 0;
     textArea.style.padding = 0;
     textArea.style.border = 'none';
-		textArea.style.outline = 'none';
-		textArea.style.boxShadow = 'none';
+    textArea.style.outline = 'none';
+    textArea.style.boxShadow = 'none';
 
-		// Ensure it has a small width and height. Setting to 1px / 1em
-		// doesn't work as this gives a negative w/h on some browsers.
-		textArea.style.width = '2em';
-		textArea.style.height = '2em';
+    // Ensure it has a small width and height. Setting to 1px / 1em
+    // doesn't work as this gives a negative w/h on some browsers.
+    textArea.style.width = '2em';
+    textArea.style.height = '2em';
 
-		// Avoid flash of white box if rendered for any reason.
-		textArea.style.background = 'transparent';
+    // Avoid flash of white box if rendered for any reason.
+    textArea.style.background = 'transparent';
 
-		textArea.value = text;
+    textArea.value = text;
 
-		document.body.appendChild(textArea);
+    document.body.appendChild(textArea);
 
-		textArea.select();
+    textArea.select();
 
     var copied = false;
-		try {
-			document.execCommand('copy');
+    try {
+      document.execCommand('copy');
       success = true;
-		} catch (err) {
-		} finally {
-			document.body.removeChild(textArea);
-		}
+    } catch (err) {
+    } finally {
+      document.body.removeChild(textArea);
+    }
     return copied;
-	}
+  }
 
   function toggleAnswerPanel(show) {
     if (ghostFace) {
@@ -217,7 +218,7 @@
       // call OpenAI API
       // @see https://beta.openai.com/docs/api-reference/create-completion
       var response = await fetch('https://api.openai.com/v1/engines/davinci/completions', {
-        method: 'POST', // *GET, POST, PUT, DELETE, etc.
+        method: 'POST',
         mode: 'cors', // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
         credentials: 'same-origin', // include, *same-origin, omit
@@ -227,12 +228,7 @@
         },
         redirect: 'follow', // manual, *follow, error
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify({
-          prompt: text,
-          max_tokens: 100, // default value (One token is roughly 4 characters for normal English text)
-          temperature: 0.9,
-          n: 2
-        }) // body data type must match "Content-Type" header
+        body: JSON.stringify(extend({ prompt: text }, EXT_CONF)) // body data type must match "Content-Type" header
       });
       var json = await response.json();
     }
@@ -298,6 +294,47 @@
     }
   }
 
+  /*!
+   * Merge two or more objects together.
+   * (c) 2017 Chris Ferdinandi, MIT License, https://gomakethings.com
+   * @param   {Boolean}  deep     If true, do a deep (or recursive) merge [optional]
+   * @param   {Object}   objects  The objects to merge together
+   * @returns {Object}            Merged values of defaults and options
+   */
+  var extend = function () {
+    var extended = {};
+    var deep = false;
+    var i = 0;
+
+    // Check if a deep merge
+    if ( Object.prototype.toString.call( arguments[0] ) === '[object Boolean]' ) {
+        deep = arguments[0];
+        i++;
+    }
+
+    // Merge the object into the extended object
+    var merge = function (obj) {
+      for (var prop in obj) {
+        if (obj.hasOwnProperty(prop)) {
+          // If property is an object, merge properties
+          if (deep && Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+            extended[prop] = extend(extended[prop], obj[prop]);
+          } else {
+            extended[prop] = obj[prop];
+          }
+        }
+      }
+    };
+
+    // Loop through each object and conduct a merge
+    for (; i < arguments.length; i++) {
+      merge(arguments[i]);
+    }
+
+    return extended;
+
+  };
+
   function initContentScript() {
     // addEventListener version
     document.addEventListener('selectionchange', (evt) => debouncedOnSelectionChange(evt));
@@ -310,17 +347,22 @@
 
   initContentScript();
 
-  chrome.extension.sendMessage({}, function(response) {
-    var readyStateCheckInterval = setInterval(() => {
-      if (document.readyState === "complete") {
-        clearInterval(readyStateCheckInterval);
-    
-        // ----------------------------------------------------------
-        // This part of the script triggers when page is done loading
-        console.log("Hello. This message was sent from scripts/content_script.js");
-        // ----------------------------------------------------------
-      }
-    }, 10);
+  chrome.runtime.sendMessage('read_config', (conf) => {
+    if (typeof conf == undefined) {
+      console.log(lastError);
+    } else if (conf) {
+      API_KEY = conf.API_KEY;
+      EXT_CONF = conf;
+      delete EXT_CONF['API_KEY'];
+    }
+  });
+
+  chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+    let action = msg.action || msg;
+    if (action == 'config_updated') {
+      console.log('configuration updated');
+      EXT_CONF = msg.data;
+    }
   });
 
 })();
