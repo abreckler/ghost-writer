@@ -6,6 +6,7 @@
    *  3. Save extension
    */
   var API_KEY = null;
+  var ENGINE = 'davinci';
   var EXT_CONF = {};
   var ghostFace; // root element of component
   var triggerBtn; // trigger button for ghost writer
@@ -217,7 +218,7 @@
     if (!json) {
       // call OpenAI API
       // @see https://beta.openai.com/docs/api-reference/create-completion
-      var response = await fetch('https://api.openai.com/v1/engines/davinci/completions', {
+      var response = await fetch('https://api.openai.com/v1/engines/'+ ENGINE +'/completions', {
         method: 'POST',
         mode: 'cors', // no-cors, *cors, same-origin
         cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -352,8 +353,10 @@
       console.log(lastError);
     } else if (conf) {
       API_KEY = conf.API_KEY;
+      ENGINE = conf.engine;
       EXT_CONF = conf;
       delete EXT_CONF['API_KEY'];
+      delete EXT_CONF['engine'];
     }
   });
 
