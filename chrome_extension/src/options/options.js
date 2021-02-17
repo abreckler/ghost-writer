@@ -27,8 +27,8 @@
       form.querySelector('#param_stop').value = conf.stop || '';
       form.querySelector('#param_presence_penalty').value = conf.presence_penalty || '';
       form.querySelector('#param_frequency_penalty').value = conf.frequency_penalty || '';
-      form.querySelector('#param_best_of').value = conf.best_of || '';
-      form.querySelector('#param_logit_bias').value = conf.logit_bias || '';
+      // form.querySelector('#param_best_of').value = conf.best_of || '';
+      // form.querySelector('#param_logit_bias').value = conf.logit_bias || '';
     }
   });
 })();
