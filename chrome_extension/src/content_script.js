@@ -262,7 +262,7 @@
    */
   function calculateTokens(text) {
     // Now suggestion text will be rougly the same length as the selected text.
-    return Number.parseInt(Math.min(Math.ceil(text.length / 4), EXT_CONF.max_tokens));
+    return Number.parseInt(Math.min(Math.ceil(text.length / 4), EXT_CONF.max_tokens || 1024));
   }
 
   /**
