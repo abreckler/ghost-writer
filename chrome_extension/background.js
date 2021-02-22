@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 function fillDefaultConfig(c) {
   var r = {};
   r.engine = (c && c.engine) || 'davinci';
-  r.max_tokens = Number.parseInt((c && c.max_tokens) || 100);
+  r.max_tokens = Number.parseInt((c && c.max_tokens) || 1024);
   c && c.temperature && (r.temperature = Number.parseFloat(c.temperature));
   c && c.top_p && (r.top_p = Number.parseFloat(c.top_p));
   r.n = Number.parseInt((c && c.n) || 1);

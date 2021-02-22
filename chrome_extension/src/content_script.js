@@ -229,7 +229,7 @@
         },
         redirect: 'follow', // manual, *follow, error
         referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-        body: JSON.stringify(extend({ prompt: text }, EXT_CONF)) // body data type must match "Content-Type" header
+        body: JSON.stringify(extend(EXT_CONF, { prompt: text, max_tokens: calculateTokens(text) })) // body data type must match "Content-Type" header
       });
       var json = await response.json();
     }
@@ -253,6 +253,16 @@
     // show "answer panel"
     ghostFace.classList.remove('gwf-thinking');
     toggleAnswerPanel(!0);
+  }
+
+  /**
+   * Calculate max_tokens to be passed on API call, based on text selection
+   * NOTE: One token is roughly 4 characters for normal English text
+   * @param {string} text 
+   */
+  function calculateTokens(text) {
+    // Now suggestion text will be rougly the same length as the selected text.
+    return Number.parseInt(Math.min(Math.ceil(text.length / 4), EXT_CONF.max_tokens));
   }
 
   /**

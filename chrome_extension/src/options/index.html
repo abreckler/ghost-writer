@@ -46,11 +46,14 @@
             <div class="param-default">Defaults to 16</div>
           </div>
           <div class="param-row-body">
-            <input id="param_max_tokens" name="max_tokens" type="number" min="1" max="100" step="1" />
+            <input id="param_max_tokens" name="max_tokens" type="number" min="1" max="1024" step="1" />
 
             <div class="markdown-content">
               <p>The maximum number of tokens to generate. Requests can use up to 2048 tokens shared between prompt
-                and completion. (One token is roughly 4 characters for normal English text)</p>
+                and completion. (One token is roughly 4 characters for normal English text)<br/>
+                The length of generated text will be roughly the same as the length of selected text. The value here will be
+                used to limit the maximum tokens to be consumed on a single API call.
+                </p>
             </div>
           </div>
         </div>
