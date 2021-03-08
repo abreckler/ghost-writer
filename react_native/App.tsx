@@ -2,6 +2,8 @@ import React, { useState, FC } from 'react';
 import { FlatList, SafeAreaView, StyleSheet, TextStyle, Text, TextInput, TouchableOpacity, View, ListRenderItem } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Clipboard from 'expo-clipboard';
+import * as Linking from 'expo-linking';
+import { NavigationContainer } from '@react-navigation/native';
 
 import { CompletionResponse, CompletionChoice } from './openai';
 
@@ -36,6 +38,12 @@ export default function App() {
   ] as CompletionChoice[]);
   const API_KEY = 'sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4';
   const ENGINE = 'davinci';
+  const linking = {
+    prefixes: [
+      Linking.createURL('/'),
+      'https://app.ghost_writer.com',
+    ],
+  };
 
   /**
    * Calculate max_tokens to be passed on API call, based on text selection
@@ -96,26 +104,28 @@ export default function App() {
   };
   
   return (
-    <View style={styles.container}>
-      <Text style={styles.titleText}>Ghost Writer</Text>
-      <TextInput style={styles.mainInput}
-          multiline = {true}
-          placeholder="Type here!"
-          onChangeText={text => setText(text)}></TextInput>
-      <TouchableOpacity style={styles.button}
-          disabled={buttonDisabled}
-          onPress={createCompletion} >
-        <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-      </TouchableOpacity>
-      <SafeAreaView style={styles.answerChoiceListContainer}>
-        <FlatList style={styles.answerChoiceList}
-          data={data}
-          renderItem={renderAnswerChoice}
-          keyExtractor={item => item.index?.toString() || Math.random().toString()}
-        />
-      </SafeAreaView>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Ghost Writer</Text>
+        <TextInput style={styles.mainInput}
+            multiline = {true}
+            placeholder="Type here!"
+            onChangeText={text => setText(text)}></TextInput>
+        <TouchableOpacity style={styles.button}
+            disabled={buttonDisabled}
+            onPress={createCompletion} >
+          <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+        </TouchableOpacity>
+        <SafeAreaView style={styles.answerChoiceListContainer}>
+          <FlatList style={styles.answerChoiceList}
+            data={data}
+            renderItem={renderAnswerChoice}
+            keyExtractor={item => item.index?.toString() || Math.random().toString()}
+          />
+        </SafeAreaView>
+        <StatusBar style="auto" />
+      </View>
+    </NavigationContainer>
   );
 }
 
