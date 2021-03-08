@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Modal } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import ShareExtension from 'react-native-share-extension';
 
@@ -37,9 +37,10 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
     }
   }
 
-  onClose = () => ShareExtension.close();
-
-  closing = () => this.setState({ isOpen: false });
+  closing = () => {
+    this.setState({ isOpen: false });
+    ShareExtension.close();
+  };
 
   async invokeGhostWriter() {
     ShareExtension.openURL('');
@@ -48,20 +49,22 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.titleText}>Ghost Writer</Text>
-        <TextInput style={styles.mainInput}
-            multiline = {true}
-            placeholder="Type here!"
-            value = { this.state.value }
-            onChangeText={ text => this.setState({value: text}) }></TextInput>
-        <TouchableOpacity style={styles.button}
-            disabled={ this.state.buttonDisabled }
-            onPress={ this.invokeGhostWriter } >
-          <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-        </TouchableOpacity>
-        <StatusBar style="auto" />
-      </View>
+      <Modal style={styles.modal} transparent={true} visible={this.state.isOpen} onRequestClose={this.closing}>
+        <View style={styles.container}>
+          <Text style={styles.titleText}>Ghost Writer</Text>
+          <TextInput style={styles.mainInput}
+              multiline = {true}
+              placeholder="Type here!"
+              value = { this.state.value }
+              onChangeText={ text => this.setState({value: text}) }></TextInput>
+          <TouchableOpacity style={styles.button}
+              disabled={ this.state.buttonDisabled }
+              onPress={ this.invokeGhostWriter } >
+            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+          </TouchableOpacity>
+          <StatusBar style="auto" />
+        </View>
+      </Modal>
     );
   }
 
@@ -72,6 +75,10 @@ const textColor = '#444';
 const borderColor = '#ccc';
 
 const styles = StyleSheet.create({
+  modal: {
+    backgroundColor: 'transparent',
+  },
+
   container: {
     flex: 1,
     backgroundColor: '#fff',

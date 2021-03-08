@@ -1,5 +1,9 @@
 import React, { useState, FC } from 'react';
-import { FlatList, SafeAreaView, StyleSheet, TextStyle, Text, TextInput, TouchableOpacity, View, ListRenderItem } from 'react-native';
+import {
+  FlatList, SafeAreaView, StyleSheet,
+  TextStyle, Text, TextInput, TouchableOpacity,
+  View, ListRenderItem, Alert
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
@@ -77,7 +81,7 @@ export default function App() {
 
   const answerclicked = (choice: CompletionChoice) => {
     Clipboard.setString(choice.text || '');
-    alert('Answer is copied to the clipboard!');
+    Alert.alert('Answer is copied to the clipboard!');
   };
 
   const renderAnswerChoice : ListRenderItem<CompletionChoice> = (info) => {
