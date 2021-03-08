@@ -42,6 +42,7 @@ export default function App() {
     prefixes: [
       Linking.createURL('/'),
       'https://app.ghost_writer.com',
+      'exps://app.ghost_writer.com',
     ],
   };
 
