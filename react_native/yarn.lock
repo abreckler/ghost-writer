@@ -1893,6 +1893,10 @@
   dependencies:
     "@types/react" "^16"
 
+"@types/react-native-share-extension@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-native-share-extension/-/react-native-share-extension-2.0.0.tgz#dd03bd47d2d0332082a7af57f0c98af9ec10833b"
+
 "@types/react-native@~0.63.2":
   version "0.63.50"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.63.50.tgz#cea13fb272983ec585179807d0cb4f84db0952f6"

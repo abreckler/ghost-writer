@@ -5,7 +5,7 @@ import Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { CompletionResponse, CompletionChoice } from './openai';
+import { CompletionChoice, OpenAiApiClient, CompletionParams } from './openai';
 
 interface IAnswerChoiceProps {
   choice?: any;
@@ -36,8 +36,8 @@ export default function App() {
       "finish_reason": "length"
     }
   ] as CompletionChoice[]);
-  const API_KEY = 'sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4';
-  const ENGINE = 'davinci';
+
+  const apiClient = new OpenAiApiClient('sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4', 'davinci');
   const linking = {
     prefixes: [
       Linking.createURL('/'),
@@ -58,27 +58,13 @@ export default function App() {
   const createCompletion = async () => {
     setButtonDisabled(true);
 
-    // call OpenAI API
-    // @see https://beta.openai.com/docs/api-reference/create-completion
-    let response = await fetch('https://api.openai.com/v1/engines/'+ ENGINE +'/completions', {
-      method: 'POST',
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + API_KEY
-      },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify({
-        prompt: text,
-        n: 2,
-        max_tokens: calculateTokens()
-      }) // body data type must match "Content-Type" header
-    });
+    let params = {
+      prompt: text,
+      n: 2,
+      max_tokens: calculateTokens()
+    } as CompletionParams;
 
-    let json : CompletionResponse = await response.json();
+    let json = await apiClient.completion(params);
 
     if (json.choices) {
       setData(json.choices);
