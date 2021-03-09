@@ -5980,9 +5980,9 @@ react-native-screens@~2.15.0:
   version "2.15.2"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.15.2.tgz#a449700e895b462937211ec72ed6f09652758f06"
 
-"react-native-share-extension@git+https://github.com/klokt-valg/react-native-share-extension#358163e":
+"react-native-share-extension@git+https://github.com/klokt-valg/react-native-share-extension":
   version "2.0.1"
-  resolved "git+https://github.com/klokt-valg/react-native-share-extension#358163e119a28d79029896ed0e46aab08222a15a"
+  resolved "git+https://github.com/klokt-valg/react-native-share-extension#192961403772c51879d924f5c64c79b0cba7c537"
 
 react-native-unimodules@~0.12.0:
   version "0.12.0"
