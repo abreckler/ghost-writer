@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Modal } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import ShareExtension from 'react-native-share-extension';
 
 
@@ -62,7 +61,6 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
               onPress={ this.invokeGhostWriter } >
             <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
           </TouchableOpacity>
-          <StatusBar style="auto" />
         </View>
       </Modal>
     );

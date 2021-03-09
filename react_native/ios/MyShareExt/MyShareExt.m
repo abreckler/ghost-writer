@@ -21,7 +21,7 @@ RCT_EXPORT_MODULE();
 - (UIView*) shareView {
   NSURL *jsCodeLocation;
   
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot@"index" fallbackResource: nil];
+  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource: nil];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL: jsCodeLocation
                                                       moduleName: @"MyShareExt"
                                                initialProperties: nil
