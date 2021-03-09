@@ -1,36 +1,27 @@
-import React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Modal, Alert } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, TextInput, TouchableOpacity, View, Modal, Alert } from 'react-native';
 import ShareExtension from 'react-native-share-extension';
 import * as Linking from 'expo-linking';
+import { CompletionChoice, CompletionParams, OpenAiApiClient } from './components/openai';
+import { AnswerList } from './components/answer-list';
+import styles from './components/styles';
 
 
-type ShareExtState = {
-  isOpen: boolean,
-  type: string,
-  value: string,
-  buttonDisabled: boolean,
-}
+export default function ShareExt() {
+  const [isOpen, setOpen] = useState(true);
+  const [dataType, setDataType] = useState('');
+  const [sharedValue, setSharedValue] = useState('');
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+  const [answersAlert, setAnswersAlert] = useState('');
+  const [answers, setAnswers] = useState([] as CompletionChoice[]);
 
-export default class ShareExt extends React.Component<{}, ShareExtState> {
+  const apiClient = new OpenAiApiClient('sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4', 'davinci');
 
-  constructor(props: {}, context: any) {
-    super(props, context);
-
-    this.state = {
-      isOpen: true,
-      type: '',
-      value: '',
-      buttonDisabled: false,
-    };
-  }
-
-  async componentDidMount() {
+  const getSharedData = async () => {
     try {
       const {type, value} = await ShareExtension.data()
-      this.setState({
-        type,
-        value
-      });
+      setDataType(type);
+      setSharedValue(value);
       Alert.alert('Complete: ' + value);
     }
     catch(e) {
@@ -39,19 +30,19 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
     }
   }
 
-  closing = () => {
-    this.setState({ isOpen: false });
+  useEffect(() => {
+    getSharedData();
+  });
+
+  const closing = () => {
+    setOpen(false);
     ShareExtension.close();
   };
 
-  async invokeGhostWriter() {
+  const invokeGhostWriter = async () => {
     try {
-      let url = Linking.createURL('/', {
-        scheme: 'svghostwriter',
-        queryParams:{
-          text: this.state.value
-        }
-      });
+      let url = Linking.makeUrl('/', { text: sharedValue });
+      console.error("tried to open url:" + url);
       ShareExtension.openURL(url);
     }
     catch (e)
@@ -60,74 +51,61 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
     }
   }
 
-
-  render() {
-    return (
-      <Modal style={styles.modal} transparent={true} visible={this.state.isOpen} onRequestClose={this.closing}>
-        <View style={styles.container}>
-          <Text style={styles.titleText}>Ghost Writer</Text>
-          <TextInput style={styles.mainInput}
-              multiline = {true}
-              placeholder="Type here!"
-              value = { this.state.value }
-              onChangeText={ text => this.setState({value: text}) }></TextInput>
-          <TouchableOpacity style={styles.button}
-              disabled={ this.state.buttonDisabled }
-              onPress={ this.invokeGhostWriter } >
-            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-    );
+  /**
+   * Calculate max_tokens to be passed on API call, based on text selection
+   * NOTE: One token is roughly 4 characters for normal English text
+   */
+  const calculateTokens = () : Number => {
+    // Now suggestion text will be rougly the same length as the selected text.
+    return Math.min(Math.ceil(sharedValue.length / 4), 1024);
   }
 
+  const createCompletion = async () => {
+    setButtonDisabled(true);
+
+    let params = {
+      prompt: sharedValue,
+      n: 1,
+      max_tokens: calculateTokens()
+    } as CompletionParams;
+
+    let json = await apiClient.completion(params);
+
+    if (json.choices) {
+      setAnswers(json.choices);
+      setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' answers' : 'answer') + '!');
+      setButtonDisabled(false);
+    } else {
+      setAnswers([]);
+      setAnswersAlert('Ghost Writer could not suggest an answer!');
+      setButtonDisabled(false);
+    }
+  };
+  
+
+  return (
+    <Modal style={styles.extModal} transparent={true} animationType="slide" visible={isOpen} onRequestClose={closing}>
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Ghost Writer</Text>
+        <TextInput style={styles.mainInput}
+            multiline = {true}
+            placeholder="Type here!"
+            value = { sharedValue }
+            onChangeText={ text => setSharedValue(text) }></TextInput>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity style={styles.button}
+              disabled={ buttonDisabled }
+              onPress={ createCompletion } >
+            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button}
+              disabled={ buttonDisabled }
+              onPress={ closing } >
+            <Text style={styles.buttonText}>Close</Text>
+          </TouchableOpacity>
+        </View>
+        <AnswerList data={answers} answersAlert={answersAlert} ></AnswerList>
+      </View>
+    </Modal>
+  );
 }
-
-
-const mainFontSize = 16;
-const bgColor = '#fff';
-const textColor = '#444';
-const borderColor = '#ccc';
-const primaryColor = 'rgb(70, 48, 235)';
-
-const styles = StyleSheet.create({
-  modal: {
-    backgroundColor: 'transparent',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: bgColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-
-  titleText: {
-    fontSize: mainFontSize * 1.8,
-    color: textColor,
-    alignSelf: 'flex-start',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-
-  mainInput: {
-    flex: .4,
-    width: '100%',
-    padding: mainFontSize,
-    fontSize: mainFontSize,
-    color: textColor,
-    borderColor: borderColor,
-    borderWidth: 1,
-  },
-
-  button: {
-    backgroundColor: primaryColor,
-    padding: mainFontSize,
-    borderRadius: 5,
-    margin: 10,
-  },
-  buttonText: {
-    fontSize: mainFontSize * 1.25,
-    color: '#fff',
-  },
-});

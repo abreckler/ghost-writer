@@ -1,27 +1,13 @@
-import React, { useState, FC, useEffect } from 'react';
-import {
-  FlatList, SafeAreaView, StyleSheet,
-  TextStyle, Text, TextInput, TouchableOpacity,
-  View, ListRenderItem, Alert
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import Clipboard from 'expo-clipboard';
 import * as Linking from 'expo-linking';
 import { NavigationContainer } from '@react-navigation/native';
 
-import { CompletionChoice, OpenAiApiClient, CompletionParams } from './openai';
+import styles from './components/styles';
+import { AnswerList } from './components/answer-list';
+import { CompletionChoice, OpenAiApiClient, CompletionParams } from './components/openai';
 
-interface IAnswerChoiceProps {
-  choice?: any;
-  onPress(e: any): void;
-  style?: TextStyle;
-};
-
-const AnswerChoice: FC<IAnswerChoiceProps> = props => (
-  <TouchableOpacity onPress={props.onPress} style={[styles.answerChoice, props.style]}>
-    <Text style={styles.answerChoiceText}>{props.choice.text.trim()}</Text>
-  </TouchableOpacity>
-);
 
 export default function App() {
   const [text, setText] = useState('');
@@ -74,7 +60,7 @@ export default function App() {
 
     let params = {
       prompt: text,
-      n: 2,
+      n: 1,
       max_tokens: calculateTokens()
     } as CompletionParams;
 
@@ -90,21 +76,6 @@ export default function App() {
 
     setButtonDisabled(false);
   };
-
-  const answerclicked = (choice: CompletionChoice) => {
-    Clipboard.setString(choice.text || '');
-    Alert.alert('Answer is copied to the clipboard!');
-  };
-
-  const renderAnswerChoice : ListRenderItem<CompletionChoice> = (info) => {
-    return (
-      <AnswerChoice
-        choice={info.item}
-        onPress={() => answerclicked(info.item)}
-        style={{}}
-      />
-    );
-  };
   
   return (
     <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
@@ -119,85 +90,9 @@ export default function App() {
             onPress={createCompletion} >
           <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
         </TouchableOpacity>
-        <SafeAreaView style={styles.answerChoiceListContainer}>
-          <Text style={styles.answersAlert}>{answersAlert}</Text>
-          <FlatList style={styles.answerChoiceList}
-            data={data}
-            renderItem={renderAnswerChoice}
-            keyExtractor={item => item.index?.toString() || Math.random().toString()}
-          />
-        </SafeAreaView>
+        <AnswerList data={data} answersAlert={answersAlert} ></AnswerList>
         <StatusBar style="auto" />
       </View>
     </NavigationContainer>
   );
 }
-
-const mainFontSize = 16;
-const bgColor = '#fff';
-const textColor = '#444';
-const borderColor = '#ccc';
-const primaryColor = 'rgb(70, 48, 235)';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: bgColor,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 20,
-  },
-
-  titleText: {
-    fontSize: mainFontSize * 1.8,
-    color: textColor,
-    alignSelf: 'flex-start',
-    marginTop: 10,
-    marginBottom: 10,
-  },
-
-  mainInput: {
-    flex: .4,
-    width: '100%',
-    padding: mainFontSize,
-    fontSize: mainFontSize,
-    color: textColor,
-    borderColor: borderColor,
-    borderWidth: 1,
-  },
-
-  button: {
-    backgroundColor: primaryColor,
-    padding: mainFontSize,
-    borderRadius: 5,
-    margin: 10,
-  },
-  buttonText: {
-    fontSize: mainFontSize * 1.25,
-    color: '#fff',
-  },
-
-  answerChoiceListContainer: {
-    flex: .4,
-    flexGrow: 1,
-    width: '100%',
-  },
-  answersAlert: {
-    fontSize: mainFontSize * .9,
-  },
-  answerChoiceList: {
-    width: '100%',
-    borderColor: '#ccc',
-    borderWidth: 1,
-    padding: mainFontSize,
-  },
-  answerChoice: {
-    borderBottomColor: borderColor,
-    borderBottomWidth: 1,
-    padding: mainFontSize / 2,
-  },
-  answerChoiceText: {
-    fontSize: mainFontSize,
-    color: textColor,
-  },
-});

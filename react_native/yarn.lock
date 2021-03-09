@@ -5982,7 +5982,7 @@ react-native-screens@~2.15.0:
 
 "react-native-share-extension@git+https://github.com/klokt-valg/react-native-share-extension":
   version "2.0.1"
-  resolved "git+https://github.com/klokt-valg/react-native-share-extension#192961403772c51879d924f5c64c79b0cba7c537"
+  resolved "git+https://github.com/klokt-valg/react-native-share-extension#5780cfb38b3414ab7434ba69eb4be4fd4784f6f3"
 
 react-native-unimodules@~0.12.0:
   version "0.12.0"
