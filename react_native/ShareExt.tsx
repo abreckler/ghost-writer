@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View, Modal } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, Modal, Alert } from 'react-native';
 import ShareExtension from 'react-native-share-extension';
 import * as Linking from 'expo-linking';
 
@@ -31,8 +31,10 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
         type,
         value
       });
+      Alert.alert('Complete: ' + value);
     }
     catch(e) {
+      Alert.alert('Error' + e);
       console.log('error', e);
     }
   }
@@ -43,13 +45,19 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
   };
 
   async invokeGhostWriter() {
-    let url = Linking.createURL('/', {
-      scheme: 'svghostwriter',
-      queryParams:{
-        text: this.state.value
-      }
-    });
-    ShareExtension.openURL(url);
+    try {
+      let url = Linking.createURL('/', {
+        scheme: 'svghostwriter',
+        queryParams:{
+          text: this.state.value
+        }
+      });
+      ShareExtension.openURL(url);
+    }
+    catch (e)
+    {
+      Alert.alert("Could not open the host app!");
+    }
   }
 
 
@@ -75,28 +83,30 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
 
 }
 
+
 const mainFontSize = 16;
+const bgColor = '#fff';
 const textColor = '#444';
 const borderColor = '#ccc';
+const primaryColor = 'rgb(70, 48, 235)';
 
 const styles = StyleSheet.create({
   modal: {
     backgroundColor: 'transparent',
   },
-
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: bgColor,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingLeft: 20,
-    paddingRight: 20
+    padding: 20,
   },
 
   titleText: {
-    fontSize: mainFontSize * 2,
+    fontSize: mainFontSize * 1.8,
     color: textColor,
     alignSelf: 'flex-start',
+    marginTop: 10,
     marginBottom: 10,
   },
 
@@ -111,8 +121,8 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: 'rgb(70, 48, 235)',
-    padding: 20,
+    backgroundColor: primaryColor,
+    padding: mainFontSize,
     borderRadius: 5,
     margin: 10,
   },

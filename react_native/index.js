@@ -2,7 +2,7 @@ import { registerRootComponent } from 'expo';
 import { AppRegistry } from 'react-native';
 
 import App from './App';
-import ShareExt from './App';
+import ShareExt from './ShareExt';
 
 // registerRootComponent calls AppRegistry.registerComponent('main', () => App);
 // It also ensures that whether you load the app in the Expo client or in a native build,

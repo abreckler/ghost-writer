@@ -281,7 +281,7 @@ PODS:
     - React-Core (= 0.63.4)
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
-  - ReactNativeShareExtension (2.0.0):
+  - ReactNativeShareExtension (2.0.1):
     - React
   - RNGestureHandler (1.8.0):
     - React
@@ -526,7 +526,7 @@ SPEC CHECKSUMS:
   React-RCTText: 5c51df3f08cb9dedc6e790161195d12bac06101c
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
-  ReactNativeShareExtension: c1552743bbb04663afcbbc246410e65eda060a87
+  ReactNativeShareExtension: 104fbc53b63e340ab5e126ae3c27572b487a59bf
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
   RNScreens: 3d682bcaba69a4f8e55543d90818704f34338db1

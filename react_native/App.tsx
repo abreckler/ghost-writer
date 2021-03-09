@@ -26,20 +26,8 @@ const AnswerChoice: FC<IAnswerChoiceProps> = props => (
 export default function App() {
   const [text, setText] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [data, setData] = useState([
-    {
-      "text": " iOS extension points are unrelated to Mac extension points, and two iOS extensions can provide similar features even if they do so via different objects and properties. iOS Share extensions use the UIActivityViewController class, which uses a related class (UIActivityItemSource) for setting such parameters as the title, description, source identifier, and type value. A common iOS extension point is the",
-      "index": 0,
-      "logprobs": null,
-      "finish_reason": "length"
-    },
-    {
-      "text": " Share extensions are also useful in areas related to your app's task or content, including media editing, creation of custom objects, and so on. A global Share button in iOS displays any available Share extensions along with any custom Share extensions your app registers. Figure 19-1 shows three available Share extensions and a custom Share extension. Figure 19-1 Available and custom Share extensions When a user selects a",
-      "index": 1,
-      "logprobs": null,
-      "finish_reason": "length"
-    }
-  ] as CompletionChoice[]);
+  const [answersAlert, setAnswersAlert] = useState('');
+  const [data, setData] = useState([] as CompletionChoice[]);
 
   const apiClient = new OpenAiApiClient('sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4', 'davinci');
   const linking = {
@@ -94,8 +82,10 @@ export default function App() {
 
     if (json.choices) {
       setData(json.choices);
+      setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' answers' : 'answer') + '!');
     } else {
       setData([]);
+      setAnswersAlert('Ghost Writer could not suggest an answer!');
     }
 
     setButtonDisabled(false);
@@ -130,6 +120,7 @@ export default function App() {
           <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
         </TouchableOpacity>
         <SafeAreaView style={styles.answerChoiceListContainer}>
+          <Text style={styles.answersAlert}>{answersAlert}</Text>
           <FlatList style={styles.answerChoiceList}
             data={data}
             renderItem={renderAnswerChoice}
@@ -143,23 +134,25 @@ export default function App() {
 }
 
 const mainFontSize = 16;
+const bgColor = '#fff';
 const textColor = '#444';
 const borderColor = '#ccc';
+const primaryColor = 'rgb(70, 48, 235)';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: bgColor,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingLeft: 20,
-    paddingRight: 20
+    padding: 20,
   },
 
   titleText: {
-    fontSize: mainFontSize * 2,
+    fontSize: mainFontSize * 1.8,
     color: textColor,
     alignSelf: 'flex-start',
+    marginTop: 10,
     marginBottom: 10,
   },
 
@@ -174,8 +167,8 @@ const styles = StyleSheet.create({
   },
 
   button: {
-    backgroundColor: 'rgb(70, 48, 235)',
-    padding: 20,
+    backgroundColor: primaryColor,
+    padding: mainFontSize,
     borderRadius: 5,
     margin: 10,
   },
@@ -186,6 +179,11 @@ const styles = StyleSheet.create({
 
   answerChoiceListContainer: {
     flex: .4,
+    flexGrow: 1,
+    width: '100%',
+  },
+  answersAlert: {
+    fontSize: mainFontSize * .9,
   },
   answerChoiceList: {
     width: '100%',
