@@ -12,7 +12,6 @@
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
 		CE94423A2173F1194724B8B3 /* libPods-ghostwriterrn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E33BC2D0218C132DD7FEB1 /* libPods-ghostwriterrn.a */; };
 		D56F21F925F60743007B2581 /* MyShareExt.m in Sources */ = {isa = PBXBuildFile; fileRef = D56F21F825F60742007B2581 /* MyShareExt.m */; };
 		D56FE21B25F60149007B2581 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D56FE21925F60149007B2581 /* MainInterface.storyboard */; };
@@ -59,7 +58,6 @@
 		75D6CBCA9D23457C66847A0D /* Pods-ghostwriterrn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghostwriterrn.debug.xcconfig"; path = "Target Support Files/Pods-ghostwriterrn/Pods-ghostwriterrn.debug.xcconfig"; sourceTree = "<group>"; };
 		8E01F16CD6254BA07649414F /* Pods-MyShareExt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt.release.xcconfig"; path = "Target Support Files/Pods-MyShareExt/Pods-MyShareExt.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = ghostwriterrn/SplashScreen.storyboard; sourceTree = "<group>"; };
-		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		D0E33BC2D0218C132DD7FEB1 /* libPods-ghostwriterrn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ghostwriterrn.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D56F21F825F60742007B2581 /* MyShareExt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyShareExt.m; sourceTree = "<group>"; };
 		D56FE21425F60148007B2581 /* MyShareExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MyShareExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,9 +147,7 @@
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
-			children = (
-				BB2F792C24A3F905000567C9 /* Expo.plist */,
-			);
+			children = ();
 			name = Supporting;
 			path = ghostwriterrn/Supporting;
 			sourceTree = "<group>";
@@ -263,7 +259,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
