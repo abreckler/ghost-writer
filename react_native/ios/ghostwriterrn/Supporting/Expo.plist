@@ -5,7 +5,7 @@
     <key>EXUpdatesSDKVersion</key>
     <string>40.0.0</string>
     <key>EXUpdatesEnabled</key>
-    <true/>
+    <false/>
     <key>EXUpdatesCheckOnLaunch</key>
     <string>ALWAYS</string>
     <key>EXUpdatesLaunchWaitMs</key>

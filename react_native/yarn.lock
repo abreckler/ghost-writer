@@ -3337,7 +3337,7 @@ expo-status-bar@~1.0.3:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.0.3.tgz#62b4d6145680abd43ba6ecfa465f835e88bf6263"
 
-expo-updates@~0.4.0:
+expo-updates@^0.4.2:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/expo-updates/-/expo-updates-0.4.2.tgz#15862bc209fa3fb98d3fa16b7aac4edfcc33f182"
   dependencies:
@@ -5997,9 +5997,9 @@ react-native-screens@~2.15.0:
   version "2.15.2"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.15.2.tgz#a449700e895b462937211ec72ed6f09652758f06"
 
-react-native-share-extension@^2.0.0:
+"react-native-share-extension@git+https://github.com/klokt-valg/react-native-share-extension#master":
   version "2.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-share-extension/-/react-native-share-extension-2.0.0.tgz#c645715ce6c937e1dd527c4df5635df89ca88a44"
+  resolved "git+https://github.com/klokt-valg/react-native-share-extension#4a8c38f02d857c201e67955ab8486e971502db1b"
 
 react-native-unimodules@~0.12.0:
   version "0.12.0"

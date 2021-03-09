@@ -13,22 +13,14 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		D56DE36025F6EED40076007B /* libPods-MyShareExt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C8804EF21D4EEA791E1A53B /* libPods-MyShareExt.a */; };
-		D56DE36225F6EED80076007B /* libPods-ghostwriterrn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F4333498BE54E445AF06A81F /* libPods-ghostwriterrn.a */; };
-		D56F21F525F60690007B2581 /* libReactNativeShareExtension.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D56F21EF25F60249007B2581 /* libReactNativeShareExtension.a */; };
+		CE94423A2173F1194724B8B3 /* libPods-ghostwriterrn.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E33BC2D0218C132DD7FEB1 /* libPods-ghostwriterrn.a */; };
 		D56F21F925F60743007B2581 /* MyShareExt.m in Sources */ = {isa = PBXBuildFile; fileRef = D56F21F825F60742007B2581 /* MyShareExt.m */; };
 		D56FE21B25F60149007B2581 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D56FE21925F60149007B2581 /* MainInterface.storyboard */; };
 		D56FE21F25F60149007B2581 /* MyShareExt.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D56FE21425F60148007B2581 /* MyShareExt.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		EC76A4A99E5054EEDF05A657 /* libPods-MyShareExt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 05D32FC02376C055FAC24AE4 /* libPods-MyShareExt.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D56F21EE25F60249007B2581 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D56F21EA25F60249007B2581 /* ReactNativeShareExtension.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 41B5DE301D0B505800949BD5;
-			remoteInfo = ReactNativeShareExtension;
-		};
 		D56FE21D25F60149007B2581 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
@@ -54,7 +46,7 @@
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		0DD5912D986BEFB7FF6579F1 /* Pods-ghostwriterrn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghostwriterrn.debug.xcconfig"; path = "Target Support Files/Pods-ghostwriterrn/Pods-ghostwriterrn.debug.xcconfig"; sourceTree = "<group>"; };
+		05D32FC02376C055FAC24AE4 /* libPods-MyShareExt.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyShareExt.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* ghostWriter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ghostWriter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = ghostwriterrn/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = ghostwriterrn/AppDelegate.m; sourceTree = "<group>"; };
@@ -62,20 +54,19 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = ghostwriterrn/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ghostwriterrn/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = ghostwriterrn/main.m; sourceTree = "<group>"; };
-		5C8804EF21D4EEA791E1A53B /* libPods-MyShareExt.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyShareExt.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		72F3F849576966CFE8BAEA7F /* Pods-ghostwriterrn.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghostwriterrn.release.xcconfig"; path = "Target Support Files/Pods-ghostwriterrn/Pods-ghostwriterrn.release.xcconfig"; sourceTree = "<group>"; };
-		81194DC4B1B7072ADF3F4512 /* Pods-MyShareExt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt.release.xcconfig"; path = "Target Support Files/Pods-MyShareExt/Pods-MyShareExt.release.xcconfig"; sourceTree = "<group>"; };
+		1BED087E26A3BC14B7D96A7E /* Pods-ghostwriterrn.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghostwriterrn.release.xcconfig"; path = "Target Support Files/Pods-ghostwriterrn/Pods-ghostwriterrn.release.xcconfig"; sourceTree = "<group>"; };
+		46FDDA5EF0BF6B3E4BB6EC26 /* Pods-MyShareExt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt.debug.xcconfig"; path = "Target Support Files/Pods-MyShareExt/Pods-MyShareExt.debug.xcconfig"; sourceTree = "<group>"; };
+		75D6CBCA9D23457C66847A0D /* Pods-ghostwriterrn.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghostwriterrn.debug.xcconfig"; path = "Target Support Files/Pods-ghostwriterrn/Pods-ghostwriterrn.debug.xcconfig"; sourceTree = "<group>"; };
+		8E01F16CD6254BA07649414F /* Pods-MyShareExt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt.release.xcconfig"; path = "Target Support Files/Pods-MyShareExt/Pods-MyShareExt.release.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = ghostwriterrn/SplashScreen.storyboard; sourceTree = "<group>"; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		C6E9296EA31E65E503F6251C /* Pods-MyShareExt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt.debug.xcconfig"; path = "Target Support Files/Pods-MyShareExt/Pods-MyShareExt.debug.xcconfig"; sourceTree = "<group>"; };
-		D56F21EA25F60249007B2581 /* ReactNativeShareExtension.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeShareExtension.xcodeproj; path = "../node_modules/react-native-share-extension/ios/ReactNativeShareExtension.xcodeproj"; sourceTree = "<group>"; };
+		D0E33BC2D0218C132DD7FEB1 /* libPods-ghostwriterrn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ghostwriterrn.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D56F21F825F60742007B2581 /* MyShareExt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyShareExt.m; sourceTree = "<group>"; };
 		D56FE21425F60148007B2581 /* MyShareExt.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MyShareExt.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		D56FE21A25F60149007B2581 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		D56FE21C25F60149007B2581 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		F4333498BE54E445AF06A81F /* libPods-ghostwriterrn.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ghostwriterrn.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,7 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D56DE36225F6EED80076007B /* libPods-ghostwriterrn.a in Frameworks */,
+				CE94423A2173F1194724B8B3 /* libPods-ghostwriterrn.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -91,8 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D56F21F525F60690007B2581 /* libReactNativeShareExtension.a in Frameworks */,
-				D56DE36025F6EED40076007B /* libPods-MyShareExt.a in Frameworks */,
+				EC76A4A99E5054EEDF05A657 /* libPods-MyShareExt.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -120,8 +110,8 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				5C8804EF21D4EEA791E1A53B /* libPods-MyShareExt.a */,
-				F4333498BE54E445AF06A81F /* libPods-ghostwriterrn.a */,
+				05D32FC02376C055FAC24AE4 /* libPods-MyShareExt.a */,
+				D0E33BC2D0218C132DD7FEB1 /* libPods-ghostwriterrn.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -129,7 +119,6 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				D56F21EA25F60249007B2581 /* ReactNativeShareExtension.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -167,14 +156,6 @@
 			path = ghostwriterrn/Supporting;
 			sourceTree = "<group>";
 		};
-		D56F21EB25F60249007B2581 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D56F21EF25F60249007B2581 /* libReactNativeShareExtension.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		D56FE21525F60148007B2581 /* MyShareExt */ = {
 			isa = PBXGroup;
 			children = (
@@ -188,10 +169,10 @@
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				C6E9296EA31E65E503F6251C /* Pods-MyShareExt.debug.xcconfig */,
-				81194DC4B1B7072ADF3F4512 /* Pods-MyShareExt.release.xcconfig */,
-				0DD5912D986BEFB7FF6579F1 /* Pods-ghostwriterrn.debug.xcconfig */,
-				72F3F849576966CFE8BAEA7F /* Pods-ghostwriterrn.release.xcconfig */,
+				46FDDA5EF0BF6B3E4BB6EC26 /* Pods-MyShareExt.debug.xcconfig */,
+				8E01F16CD6254BA07649414F /* Pods-MyShareExt.release.xcconfig */,
+				75D6CBCA9D23457C66847A0D /* Pods-ghostwriterrn.debug.xcconfig */,
+				1BED087E26A3BC14B7D96A7E /* Pods-ghostwriterrn.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -203,14 +184,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ghostwriterrn" */;
 			buildPhases = (
-				278B4722A10ADE3FD8BC029E /* [CP] Check Pods Manifest.lock */,
+				DB45D20B240FCB3864CE4380 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				D56FE1D125F5FE31007B2581 /* Embed App Extensions */,
-				2194EAF4674F3B627D04ED43 /* [CP] Copy Pods Resources */,
+				7AF848972289479A34EF2705 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -226,11 +207,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D56FE22025F60149007B2581 /* Build configuration list for PBXNativeTarget "MyShareExt" */;
 			buildPhases = (
-				C93CFDCE7F70A06978BC11EE /* [CP] Check Pods Manifest.lock */,
+				980F6987F43BC3C6582DBF71 /* [CP] Check Pods Manifest.lock */,
 				D56FE21025F60148007B2581 /* Sources */,
 				D56FE21125F60148007B2581 /* Frameworks */,
 				D56FE21225F60148007B2581 /* Resources */,
-				19B01827B001210BD0C0B15F /* [CP] Copy Pods Resources */,
+				4CAF524BB8CEF6E41A488084 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -269,12 +250,6 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = D56F21EB25F60249007B2581 /* Products */;
-					ProjectRef = D56F21EA25F60249007B2581 /* ReactNativeShareExtension.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* ghostwriterrn */,
@@ -282,16 +257,6 @@
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		D56F21EF25F60249007B2581 /* libReactNativeShareExtension.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libReactNativeShareExtension.a;
-			remoteRef = D56F21EE25F60249007B2581 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		13B07F8E1A680F5B00A75B9A /* Resources */ = {
@@ -330,7 +295,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n../node_modules/expo-constants/scripts/get-app-config-ios.sh\n../node_modules/expo-updates/scripts/create-manifest-ios.sh\n";
 		};
-		19B01827B001210BD0C0B15F /* [CP] Copy Pods Resources */ = {
+		4CAF524BB8CEF6E41A488084 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -348,7 +313,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MyShareExt/Pods-MyShareExt-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2194EAF4674F3B627D04ED43 /* [CP] Copy Pods Resources */ = {
+		7AF848972289479A34EF2705 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -366,29 +331,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ghostwriterrn/Pods-ghostwriterrn-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		278B4722A10ADE3FD8BC029E /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-ghostwriterrn-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C93CFDCE7F70A06978BC11EE /* [CP] Check Pods Manifest.lock */ = {
+		980F6987F43BC3C6582DBF71 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -404,6 +347,28 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-MyShareExt-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		DB45D20B240FCB3864CE4380 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ghostwriterrn-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -482,7 +447,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0DD5912D986BEFB7FF6579F1 /* Pods-ghostwriterrn.debug.xcconfig */;
+			baseConfigurationReference = 75D6CBCA9D23457C66847A0D /* Pods-ghostwriterrn.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -513,7 +478,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 72F3F849576966CFE8BAEA7F /* Pods-ghostwriterrn.release.xcconfig */;
+			baseConfigurationReference = 1BED087E26A3BC14B7D96A7E /* Pods-ghostwriterrn.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -655,7 +620,7 @@
 		};
 		D56FE22125F60149007B2581 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C6E9296EA31E65E503F6251C /* Pods-MyShareExt.debug.xcconfig */;
+			baseConfigurationReference = 46FDDA5EF0BF6B3E4BB6EC26 /* Pods-MyShareExt.debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -668,57 +633,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"${PODS_ROOT}/Headers/Public\"",
-					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
-					"\"${PODS_ROOT}/Headers/Public/EXApplication\"",
-					"\"${PODS_ROOT}/Headers/Public/EXConstants\"",
-					"\"${PODS_ROOT}/Headers/Public/EXErrorRecovery\"",
-					"\"${PODS_ROOT}/Headers/Public/EXFileSystem\"",
-					"\"${PODS_ROOT}/Headers/Public/EXFont\"",
-					"\"${PODS_ROOT}/Headers/Public/EXImageLoader\"",
-					"\"${PODS_ROOT}/Headers/Public/EXKeepAwake\"",
-					"\"${PODS_ROOT}/Headers/Public/EXLinearGradient\"",
-					"\"${PODS_ROOT}/Headers/Public/EXLocation\"",
-					"\"${PODS_ROOT}/Headers/Public/EXPermissions\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSQLite\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSecureStore\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSplashScreen\"",
-					"\"${PODS_ROOT}/Headers/Public/EXUpdates\"",
-					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
-					"\"${PODS_ROOT}/Headers/Public/FBReactNativeSpec\"",
-					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
-					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
-					"\"${PODS_ROOT}/Headers/Public/RNGestureHandler\"",
-					"\"${PODS_ROOT}/Headers/Public/RNReanimated\"",
-					"\"${PODS_ROOT}/Headers/Public/RNScreens\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
-					"\"${PODS_ROOT}/Headers/Public/React-callinvoker\"",
-					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
-					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
-					"\"${PODS_ROOT}/Headers/Public/UMAppLoader\"",
-					"\"${PODS_ROOT}/Headers/Public/UMBarCodeScannerInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMCameraInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMConstantsInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMCore\"",
-					"\"${PODS_ROOT}/Headers/Public/UMFaceDetectorInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMFileSystemInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMFontInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMImageLoaderInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMPermissionsInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMReactNativeAdapter\"",
-					"\"${PODS_ROOT}/Headers/Public/UMSensorsInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMTaskManagerInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
-					"\"${PODS_ROOT}/Headers/Public/glog\"",
-					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
-					"$(SRCROOT)/../node_modules/react-native-share-extension/ios/**",
-				);
 				INFOPLIST_FILE = MyShareExt/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
@@ -738,7 +652,7 @@
 		};
 		D56FE22225F60149007B2581 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 81194DC4B1B7072ADF3F4512 /* Pods-MyShareExt.release.xcconfig */;
+			baseConfigurationReference = 8E01F16CD6254BA07649414F /* Pods-MyShareExt.release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -752,57 +666,6 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
-				HEADER_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"${PODS_ROOT}/Headers/Public\"",
-					"\"${PODS_ROOT}/Headers/Public/DoubleConversion\"",
-					"\"${PODS_ROOT}/Headers/Public/EXApplication\"",
-					"\"${PODS_ROOT}/Headers/Public/EXConstants\"",
-					"\"${PODS_ROOT}/Headers/Public/EXErrorRecovery\"",
-					"\"${PODS_ROOT}/Headers/Public/EXFileSystem\"",
-					"\"${PODS_ROOT}/Headers/Public/EXFont\"",
-					"\"${PODS_ROOT}/Headers/Public/EXImageLoader\"",
-					"\"${PODS_ROOT}/Headers/Public/EXKeepAwake\"",
-					"\"${PODS_ROOT}/Headers/Public/EXLinearGradient\"",
-					"\"${PODS_ROOT}/Headers/Public/EXLocation\"",
-					"\"${PODS_ROOT}/Headers/Public/EXPermissions\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSQLite\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSecureStore\"",
-					"\"${PODS_ROOT}/Headers/Public/EXSplashScreen\"",
-					"\"${PODS_ROOT}/Headers/Public/EXUpdates\"",
-					"\"${PODS_ROOT}/Headers/Public/FBLazyVector\"",
-					"\"${PODS_ROOT}/Headers/Public/FBReactNativeSpec\"",
-					"\"${PODS_ROOT}/Headers/Public/RCTRequired\"",
-					"\"${PODS_ROOT}/Headers/Public/RCTTypeSafety\"",
-					"\"${PODS_ROOT}/Headers/Public/RNGestureHandler\"",
-					"\"${PODS_ROOT}/Headers/Public/RNReanimated\"",
-					"\"${PODS_ROOT}/Headers/Public/RNScreens\"",
-					"\"${PODS_ROOT}/Headers/Public/React-Core\"",
-					"\"${PODS_ROOT}/Headers/Public/React-RCTText\"",
-					"\"${PODS_ROOT}/Headers/Public/React-callinvoker\"",
-					"\"${PODS_ROOT}/Headers/Public/React-cxxreact\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsi\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsiexecutor\"",
-					"\"${PODS_ROOT}/Headers/Public/React-jsinspector\"",
-					"\"${PODS_ROOT}/Headers/Public/ReactCommon\"",
-					"\"${PODS_ROOT}/Headers/Public/UMAppLoader\"",
-					"\"${PODS_ROOT}/Headers/Public/UMBarCodeScannerInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMCameraInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMConstantsInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMCore\"",
-					"\"${PODS_ROOT}/Headers/Public/UMFaceDetectorInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMFileSystemInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMFontInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMImageLoaderInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMPermissionsInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMReactNativeAdapter\"",
-					"\"${PODS_ROOT}/Headers/Public/UMSensorsInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/UMTaskManagerInterface\"",
-					"\"${PODS_ROOT}/Headers/Public/Yoga\"",
-					"\"${PODS_ROOT}/Headers/Public/glog\"",
-					"\"$(PODS_ROOT)/Headers/Private/React-Core\"",
-					"$(SRCROOT)/../node_modules/react-native-share-extension/ios/**",
-				);
 				INFOPLIST_FILE = MyShareExt/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";

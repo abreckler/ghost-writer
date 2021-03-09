@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, TextInput, TouchableOpacity, View, Modal } from 'react-native';
 import ShareExtension from 'react-native-share-extension';
+import * as Linking from 'expo-linking';
 
 
 type ShareExtState = {
@@ -42,7 +43,13 @@ export default class ShareExt extends React.Component<{}, ShareExtState> {
   };
 
   async invokeGhostWriter() {
-    ShareExtension.openURL('');
+    let url = Linking.createURL('/', {
+      scheme: 'svghostwriter',
+      queryParams:{
+        text: this.state.value
+      }
+    });
+    ShareExtension.openURL(url);
   }
 
 

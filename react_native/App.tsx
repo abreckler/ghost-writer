@@ -1,4 +1,4 @@
-import React, { useState, FC } from 'react';
+import React, { useState, FC, useEffect } from 'react';
 import {
   FlatList, SafeAreaView, StyleSheet,
   TextStyle, Text, TextInput, TouchableOpacity,
@@ -49,6 +49,28 @@ export default function App() {
       'exps://app.ghost_writer.com',
     ],
   };
+
+  const checkInitialURL = async () => {
+    let {path, queryParams} = await Linking.parseInitialURLAsync();
+    if (queryParams && queryParams.text)
+    {
+      console.log("Initial URL:", path, queryParams);
+      setText(queryParams.text);
+    }
+  }
+
+  Linking.addEventListener('url', (event) => {
+    let { path, queryParams } = Linking.parse(event.url);
+    if (queryParams && queryParams.text)
+    {
+      console.log("URL Event:", path, queryParams);
+      setText(queryParams.text);
+    }
+  })
+
+  useEffect(() => {
+    checkInitialURL();
+  });
 
   /**
    * Calculate max_tokens to be passed on API call, based on text selection
