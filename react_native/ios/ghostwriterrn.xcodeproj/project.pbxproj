@@ -147,7 +147,8 @@
 		};
 		BB2F792B24A3F905000567C9 /* Supporting */ = {
 			isa = PBXGroup;
-			children = ();
+			children = (
+			);
 			name = Supporting;
 			path = ghostwriterrn/Supporting;
 			sourceTree = "<group>";
@@ -208,6 +209,7 @@
 				D56FE21125F60148007B2581 /* Frameworks */,
 				D56FE21225F60148007B2581 /* Resources */,
 				4CAF524BB8CEF6E41A488084 /* [CP] Copy Pods Resources */,
+				D5E740C825F81B1200B8BF32 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -347,6 +349,23 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
+		};
+		D5E740C825F81B1200B8BF32 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport NODE_BINARY=node\n../node_modules/react-native/packager/react-native-xcode.sh\n";
 		};
 		DB45D20B240FCB3864CE4380 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
