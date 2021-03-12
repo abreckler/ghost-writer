@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-picker/picker": "^1.8.1",
     "@react-navigation/native": "^5.9.3",
     "@types/react-native-share-extension": "^2.0.0",
     "expo": "~40.0.0",

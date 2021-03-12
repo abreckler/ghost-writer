@@ -1770,6 +1770,11 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@react-native-picker/picker@^1.8.1":
+  version "1.9.12"
+  resolved "https://registry.yarnpkg.com/@react-native-picker/picker/-/picker-1.9.12.tgz#627a865d759be4062bc41b50cb614972c1d66634"
+  integrity sha512-Fyvpu7+VLheC+Y2D21DJ6SCpx8WG3xSEBmgR+7SDcAuc6wqMEeIFUxtIjlGoSQXyGIsOoDUsuZ17pbbQnw/MeA==
+
 "@react-navigation/core@^5.15.2":
   version "5.15.2"
   resolved "https://registry.yarnpkg.com/@react-navigation/core/-/core-5.15.2.tgz#6aa374c7bcb6ffcaac8e2a7f8bdb2f9aba469b31"

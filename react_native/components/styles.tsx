@@ -44,6 +44,14 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 
+  modePicker: {
+    fontSize: mainFontSize * 1.25,
+    padding: mainFontSize,
+    paddingRight: mainFontSize,
+    borderRadius: 5,
+    margin: 10,
+  },
+
   answerChoiceListContainer: {
     flex: .4,
     flexGrow: 1,
