@@ -8,6 +8,7 @@ import styles from './components/styles';
 import { AnswerList } from './components/answer-list';
 import { CompletionChoice, OpenAiApiClient, CompletionParams } from './components/openai';
 import { Picker } from '@react-native-picker/picker';
+import { ActivityIndicator } from 'react-native';
 
 
 export default function App() {
@@ -57,7 +58,7 @@ export default function App() {
     let base = Math.min(Math.ceil(text.length / 4), 1024);
     if (writingMode === 'qa') {
       // typically the questions are shorter than the answer, so we apply some multiplication to the max tokens
-      return Math.min(base * 2, 1024);
+      return 1024;
     } else {
       return base;
     }
@@ -72,7 +73,7 @@ export default function App() {
     setButtonDisabled(true);
 
     let params = {} as CompletionParams;
-    let engine = 'davinci';
+    let engine = 'curie';
     if (writingMode === 'rewrite')
     {
       params.prompt = text.trim();
@@ -114,6 +115,7 @@ export default function App() {
               disabled={buttonDisabled}
               onPress={createCompletion} >
             <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+            <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
           </TouchableOpacity>
           <Picker
               selectedValue={writingMode}
