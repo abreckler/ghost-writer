@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TextInput, TouchableOpacity, View, Modal, Alert, ActivityIndicator } from 'react-native';
+import { Text, TextInput, TouchableOpacity, View, Modal, Alert, ActivityIndicator, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as Linking from 'expo-linking';
 import ShareExtension from 'react-native-share-extension';
@@ -63,13 +63,20 @@ export default function ShareExt() {
 
     if (json.choices) {
       setAnswers(json.choices);
-      setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' answers' : 'answer') + '!');
-      setButtonDisabled(false);
+
+      if (writingMode === 'rewrite')
+        setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
+      else if (writingMode === 'qa')
+        setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
+      else
+        setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
+
     } else {
       setAnswers([]);
       setAnswersAlert('Ghost Writer could not suggest an answer!');
-      setButtonDisabled(false);
     }
+
+    setButtonDisabled(false);
   };
 
   const toggleSettingsView = () => {
@@ -79,13 +86,22 @@ export default function ShareExt() {
   return (
     <Modal style={styles.extModal} transparent={true} animationType="slide" visible={isOpen} onRequestClose={closing}>
       <View style={styles.container}>
-        <Text style={styles.titleText}>Ghost Writer</Text>
-        <TextInput style={styles.mainInput}
-            multiline = {true}
-            placeholder="Type here!"
-            value = { sharedValue }
-            onChangeText={ text => setSharedValue(text) }></TextInput>
-        
+        <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+          <Text style={styles.titleText}>Ghost Writer</Text>
+
+          <TouchableOpacity onPress={closing} style={{paddingHorizontal: 10}}>
+            <Text style={{fontSize: 42}}>&times;</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.mainInputContainer}>
+          <TextInput style={styles.mainInput}
+              multiline = {true}
+              placeholder="Type here!"
+              value = { sharedValue }
+              onChangeText={ text => setSharedValue(text) }></TextInput>
+        </View>
+
         <View style={[styles.settingsContainer, { display: settingsVisible ? 'flex' : 'none' }]}>
           <Text style={styles.settingsLabel}>Mode:</Text>
           <Picker

@@ -73,37 +73,35 @@ class OpenAiApiClient {
 }
 
 class GhostWriterConfig {
-  /**
-   * Calculate max_tokens to be passed on API call, based on text selection
-   * NOTE: One token is roughly 4 characters for normal English text
-   */
-  public static calculateTokens(seedText: string, writingMode?: string) : number {
-    // Now suggestion text will be rougly the same length as the selected text.
-    let base = Math.min(Math.ceil(seedText.length / 4), 1024);
-    if (writingMode === 'qa') {
-      // typically the questions are shorter than the answer, so we apply some multiplication to the max tokens
-      return 1024;
-    } else {
-      return base;
-    }
-  }
-
   public static generateCompleteParams(seedText: string, writingMode?: string): CompletionParams {
     let params = {} as CompletionParams;
+
     if (writingMode === 'rewrite')
     {
-      params.prompt = seedText.trim();
+      params.prompt = "The article reads:\n'''" + seedText.trim() + "'''\n\nAnd this can be rephrased as:\n'''";
+      params.stop = ["'''"];
+      params.temperature = 0.5;
+      params.n = 1;
+      params.frequency_penalty = 0.3;
+      params.max_tokens = Math.min(Math.ceil(seedText.length / 4), 1024);
     }
     else if(writingMode === 'qa')
     {
       params.prompt = 'Q: ' + seedText.trim() + '\nA:';
       params.stop = ['Q:'];
+      params.max_tokens = Math.min(Math.ceil(seedText.length / 4), 1024);
+
+      // generate N, random between 3 and 8
+      let maxN = Math.floor(1024 / params.max_tokens);
+      let n = Math.ceil(Math.random() * 5) + 3;
+      params.n = n > maxN ? maxN : n;
     }
-    else { // autocomplete
+    else
+    { // autocomplete
       params.prompt = seedText.trim();
+      params.n = 1;
+      params.max_tokens = Math.min(Math.ceil(seedText.length / 4), 1024);
     }
-    params.n = 1;
-    params.max_tokens = GhostWriterConfig.calculateTokens(seedText, writingMode);
 
     return params;
   }

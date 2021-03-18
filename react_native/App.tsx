@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, ActivityIndicator, Keyboard } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
@@ -64,7 +64,14 @@ export default function App() {
 
     if (json.choices) {
       setAnswers(json.choices);
-      setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
+
+      if (writingMode === 'rewrite')
+        setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
+      else if (writingMode === 'qa')
+        setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
+      else
+        setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
+
     } else {
       setAnswers([]);
       setAnswersAlert('Ghost Writer could not suggest an answer!');
@@ -79,41 +86,46 @@ export default function App() {
   
   return (
     <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
-      <View style={styles.container}>
-        <Text style={styles.titleText}>Ghost Writer</Text>
-        <TextInput style={styles.mainInput}
-            multiline = {true}
-            placeholder="Type here!"
-            onChangeText={text => setText(text)}></TextInput>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} style={{flex:1}}>
+        <View style={styles.container}>
+          <Text style={styles.titleText}>Ghost Writer</Text>
 
-        <View style={[styles.settingsContainer, { display: settingsVisible ? 'flex' : 'none' }]}>
-          <Text style={styles.settingsLabel}>Mode:</Text>
-          <Picker
-              selectedValue={writingMode}
-              style={styles.modePicker}
-              mode='dropdown'
-              onValueChange={(itemValue, itemIndex) => setWritingMode(itemValue.toString())}>
-            <Picker.Item label="Auto-complete" value="autocomplete" />
-            <Picker.Item label="Re-write" value="rewrite" />
-            <Picker.Item label="Q&A" value="qa" />
-          </Picker>
+          <View style={styles.mainInputContainer}>
+            <TextInput style={styles.mainInput}
+                multiline = {true}
+                placeholder="Type here!"
+                onChangeText={text => setText(text)}></TextInput>
+          </View>
+
+          <View style={[styles.settingsContainer, { display: settingsVisible ? 'flex' : 'none' }]}>
+            <Text style={styles.settingsLabel}>Mode:</Text>
+            <Picker
+                selectedValue={writingMode}
+                style={styles.modePicker}
+                mode='dropdown'
+                onValueChange={(itemValue, itemIndex) => setWritingMode(itemValue.toString())}>
+              <Picker.Item label="Auto-complete" value="autocomplete" />
+              <Picker.Item label="Re-write" value="rewrite" />
+              <Picker.Item label="Q&A" value="qa" />
+            </Picker>
+          </View>
+
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={styles.button}
+                disabled={buttonDisabled}
+                onPress={createCompletion} >
+              <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+              <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={toggleSettingsView}>
+              <Text style={styles.buttonText}>Mode</Text>
+            </TouchableOpacity>
+          </View>
+
+          <AnswerList data={answers} answersAlert={answersAlert} style={styles.answerChoiceListContainer}></AnswerList>
+          <StatusBar style="auto" />
         </View>
-
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button}
-              disabled={buttonDisabled}
-              onPress={createCompletion} >
-            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-            <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={toggleSettingsView}>
-            <Text style={styles.buttonText}>Mode</Text>
-          </TouchableOpacity>
-        </View>
-
-        <AnswerList data={answers} answersAlert={answersAlert} style={styles.answerChoiceListContainer}></AnswerList>
-        <StatusBar style="auto" />
-      </View>
+      </TouchableWithoutFeedback>
     </NavigationContainer>
   );
 }

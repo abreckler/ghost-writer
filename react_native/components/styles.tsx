@@ -21,15 +21,19 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  mainInput: {
+  mainInputContainer: {
     flex: 0.4,
     flexShrink: 0,
-    width: '100%',
-    padding: mainFontSize,
-    fontSize: mainFontSize,
-    color: textColor,
+    paddingVertical: mainFontSize / 2,
+    paddingHorizontal: mainFontSize,
     borderColor: borderColor,
     borderWidth: 1,
+  },
+  mainInput: {
+    flex: 1,
+    width: '100%',
+    fontSize: mainFontSize,
+    color: textColor,
   },
 
   settingsContainer: {

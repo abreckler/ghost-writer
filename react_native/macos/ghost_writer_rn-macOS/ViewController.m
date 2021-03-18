@@ -9,7 +9,7 @@
   [super viewDidLoad];
 
   RCTBridge *bridge = [((AppDelegate *)[NSApp delegate])bridge];
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"ghost_writer_rn" initialProperties:nil];
+  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge moduleName:@"MyShareExt" initialProperties:nil];
 
   NSView *view = [self view];
 
