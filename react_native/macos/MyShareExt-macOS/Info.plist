@@ -36,5 +36,10 @@
 		<key>NSExtensionPrincipalClass</key>
 		<string>MyShareExt</string>
 	</dict>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+	</dict>
 </dict>
 </plist>
