@@ -8,11 +8,9 @@ const primaryColor = 'rgb(70, 48, 235)';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: bgColor,
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 20,
+    flex: 1,
   },
 
   titleText: {
@@ -24,7 +22,8 @@ const styles = StyleSheet.create({
   },
 
   mainInput: {
-    flex: .4,
+    flex: 0.4,
+    flexShrink: 0,
     width: '100%',
     padding: mainFontSize,
     fontSize: mainFontSize,
@@ -33,27 +32,36 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
 
+  settingsContainer: {
+    flexBasis: mainFontSize*20,
+    flexShrink: 0,
+    flexGrow: 0,
+  },
+  settingsLabel: {
+    fontSize: mainFontSize,
+    marginTop: mainFontSize * 1.5,
+  },
+  modePicker: {
+    fontSize: mainFontSize * 1.25,
+  },
+
+  buttonsContainer: {
+    flexDirection: "row",
+  },
   button: {
     backgroundColor: primaryColor,
     padding: mainFontSize,
     borderRadius: 5,
     margin: 10,
+    flexDirection: "row",
   },
   buttonText: {
     fontSize: mainFontSize * 1.25,
     color: '#fff',
   },
 
-  modePicker: {
-    fontSize: mainFontSize * 1.25,
-    padding: mainFontSize,
-    paddingRight: mainFontSize,
-    borderRadius: 5,
-    margin: 10,
-  },
-
   answerChoiceListContainer: {
-    flex: .4,
+    flex: 0.4,
     flexGrow: 1,
     width: '100%',
   },
