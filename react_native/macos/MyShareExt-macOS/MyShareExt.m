@@ -20,18 +20,21 @@ RCT_EXPORT_MODULE();
 
 
 - (NSURL *)sourceURLForBridge {
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:@"main"]; // .jsBundle
+ #ifdef DEBUG
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+ #else
+  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsBundle"];
+ #endif
 }
 
 
-- (UIView*) shareView {
+- (NSView*) shareView {
   NSURL *jsCodeLocation = [self sourceURLForBridge];
   
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL: jsCodeLocation
                                                       moduleName: @"MyShareExt"
                                                initialProperties: nil
                                                    launchOptions: nil];
-  rootView.backgroundColor = nil;
   
   // Uncomment for console output in Xcode console for release mode on device:
   // RCTSetLogThreshold(RCTLogLevelInfo - 1);

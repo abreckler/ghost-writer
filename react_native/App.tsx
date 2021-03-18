@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View, ActivityIndicator, Keyboard } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import * as Linking from 'expo-linking';
-import { NavigationContainer } from '@react-navigation/native';
 
 import styles from './components/styles';
+import { CompletionChoice, OpenAiApiClient, CompletionParams, GhostWriterConfig } from './components/openai';
 import { AnswerList } from './components/answer-list';
-import { CompletionChoice, OpenAiApiClient, CompletionParams } from './components/openai';
 
 
 export default function App() {
+  const [writingMode, setWritingMode] = useState('autocomplete');
   const [text, setText] = useState('');
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [answersAlert, setAnswersAlert] = useState('');
-  const [data, setData] = useState([] as CompletionChoice[]);
+  const [answers, setAnswers] = useState([] as CompletionChoice[]);
+  const [settingsVisible, setSettingsVisible] = useState(false);
 
   const apiClient = new OpenAiApiClient('sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4', 'davinci');
   const linking = {
@@ -46,53 +49,83 @@ export default function App() {
     checkInitialURL();
   });
 
-  /**
-   * Calculate max_tokens to be passed on API call, based on text selection
-   * NOTE: One token is roughly 4 characters for normal English text
-   */
-  const calculateTokens = () : Number => {
-    // Now suggestion text will be rougly the same length as the selected text.
-    return Math.min(Math.ceil(text.length / 4), 1024);
-  }
-
   const createCompletion = async () => {
+    if (text.trim().length < 10) {
+      Alert.alert("Please enter seed text!");
+      return;
+    }
+
     setButtonDisabled(true);
 
-    let params = {
-      prompt: text,
-      n: 1,
-      max_tokens: calculateTokens()
-    } as CompletionParams;
+    let engine = 'curie';
+    let params = GhostWriterConfig.generateCompleteParams(text.trim(), writingMode);
 
-    let json = await apiClient.completion(params);
+    let json = await apiClient.completion(params, engine);
 
     if (json.choices) {
-      setData(json.choices);
-      setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' answers' : 'answer') + '!');
+      setAnswers(json.choices);
+
+      if (writingMode === 'rewrite')
+        setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
+      else if (writingMode === 'qa')
+        setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
+      else
+        setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
+
     } else {
-      setData([]);
+      setAnswers([]);
       setAnswersAlert('Ghost Writer could not suggest an answer!');
     }
 
     setButtonDisabled(false);
   };
+
+  const toggleSettingsView = () => {
+    setSettingsVisible(!settingsVisible);
+  }
   
   return (
     <NavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
-      <View style={styles.container}>
-        <Text style={styles.titleText}>Ghost Writer</Text>
-        <TextInput style={styles.mainInput}
-            multiline = {true}
-            placeholder="Type here!"
-            onChangeText={text => setText(text)}></TextInput>
-        <TouchableOpacity style={styles.button}
-            disabled={buttonDisabled}
-            onPress={createCompletion} >
-          <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-        </TouchableOpacity>
-        <AnswerList data={data} answersAlert={answersAlert} ></AnswerList>
-        <StatusBar style="auto" />
-      </View>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} style={{flex:1}}>
+        <View style={styles.container}>
+          <Text style={styles.titleText}>Ghost Writer</Text>
+
+          <View style={styles.mainInputContainer}>
+            <TextInput style={styles.mainInput}
+                multiline = {true}
+                placeholder="Type here!"
+                onChangeText={text => setText(text)}></TextInput>
+          </View>
+
+          <View style={[styles.settingsContainer, { display: settingsVisible ? 'flex' : 'none' }]}>
+            <Text style={styles.settingsLabel}>Mode:</Text>
+            <Picker
+                selectedValue={writingMode}
+                style={styles.modePicker}
+                mode='dropdown'
+                onValueChange={(itemValue, itemIndex) => setWritingMode(itemValue.toString())}>
+              <Picker.Item label="Auto-complete" value="autocomplete" />
+              <Picker.Item label="Re-write" value="rewrite" />
+              <Picker.Item label="Q&A" value="qa" />
+            </Picker>
+          </View>
+
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={styles.button}
+                disabled={buttonDisabled}
+                onPress={createCompletion} >
+              <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+              <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={toggleSettingsView}>
+              <Text style={styles.buttonText}>Mode</Text>
+            </TouchableOpacity>
+          </View>
+
+          <AnswerList data={answers} answersAlert={answersAlert} style={styles.answerChoiceListContainer}></AnswerList>
+          <StatusBar style="auto" />
+        </View>
+      </TouchableWithoutFeedback>
     </NavigationContainer>
   );
 }

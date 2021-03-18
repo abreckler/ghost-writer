@@ -24,7 +24,6 @@ target 'ghostwriterrn' do
 end
 
 target 'MyShareExt' do
-  use_unimodules!
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])

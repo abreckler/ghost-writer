@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1240"
-   version = "1.3">
+   wasCreatedForAppExtension = "YES"
+   version = "2.0">
    <BuildAction
       parallelizeBuildables = "NO"
       buildImplicitDependencies = "YES">
@@ -14,9 +15,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "ghostWriter.app"
-               BlueprintName = "ghostwriterrn"
+               BlueprintIdentifier = "D56FE21325F60148007B2581"
+               BuildableName = "MyShareExt.appex"
+               BlueprintName = "MyShareExt"
                ReferencedContainer = "container:ghostwriterrn.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,55 +29,37 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "ghostwriterrnTests.xctest"
-               BlueprintName = "ghostwriterrnTests"
-               ReferencedContainer = "container:ghostwriterrn.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = ""
+      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
       launchStyle = "0"
+      askForAppToLaunch = "Yes"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ghostWriter.app"
-            BlueprintName = "ghostwriterrn"
-            ReferencedContainer = "container:ghostwriterrn.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
+      allowLocationSimulation = "YES"
+      launchAutomaticallySubstyle = "2">
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
-      debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      debugDocumentVersioning = "YES"
+      launchAutomaticallySubstyle = "2">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ghostWriter.app"
-            BlueprintName = "ghostwriterrn"
+            BlueprintIdentifier = "D56FE21325F60148007B2581"
+            BuildableName = "MyShareExt.appex"
+            BlueprintName = "MyShareExt"
             ReferencedContainer = "container:ghostwriterrn.xcodeproj">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

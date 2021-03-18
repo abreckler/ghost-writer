@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Alert, FlatList, ListRenderItem, SafeAreaView, Text } from 'react-native';
+import { Alert, FlatList, ListRenderItem, StyleProp, Text, View, ViewStyle } from 'react-native';
 import Clipboard from 'expo-clipboard';
 
 import { AnswerChoice } from './answer-choice';
@@ -9,6 +9,7 @@ import styles from './styles';
 interface IAnswerListProps {
   data?: CompletionChoice[];
   answersAlert?: string;
+  style?: StyleProp<ViewStyle>;
 }
 
 const AnswerList: FC<IAnswerListProps> = props => {
@@ -29,14 +30,14 @@ const AnswerList: FC<IAnswerListProps> = props => {
   };
 
   return (
-    <SafeAreaView style={styles.answerChoiceListContainer}>
+    <View style={props.style}>
       <Text style={styles.answersAlert}>{props.answersAlert}</Text>
       <FlatList style={styles.answerChoiceList}
         data={props.data}
         renderItem={renderAnswerChoice}
         keyExtractor={item => item.index?.toString() || Math.random().toString()}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
