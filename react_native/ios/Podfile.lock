@@ -531,7 +531,7 @@ SPEC CHECKSUMS:
   React-RCTText: 5c51df3f08cb9dedc6e790161195d12bac06101c
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
-  ReactNativeShareExtension: 104fbc53b63e340ab5e126ae3c27572b487a59bf
+  ReactNativeShareExtension: a5bcf3985f470d93a2d9be35c2a93ca49fe41d47
   RNCPicker: b1e22287e5feb38fb10cac877753b924ba1c05d1
   RNGestureHandler: 7a5833d0f788dbd107fbb913e09aa0c1ff333c39
   RNReanimated: e03f7425cb7a38dcf1b644d680d1bfc91c3337ad
@@ -551,6 +551,6 @@ SPEC CHECKSUMS:
   UMTaskManagerInterface: 4c60b43eaf3cb05a164bc9113258a171c18b7bf7
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
 
-PODFILE CHECKSUM: 2621bff9a75bad176e8a6905d4cebfa7f40e4bd7
+PODFILE CHECKSUM: 4a084a9327e5257551f2a42280ac315285d38fcc
 
 COCOAPODS: 1.10.1

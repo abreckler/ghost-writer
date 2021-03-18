@@ -1,12 +1,9 @@
 require_relative '../node_modules/react-native-macos/scripts/react_native_pods'
-require_relative '../node_modules/react-native-unimodules/cocoapods.rb'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
-platform :ios, '11.0'
-# platform :macos, '10.13'
+platform :macos, '10.14'
 
 target 'ghost_writer_rn-macOS' do
-  use_unimodules!
   config = use_native_modules!
   use_react_native!(
     :path => '../node_modules/react-native-macos',
@@ -22,8 +19,6 @@ target 'ghost_writer_rn-macOS' do
 end
 
 target 'MyShareExt-macOS' do
-  config = use_native_modules!
-
   use_react_native!(
     :path => '../node_modules/react-native-macos',
   )
@@ -31,7 +26,7 @@ end
 
 post_install do |installer|
   installer.pods_project.targets.each do |target|
-    if target.name.equal? "MyShareExt"
+    if target.name.equal? "MyShareExt-macOS"
       target.build_configurations.each do |build_configuration|
         build_configuration.build_settings['APPLICATION_EXTENSION_API_ONLY'] = 'YES'
         build_configuration.build_settings['CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES'] = 'YES'
