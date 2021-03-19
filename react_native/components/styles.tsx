@@ -3,6 +3,7 @@ import { Platform, StyleSheet } from 'react-native';
 const mainFontSize = 16;
 const bgColor = '#f8f8ff';
 const textColor = '#444';
+const darkTextcolor = '#333';
 const borderColor = '#ccc';
 const primaryColor = 'rgb(70, 48, 235)';
 
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
 
   titleText: {
     fontSize: mainFontSize * 1.8,
-    color: textColor,
+    color: darkTextcolor,
     alignSelf: 'flex-start',
     marginTop: 10,
     marginBottom: 10,
@@ -37,16 +38,20 @@ const styles = StyleSheet.create({
   },
 
   settingsContainer: {
-    flexBasis: mainFontSize*20,
     flexShrink: 0,
     flexGrow: 0,
   },
   settingsLabel: {
     fontSize: mainFontSize,
     marginTop: mainFontSize * 1.5,
+    color: darkTextcolor,
   },
   modePicker: {
     fontSize: mainFontSize * 1.25,
+    flexBasis: 50,
+  },
+  modePickerItemStyle: {
+    fontSize: mainFontSize,
   },
 
   buttonsContainer: {

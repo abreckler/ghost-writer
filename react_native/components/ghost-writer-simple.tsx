@@ -4,7 +4,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as Linking from 'expo-linking';
 
 import styles from './styles';
-import { CompletionChoice, OpenAiApiClient, GhostWriterConfig } from './openai';
+import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig } from './openai';
 import { AnswerList } from './answer-list';
 
 interface GhostWriterSimpleProps {
@@ -19,7 +19,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   const [answers, setAnswers] = useState([] as CompletionChoice[]);
   const [settingsVisible, setSettingsVisible] = useState(false);
 
-  const apiClient = new OpenAiApiClient('sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4', 'davinci');
+  const apiClient = new OpenAiApiClient('sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4', EngineID.Curie);
 
   const checkInitialURL = async () => {
     let {path, queryParams} = await Linking.parseInitialURLAsync();
@@ -51,10 +51,9 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
 
     setButtonDisabled(true);
 
-    let engine = 'curie';
     let params = GhostWriterConfig.generateCompleteParams(text.trim(), writingMode);
 
-    let json = await apiClient.completion(params, engine);
+    let json = await apiClient.completion(params);
 
     if (json.choices) {
       setAnswers(json.choices);
@@ -92,6 +91,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         <Picker
             selectedValue={writingMode}
             style={styles.modePicker}
+            itemStyle={styles.modePickerItemStyle}
             mode='dropdown'
             onValueChange={(itemValue, itemIndex) => setWritingMode(itemValue.toString())}>
           <Picker.Item label="Auto-complete" value="autocomplete" />
