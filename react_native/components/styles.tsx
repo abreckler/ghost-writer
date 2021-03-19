@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 const mainFontSize = 16;
 const bgColor = '#f8f8ff';
@@ -89,8 +89,13 @@ const styles = StyleSheet.create({
   },
 
   extModal: {
-	backgroundColor: 'transparent',
-  }
+	  backgroundColor: 'transparent',
+    flex: Platform.OS == 'macos' ? 1 : undefined,
+  },
+  closeExtButton: {
+    paddingHorizontal: 10,
+    display: Platform.OS === 'macos' ? 'none' : 'flex',
+  },
 });
 
 export default styles;
