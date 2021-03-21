@@ -1,12 +1,13 @@
 import React, { FC, useState, useEffect } from 'react';
 import { Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import * as Linking from 'expo-linking';
 
 import GhostWriterSimple from './components/ghost-writer-simple';
 import styles from './components/styles';
 import { enableScreens } from 'react-native-screens';
-import { createNativeStackNavigator } from 'react-native-screens/native-stack';
+
 
 export default function App() {
   const [text, setText] = useState('');
@@ -30,7 +31,7 @@ export default function App() {
   }
   else {
     enableScreens();
-    const Stack = createNativeStackNavigator();
+    const Stack = createStackNavigator();
 
     const linking = {
       prefixes: [

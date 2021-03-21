@@ -10,6 +10,7 @@
   "dependencies": {
     "@react-native-picker/picker": "^1.8.1",
     "@react-navigation/native": "^5.9.3",
+    "@react-navigation/stack": "^5.14.3",
     "expo": "~40.0.0",
     "expo-clipboard": "~1.0.1",
     "expo-linking": "~2.0.1",
