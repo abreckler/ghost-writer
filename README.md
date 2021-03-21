@@ -19,20 +19,29 @@ Uses [OpenAI](https://openai.com/) API to suggest auto-completes of selected sen
 
     ```sh
     cd react-native
+
+    # NPM packages
     yarn install
+
+    # Cocoapods
+    cd ios
     pod install
     ```
 
-3. Open Xcode project, and assign Code Signing Identity
+3. Open Xcode project, and assign Code Signing Identity.  
+    There are many good tutorials for creation, management and assignment of Code Signing Identity.
 4. Compile from command line
 
     ```sh
+    # run this in ./react-native directory context
+
     # for simulator
     yarn ios
-
-    # for device
+    # for a specific device
     yarn ios --udid=xxx
     ```
+
+    NOTE: When compiling for a specific device, you will need to check device settings to allow the app signed by the Code signing identity.
 
 ## React Native App for Mac OS X (Share Extension enabled)
 
@@ -43,13 +52,26 @@ Uses [OpenAI](https://openai.com/) API to suggest auto-completes of selected sen
   
     ```sh
     cd react-native
+
+    # NPM packages
     yarn install
+
+    # Cocoapods
+    cd macos
     pod install
     ```
 
-3. Open Xcode project and assign Code Signing Identity
+3. Open Xcode project and assign Code Signing Identity.  
+    There are many good tutorials for creation, management and assignment of Code Signing Identity.
 4. Compile from command line
 
     ```sh
+    # run this in ./react-native directory context
     yarn macos
     ```
+
+### Troubleshooting of building issues for MacOS and iOS projects
+
+#### Xcode, Pods ProjectName.debug.xcconfig unable to open file. Wrong directory
+
+See [this Stackoverflow question](https://stackoverflow.com/questions/55558984/xcode-pods-projectname-debug-xcconfig-unable-to-open-file-wrong-directory).
