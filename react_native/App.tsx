@@ -1,5 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { GestureResponderEvent, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as Linking from 'expo-linking';
@@ -13,8 +13,15 @@ export default function App() {
   const [text, setText] = useState('');
 
   const HomeScreen :FC = () => {
+    const touchOutsideInput = (evt: GestureResponderEvent) => {
+      if (Platform.OS === 'web') {
+        return;       
+      }
+      Keyboard.dismiss();
+    }
+
     return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} style={{flex:1}}>
+      <TouchableWithoutFeedback onPress={touchOutsideInput} accessible={false} style={{flex:1}}>
         <View style={styles.container}>
           <Text style={styles.titleText}>Ghost Writer</Text>
 
@@ -25,6 +32,7 @@ export default function App() {
   }
 
   if (Platform.OS === 'macos') {
+    // NOTE: Deep linking through React-navigation is not supported yet?
     return (
       <HomeScreen></HomeScreen>
     );

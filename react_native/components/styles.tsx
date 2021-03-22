@@ -25,8 +25,6 @@ const styles = StyleSheet.create({
   mainInputContainer: {
     flex: 0.4,
     flexShrink: 0,
-    paddingVertical: mainFontSize / 2,
-    paddingHorizontal: mainFontSize,
     borderColor: borderColor,
     borderWidth: 1,
   },
@@ -35,6 +33,8 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: mainFontSize,
     color: textColor,
+    paddingVertical: mainFontSize / 2,
+    paddingHorizontal: mainFontSize,
   },
 
   settingsContainer: {

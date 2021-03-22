@@ -80,7 +80,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   return (
     <>
       <View style={styles.mainInputContainer}>
-        <TextInput style={styles.mainInput}
+        <TextInput nativeID="mainInput" style={styles.mainInput}
             multiline = {true}
             placeholder="Type here!"
             onChangeText={text => setText(text)}></TextInput>
