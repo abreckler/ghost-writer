@@ -20,11 +20,7 @@ RCT_EXPORT_MODULE();
 
 
 - (NSURL *)sourceURLForBridge {
- #ifdef DEBUG
-  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
- #else
-  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsBundle"];
- #endif
+  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:@"main"]; // .jsbundle;
 }
 
 
@@ -32,7 +28,7 @@ RCT_EXPORT_MODULE();
   NSURL *jsCodeLocation = [self sourceURLForBridge];
   
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL: jsCodeLocation
-                                                      moduleName: @"MyShareExt"
+                                                      moduleName: @"ShareExt"
                                                initialProperties: nil
                                                    launchOptions: nil];
   
