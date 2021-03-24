@@ -7,24 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4D19EBF39CABAB43377F451D /* libPods-ghost_writer_rn-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 110E2930F91C2169E33CF8EC /* libPods-ghost_writer_rn-macOS.a */; };
+		2C541F40C50C40CCBCEC66BE /* libPods-ghost_writer_rn-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9E43742DC321110338BC93CB /* libPods-ghost_writer_rn-macOS.a */; };
 		5142014D2437B4B30078DB4F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5142014C2437B4B30078DB4F /* AppDelegate.m */; };
 		514201502437B4B30078DB4F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5142014F2437B4B30078DB4F /* ViewController.m */; };
 		514201522437B4B40078DB4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 514201512437B4B40078DB4F /* Assets.xcassets */; };
 		514201552437B4B40078DB4F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 514201532437B4B40078DB4F /* Main.storyboard */; };
 		514201582437B4B40078DB4F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 514201572437B4B40078DB4F /* main.m */; };
-		886EBB00D26DEA49FBB4DE33 /* libPods-MyShareExt-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EA7DE7577A6993913E6554DE /* libPods-MyShareExt-macOS.a */; };
-		D5FE23A826033A6C0094F33B /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D5FE23A726033A6C0094F33B /* icon.icns */; };
-		D5FE23B326033A6C0094F33B /* MyShareExt-macOS.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D5FE23A526033A6C0094F33B /* MyShareExt-macOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		D5FE23BA26033ADC0094F33B /* MyShareExt.m in Sources */ = {isa = PBXBuildFile; fileRef = D5FE23B926033ADC0094F33B /* MyShareExt.m */; };
+		5675A9613F6713966A2047DE /* libPods-MyShareExt-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DC9E6DC47F8CBDFFB0F5D60 /* libPods-MyShareExt-macOS.a */; };
+		D59FEA3B260A41080079206A /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = D59FEA3A260A41080079206A /* icon.icns */; };
+		D59FEA41260A410E0079206A /* MyShareExt.xib in Resources */ = {isa = PBXBuildFile; fileRef = D59FEA3F260A410E0079206A /* MyShareExt.xib */; };
+		D59FEA46260A410F0079206A /* MyShareExt-macOS.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D59FEA38260A41040079206A /* MyShareExt-macOS.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D59FEA4B260A41940079206A /* MyShareExt.m in Sources */ = {isa = PBXBuildFile; fileRef = D59FEA4A260A41940079206A /* MyShareExt.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		D5FE23B126033A6C0094F33B /* PBXContainerItemProxy */ = {
+		D59FEA44260A410F0079206A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = D5FE23A426033A6C0094F33B;
+			remoteGlobalIDString = D59FEA37260A41040079206A;
 			remoteInfo = "MyShareExt-macOS";
 		};
 /* End PBXContainerItemProxy section */
@@ -36,7 +37,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				D5FE23B326033A6C0094F33B /* MyShareExt-macOS.appex in Embed App Extensions */,
+				D59FEA46260A410F0079206A /* MyShareExt-macOS.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -44,9 +45,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		079D98F242C69E89107579E8 /* Pods-ghost_writer_rn-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghost_writer_rn-macOS.release.xcconfig"; path = "Target Support Files/Pods-ghost_writer_rn-macOS/Pods-ghost_writer_rn-macOS.release.xcconfig"; sourceTree = "<group>"; };
-		110E2930F91C2169E33CF8EC /* libPods-ghost_writer_rn-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ghost_writer_rn-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2C54BBD0E622B79C6392AC2F /* Pods-MyShareExt-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt-macOS.debug.xcconfig"; path = "Target Support Files/Pods-MyShareExt-macOS/Pods-MyShareExt-macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		0E5958BE613E4484C2CB0246 /* Pods-ghost_writer_rn-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghost_writer_rn-macOS.debug.xcconfig"; path = "Target Support Files/Pods-ghost_writer_rn-macOS/Pods-ghost_writer_rn-macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		36FFC1E4E5EFADCB998B658D /* Pods-ghost_writer_rn-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghost_writer_rn-macOS.release.xcconfig"; path = "Target Support Files/Pods-ghost_writer_rn-macOS/Pods-ghost_writer_rn-macOS.release.xcconfig"; sourceTree = "<group>"; };
 		38423A3E24576CBC00BC2EAC /* main.jsbundle */ = {isa = PBXFileReference; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		514201492437B4B30078DB4F /* ghost_writer_rn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ghost_writer_rn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5142014B2437B4B30078DB4F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -58,16 +58,18 @@
 		514201562437B4B40078DB4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		514201572437B4B40078DB4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		514201592437B4B40078DB4F /* ghost_writer_rn.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ghost_writer_rn.entitlements; sourceTree = "<group>"; };
-		AFD9D89B39D1B9C9690A57AF /* Pods-MyShareExt-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt-macOS.release.xcconfig"; path = "Target Support Files/Pods-MyShareExt-macOS/Pods-MyShareExt-macOS.release.xcconfig"; sourceTree = "<group>"; };
-		D5FE23A526033A6C0094F33B /* MyShareExt-macOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "MyShareExt-macOS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
-		D5FE23A726033A6C0094F33B /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
-		D5FE23AF26033A6C0094F33B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D5FE23B026033A6C0094F33B /* MyShareExt_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyShareExt_macOS.entitlements; sourceTree = "<group>"; };
-		D5FE23B926033ADC0094F33B /* MyShareExt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyShareExt.m; sourceTree = "<group>"; };
-		EA7DE7577A6993913E6554DE /* libPods-MyShareExt-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyShareExt-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7BEF7C792A9A28D9D8EA9FA1 /* Pods-MyShareExt-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt-macOS.debug.xcconfig"; path = "Target Support Files/Pods-MyShareExt-macOS/Pods-MyShareExt-macOS.debug.xcconfig"; sourceTree = "<group>"; };
+		7DC9E6DC47F8CBDFFB0F5D60 /* libPods-MyShareExt-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MyShareExt-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		8ECCDCA465833E1E92BC3AA2 /* Pods-MyShareExt-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MyShareExt-macOS.release.xcconfig"; path = "Target Support Files/Pods-MyShareExt-macOS/Pods-MyShareExt-macOS.release.xcconfig"; sourceTree = "<group>"; };
+		9E43742DC321110338BC93CB /* libPods-ghost_writer_rn-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ghost_writer_rn-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D59FEA38260A41040079206A /* MyShareExt-macOS.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "MyShareExt-macOS.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D59FEA3A260A41080079206A /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
+		D59FEA40260A410E0079206A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MyShareExt.xib; sourceTree = "<group>"; };
+		D59FEA42260A410E0079206A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		D59FEA43260A410F0079206A /* MyShareExt_macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MyShareExt_macOS.entitlements; sourceTree = "<group>"; };
+		D59FEA4A260A41940079206A /* MyShareExt.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyShareExt.m; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		F145757EB361D9B789545E3F /* Pods-ghost_writer_rn-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ghost_writer_rn-macOS.debug.xcconfig"; path = "Target Support Files/Pods-ghost_writer_rn-macOS/Pods-ghost_writer_rn-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,15 +77,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4D19EBF39CABAB43377F451D /* libPods-ghost_writer_rn-macOS.a in Frameworks */,
+				2C541F40C50C40CCBCEC66BE /* libPods-ghost_writer_rn-macOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D5FE23A226033A6C0094F33B /* Frameworks */ = {
+		D59FEA35260A41040079206A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				886EBB00D26DEA49FBB4DE33 /* libPods-MyShareExt-macOS.a in Frameworks */,
+				5675A9613F6713966A2047DE /* libPods-MyShareExt-macOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,10 +95,10 @@
 		1986A43FA6A91CFACDF0A798 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				2C54BBD0E622B79C6392AC2F /* Pods-MyShareExt-macOS.debug.xcconfig */,
-				AFD9D89B39D1B9C9690A57AF /* Pods-MyShareExt-macOS.release.xcconfig */,
-				F145757EB361D9B789545E3F /* Pods-ghost_writer_rn-macOS.debug.xcconfig */,
-				079D98F242C69E89107579E8 /* Pods-ghost_writer_rn-macOS.release.xcconfig */,
+				7BEF7C792A9A28D9D8EA9FA1 /* Pods-MyShareExt-macOS.debug.xcconfig */,
+				8ECCDCA465833E1E92BC3AA2 /* Pods-MyShareExt-macOS.release.xcconfig */,
+				0E5958BE613E4484C2CB0246 /* Pods-ghost_writer_rn-macOS.debug.xcconfig */,
+				36FFC1E4E5EFADCB998B658D /* Pods-ghost_writer_rn-macOS.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -106,8 +108,8 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				EA7DE7577A6993913E6554DE /* libPods-MyShareExt-macOS.a */,
-				110E2930F91C2169E33CF8EC /* libPods-ghost_writer_rn-macOS.a */,
+				7DC9E6DC47F8CBDFFB0F5D60 /* libPods-MyShareExt-macOS.a */,
+				9E43742DC321110338BC93CB /* libPods-ghost_writer_rn-macOS.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -141,7 +143,7 @@
 			children = (
 				5142014A2437B4B30078DB4F /* ghost_writer_rn-macOS */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
-				D5FE23A626033A6C0094F33B /* MyShareExt-macOS */,
+				D59FEA39260A41050079206A /* MyShareExt-macOS */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				1986A43FA6A91CFACDF0A798 /* Pods */,
@@ -155,18 +157,19 @@
 			isa = PBXGroup;
 			children = (
 				514201492437B4B30078DB4F /* ghost_writer_rn.app */,
-				D5FE23A526033A6C0094F33B /* MyShareExt-macOS.appex */,
+				D59FEA38260A41040079206A /* MyShareExt-macOS.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		D5FE23A626033A6C0094F33B /* MyShareExt-macOS */ = {
+		D59FEA39260A41050079206A /* MyShareExt-macOS */ = {
 			isa = PBXGroup;
 			children = (
-				D5FE23A726033A6C0094F33B /* icon.icns */,
-				D5FE23AF26033A6C0094F33B /* Info.plist */,
-				D5FE23B026033A6C0094F33B /* MyShareExt_macOS.entitlements */,
-				D5FE23B926033ADC0094F33B /* MyShareExt.m */,
+				D59FEA3A260A41080079206A /* icon.icns */,
+				D59FEA3F260A410E0079206A /* MyShareExt.xib */,
+				D59FEA42260A410E0079206A /* Info.plist */,
+				D59FEA43260A410F0079206A /* MyShareExt_macOS.entitlements */,
+				D59FEA4A260A41940079206A /* MyShareExt.m */,
 			);
 			path = "MyShareExt-macOS";
 			sourceTree = "<group>";
@@ -178,34 +181,34 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5142015A2437B4B40078DB4F /* Build configuration list for PBXNativeTarget "ghost_writer_rn-macOS" */;
 			buildPhases = (
-				CC35864FA5E1A71CD2C3942C /* [CP] Check Pods Manifest.lock */,
+				8DEC4F8D40D0AE495CAA4E72 /* [CP] Check Pods Manifest.lock */,
 				381D8A6F24576A6C00465D17 /* Start Packager */,
 				514201452437B4B30078DB4F /* Sources */,
 				514201462437B4B30078DB4F /* Frameworks */,
 				514201472437B4B30078DB4F /* Resources */,
 				381D8A6E24576A4E00465D17 /* Bundle React Native code and images */,
 				D5FE2395260339480094F33B /* Embed App Extensions */,
-				26230FEC41A89EB4672240BC /* [CP] Copy Pods Resources */,
+				4BD75ED033741410CD54A6FD /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				D5FE23B226033A6C0094F33B /* PBXTargetDependency */,
+				D59FEA45260A410F0079206A /* PBXTargetDependency */,
 			);
 			name = "ghost_writer_rn-macOS";
 			productName = ghost_writer_rn;
 			productReference = 514201492437B4B30078DB4F /* ghost_writer_rn.app */;
 			productType = "com.apple.product-type.application";
 		};
-		D5FE23A426033A6C0094F33B /* MyShareExt-macOS */ = {
+		D59FEA37260A41040079206A /* MyShareExt-macOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D5FE23B426033A6C0094F33B /* Build configuration list for PBXNativeTarget "MyShareExt-macOS" */;
+			buildConfigurationList = D59FEA47260A410F0079206A /* Build configuration list for PBXNativeTarget "MyShareExt-macOS" */;
 			buildPhases = (
-				80DFE7016942987EAACB359A /* [CP] Check Pods Manifest.lock */,
-				D5FE23A126033A6C0094F33B /* Sources */,
-				D5FE23A226033A6C0094F33B /* Frameworks */,
-				D5FE23A326033A6C0094F33B /* Resources */,
-				CF3B87A0CD497A142780A648 /* [CP] Copy Pods Resources */,
+				234C9594767B313F52D1D3B4 /* [CP] Check Pods Manifest.lock */,
+				D59FEA34260A41040079206A /* Sources */,
+				D59FEA35260A41040079206A /* Frameworks */,
+				D59FEA36260A41040079206A /* Resources */,
+				9B7D1D3882A849DCA53ACBF8 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -213,7 +216,7 @@
 			);
 			name = "MyShareExt-macOS";
 			productName = "MyShareExt-macOS";
-			productReference = D5FE23A526033A6C0094F33B /* MyShareExt-macOS.appex */;
+			productReference = D59FEA38260A41040079206A /* MyShareExt-macOS.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -228,7 +231,7 @@
 						CreatedOnToolsVersion = 11.4;
 						ProvisioningStyle = Automatic;
 					};
-					D5FE23A426033A6C0094F33B = {
+					D59FEA37260A41040079206A = {
 						CreatedOnToolsVersion = 12.4;
 						ProvisioningStyle = Automatic;
 					};
@@ -248,7 +251,7 @@
 			projectRoot = "";
 			targets = (
 				514201482437B4B30078DB4F /* ghost_writer_rn-macOS */,
-				D5FE23A426033A6C0094F33B /* MyShareExt-macOS */,
+				D59FEA37260A41040079206A /* MyShareExt-macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -263,33 +266,38 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D5FE23A326033A6C0094F33B /* Resources */ = {
+		D59FEA36260A41040079206A /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D5FE23A826033A6C0094F33B /* icon.icns in Resources */,
+				D59FEA41260A410E0079206A /* MyShareExt.xib in Resources */,
+				D59FEA3B260A41080079206A /* icon.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		26230FEC41A89EB4672240BC /* [CP] Copy Pods Resources */ = {
+		234C9594767B313F52D1D3B4 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ghost_writer_rn-macOS/Pods-ghost_writer_rn-macOS-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			inputFileListPaths = (
 			);
-			name = "[CP] Copy Pods Resources";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+				"$(DERIVED_FILE_DIR)/Pods-MyShareExt-macOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ghost_writer_rn-macOS/Pods-ghost_writer_rn-macOS-resources.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		381D8A6E24576A4E00465D17 /* Bundle React Native code and images */ = {
@@ -328,29 +336,25 @@
 			shellPath = /bin/sh;
 			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native-macos/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native-macos/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
 		};
-		80DFE7016942987EAACB359A /* [CP] Check Pods Manifest.lock */ = {
+		4BD75ED033741410CD54A6FD /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
+				"${PODS_ROOT}/Target Support Files/Pods-ghost_writer_rn-macOS/Pods-ghost_writer_rn-macOS-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-MyShareExt-macOS-checkManifestLockResult.txt",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ghost_writer_rn-macOS/Pods-ghost_writer_rn-macOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CC35864FA5E1A71CD2C3942C /* [CP] Check Pods Manifest.lock */ = {
+		8DEC4F8D40D0AE495CAA4E72 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -372,7 +376,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		CF3B87A0CD497A142780A648 /* [CP] Copy Pods Resources */ = {
+		9B7D1D3882A849DCA53ACBF8 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -403,21 +407,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		D5FE23A126033A6C0094F33B /* Sources */ = {
+		D59FEA34260A41040079206A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D5FE23BA26033ADC0094F33B /* MyShareExt.m in Sources */,
+				D59FEA4B260A41940079206A /* MyShareExt.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		D5FE23B226033A6C0094F33B /* PBXTargetDependency */ = {
+		D59FEA45260A410F0079206A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = D5FE23A426033A6C0094F33B /* MyShareExt-macOS */;
-			targetProxy = D5FE23B126033A6C0094F33B /* PBXContainerItemProxy */;
+			target = D59FEA37260A41040079206A /* MyShareExt-macOS */;
+			targetProxy = D59FEA44260A410F0079206A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -430,14 +434,24 @@
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
+		D59FEA3F260A410E0079206A /* MyShareExt.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				D59FEA40260A410E0079206A /* Base */,
+			);
+			name = MyShareExt.xib;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		5142015B2437B4B40078DB4F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F145757EB361D9B789545E3F /* Pods-ghost_writer_rn-macOS.debug.xcconfig */;
+			baseConfigurationReference = 0E5958BE613E4484C2CB0246 /* Pods-ghost_writer_rn-macOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ghost_writer_rn-macOS/ghost_writer_rn.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = "";
@@ -457,9 +471,10 @@
 		};
 		5142015C2437B4B40078DB4F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 079D98F242C69E89107579E8 /* Pods-ghost_writer_rn-macOS.release.xcconfig */;
+			baseConfigurationReference = 36FFC1E4E5EFADCB998B658D /* Pods-ghost_writer_rn-macOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ghost_writer_rn-macOS/ghost_writer_rn.entitlements";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "ghost_writer_rn-macos/Info.plist";
@@ -591,9 +606,9 @@
 			};
 			name = Release;
 		};
-		D5FE23B526033A6C0094F33B /* Debug */ = {
+		D59FEA48260A410F0079206A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 2C54BBD0E622B79C6392AC2F /* Pods-MyShareExt-macOS.debug.xcconfig */;
+			baseConfigurationReference = 7BEF7C792A9A28D9D8EA9FA1 /* Pods-MyShareExt-macOS.debug.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -603,6 +618,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_ENTITLEMENTS = "MyShareExt-macOS/MyShareExt_macOS.entitlements";
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
@@ -625,9 +641,9 @@
 			};
 			name = Debug;
 		};
-		D5FE23B626033A6C0094F33B /* Release */ = {
+		D59FEA49260A410F0079206A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = AFD9D89B39D1B9C9690A57AF /* Pods-MyShareExt-macOS.release.xcconfig */;
+			baseConfigurationReference = 8ECCDCA465833E1E92BC3AA2 /* Pods-MyShareExt-macOS.release.xcconfig */;
 			buildSettings = {
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -680,11 +696,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		D5FE23B426033A6C0094F33B /* Build configuration list for PBXNativeTarget "MyShareExt-macOS" */ = {
+		D59FEA47260A410F0079206A /* Build configuration list for PBXNativeTarget "MyShareExt-macOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				D5FE23B526033A6C0094F33B /* Debug */,
-				D5FE23B626033A6C0094F33B /* Release */,
+				D59FEA48260A410F0079206A /* Debug */,
+				D59FEA49260A410F0079206A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -16,6 +16,10 @@
 
 @implementation MyShareExt
 
+- (NSString *)nibName {
+    return @"MyShareExt";
+}
+
 RCT_EXPORT_MODULE();
 
 
@@ -28,7 +32,7 @@ RCT_EXPORT_MODULE();
   NSURL *jsCodeLocation = [self sourceURLForBridge];
   
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL: jsCodeLocation
-                                                      moduleName: @"ShareExt"
+                                                      moduleName: @"MyShareExt"
                                                initialProperties: nil
                                                    launchOptions: nil];
   
