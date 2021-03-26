@@ -209,6 +209,7 @@
 				D59FEA35260A41040079206A /* Frameworks */,
 				D59FEA36260A41040079206A /* Resources */,
 				9B7D1D3882A849DCA53ACBF8 /* [CP] Copy Pods Resources */,
+				D526E1DF260CDDEC003D6D84 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -393,6 +394,23 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-MyShareExt-macOS/Pods-MyShareExt-macOS-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		D526E1DF260CDDEC003D6D84 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport NODE_BINARY=node\n../node_modules/react-native-macos/scripts/react-native-xcode.sh\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

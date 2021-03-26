@@ -16,15 +16,14 @@ target 'ghost_writer_rn-macOS' do
   )
 
   # Pods specifically for macOS target
-  pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker'
 end
 
 target 'MyShareExt-macOS' do
+  config = use_native_modules!
   use_react_native!(
     :path => '../node_modules/react-native-macos',
   )
   pod 'ReactNativeShareExtension', :path => '../node_modules/react-native-share-extension'
-  pod 'RNCPicker', :path => '../node_modules/@react-native-picker/picker'
 end
 
 post_install do |installer|
