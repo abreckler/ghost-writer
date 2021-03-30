@@ -15,7 +15,7 @@ export default function App() {
   const HomeScreen :FC = () => {
     const touchOutsideInput = (evt: GestureResponderEvent) => {
       if (Platform.OS === 'web') {
-        return;       
+        return;
       }
       Keyboard.dismiss();
     }
@@ -47,6 +47,11 @@ export default function App() {
         'https://app.ghost_writer.com',
         'exps://app.ghost_writer.com',
       ],
+      config: {
+        screens: {
+          Home: '',
+        },
+      },
     }; 
     const checkInitialURL = async () => {
       let {path, queryParams} = await Linking.parseInitialURLAsync();
@@ -63,7 +68,7 @@ export default function App() {
         console.log("URL Event:", path, queryParams);
         setText(queryParams.text);
       }
-    })
+    });
   
     useEffect(() => {
       checkInitialURL();

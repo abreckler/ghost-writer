@@ -10,7 +10,7 @@ interface IAnswerChoiceProps {
 
 const AnswerChoice: FC<IAnswerChoiceProps> = props => (
   <TouchableOpacity onPress={props.onPress} style={[styles.answerChoice, props.style]}>
-      <Text style={styles.answerChoiceText}>{props.choice.text.trim()}</Text>
+    <Text style={styles.answerChoiceText}>{props.choice.text.trim()}</Text>
   </TouchableOpacity>
 );
 
