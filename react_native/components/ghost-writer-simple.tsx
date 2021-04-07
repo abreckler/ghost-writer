@@ -51,8 +51,8 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
 
     setButtonDisabled(true);
 
-    let params = GhostWriterConfig.generateCompleteParams(text.trim(), writingMode);
-
+    let writer = new GhostWriterConfig;
+    let params = writer.generateCompleteParams(text.trim(), writingMode);
     let json = await apiClient.completion(params);
 
     if (json.choices) {
@@ -64,7 +64,6 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
       else
         setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
-
     } else {
       setAnswers([]);
       setAnswersAlert('Ghost Writer could not suggest an answer!');
