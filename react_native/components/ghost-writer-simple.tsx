@@ -78,11 +78,37 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   
   return (
     <>
-      <View style={styles.mainInputContainer}>
-        <TextInput nativeID="mainInput" style={styles.mainInput}
-            multiline = {true}
-            placeholder="Type here!"
-            onChangeText={text => setText(text)}></TextInput>
+      <View style={styles.gwSimple}>
+        <View style={styles.gwInputContainer}>
+          <TextInput style={styles.gwInput}
+              multiline = {true}
+              placeholder="Type here!"
+              onChangeText={text => setText(text)}></TextInput>
+        </View>
+        <View style={[styles.buttonsContainer, styles.buttonsContainerSm]}>
+          <TouchableOpacity style={styles.button}
+              disabled={buttonDisabled}
+              onPress={createCompletion} >
+            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+            <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={toggleSettingsView}>
+            <Text style={styles.buttonText}>Mode</Text>
+          </TouchableOpacity>
+        </View>
+        <AnswerList data={answers} answersAlert={answersAlert} style={styles.gwAnswersContainer}></AnswerList>
+      </View>
+
+      <View style={[styles.buttonsContainer, styles.buttonsContainerMdUp]}>
+        <TouchableOpacity style={styles.button}
+            disabled={buttonDisabled}
+            onPress={createCompletion} >
+          <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+          <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={toggleSettingsView}>
+          <Text style={styles.buttonText}>Mode</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={[styles.settingsContainer, { display: settingsVisible ? 'flex' : 'none' }]}>
@@ -96,22 +122,10 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
           <Picker.Item label="Auto-complete" value="autocomplete" />
           <Picker.Item label="Re-write" value="rewrite" />
           <Picker.Item label="Q&A" value="qa" />
+          <Picker.Item label="Summarize" value="summary" />
+          <Picker.Item label="Key Sentences" value="extract" />
         </Picker>
       </View>
-
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity style={styles.button}
-            disabled={buttonDisabled}
-            onPress={createCompletion} >
-          <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-          <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={toggleSettingsView}>
-          <Text style={styles.buttonText}>Mode</Text>
-        </TouchableOpacity>
-      </View>
-
-      <AnswerList data={answers} answersAlert={answersAlert} style={styles.answerChoiceListContainer}></AnswerList>
     </>
   );
 }

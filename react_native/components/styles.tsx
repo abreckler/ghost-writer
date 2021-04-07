@@ -1,4 +1,4 @@
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, StyleSheet, Dimensions } from 'react-native';
 
 const mainFontSize = 16;
 const bgColor = '#f8f8ff';
@@ -6,6 +6,7 @@ const textColor = '#444';
 const darkTextcolor = '#333';
 const borderColor = '#ccc';
 const primaryColor = 'rgb(70, 48, 235)';
+const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   container: {
@@ -22,13 +23,17 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  mainInputContainer: {
-    flex: 0.4,
-    flexShrink: 0,
+  gwSimple: {
+    flexDirection: width > 600 ? 'row' : 'column',
+    flex: width > 600 ? 0.7 : 0.9,
+  },
+
+  gwInputContainer: {
+    flex: 0.5,
     borderColor: borderColor,
     borderWidth: 1,
   },
-  mainInput: {
+  gwInput: {
     flex: 1,
     width: '100%',
     fontSize: mainFontSize,
@@ -37,44 +42,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: mainFontSize,
   },
 
-  settingsContainer: {
-    flexShrink: 0,
-    flexGrow: 0,
-  },
-  settingsLabel: {
-    fontSize: mainFontSize,
-    marginTop: mainFontSize * 1.5,
-    color: darkTextcolor,
-  },
-  modePicker: {
-    fontSize: mainFontSize * 1.25,
-    flexBasis: 50,
-  },
-  modePickerItemStyle: {
-    fontSize: mainFontSize,
-  },
-
-  buttonsContainer: {
-    flexDirection: "row",
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    backgroundColor: primaryColor,
-    padding: mainFontSize,
-    borderRadius: 5,
-    margin: 10,
-    flexDirection: "row",
-  },
-  buttonText: {
-    fontSize: mainFontSize * 1.25,
-    color: '#fff',
-  },
-
-  answerChoiceListContainer: {
-    flex: 0.4,
-    flexGrow: 1,
-    width: '100%',
+  gwAnswersContainer: {
+    flex: 0.5,
   },
   answersAlert: {
     fontSize: mainFontSize * .9,
@@ -94,6 +63,48 @@ const styles = StyleSheet.create({
     fontSize: mainFontSize,
     color: textColor,
   },
+
+  settingsContainer: {
+    flexShrink: 0,
+    flexGrow: 0,
+    display: width > 600 ? 'flex' : 'none',
+  },
+  settingsLabel: {
+    fontSize: mainFontSize,
+    marginTop: mainFontSize * 1.5,
+    color: darkTextcolor,
+  },
+  modePicker: {
+    fontSize: mainFontSize * 1.25,
+    flexBasis: 50,
+  },
+  modePickerItemStyle: {
+    fontSize: mainFontSize,
+  },
+
+  buttonsContainerSm: {
+    display: width > 600 ? 'none' : 'flex',
+  },
+  buttonsContainerMdUp: {
+    display: width > 600 ? 'flex' : 'none',
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: primaryColor,
+    padding: mainFontSize,
+    borderRadius: 5,
+    margin: 10,
+    flexDirection: "row",
+  },
+  buttonText: {
+    fontSize: mainFontSize * 1.25,
+    color: '#fff',
+  },
+
 
   extModal: {
 	  backgroundColor: 'transparent',
