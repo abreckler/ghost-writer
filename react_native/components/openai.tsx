@@ -322,10 +322,20 @@ class GhostWriterConfig {
     },
   ];
   readonly SUMMARY_TEMPLATES = [
-    {
-      'prompt': 'Someone wrote as: "{USER_INPUT}"' +
-                '\nAnd another wrote on the same subject matter as:"',
-      'stop': ['"'],
+    { // basic summary
+      'prompt': '{USER_INPUT}' +
+                '\ntl;dr:',
+      'stop': ['\n'],
+    },
+    { // one-sentence summary
+      'prompt': '{USER_INPUT}' +
+                '\nOne-sentence summary:',
+      'stop': ['\n', '.'],
+    },
+    { // grader summary
+      'prompt': '{USER_INPUT}' +
+                '\nI rephrased this for my daughter, in plain language a second grader can understand:',
+      'stop': ['\n'],
     },
   ];
   readonly EXTRACT_TEMPLATES = [
@@ -372,6 +382,7 @@ class GhostWriterConfig {
       params.prompt = template.prompt.replaceAll('{USER_INPUT}', seedText.trim());
       params.stop = template.stop;
       params.n = 1;
+      params.temperature = 0.3;
       // summary/extracted text should not be longer than the original text
       params.max_tokens = Math.min(Math.ceil(seedText.length / 4), 1024);
     }

@@ -31,7 +31,7 @@ const AnswerList: FC<IAnswerListProps> = props => {
 
   return (
     <View style={props.style}>
-      <Text style={styles.answersAlert}>{props.answersAlert}</Text>
+      {/* <Text style={styles.answersAlert}>{props.answersAlert}</Text> */}
       <FlatList style={styles.answerChoiceList}
         data={props.data}
         renderItem={renderAnswerChoice}
