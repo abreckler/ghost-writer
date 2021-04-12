@@ -59,8 +59,8 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       let writer = new TwinwordTopicTaggingApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
       let json = await writer.generate(text.trim());
   
-      if (json.topic) {
-        let choices = Object.keys(json.topic).map(t => { return { text: t } as CompletionChoice; });
+      if (json.keyword) {
+        let choices = Object.keys(json.keyword).map(t => { return { text: t } as CompletionChoice; });
         setAnswers(choices);
         setAnswersAlert('');
       } else {
