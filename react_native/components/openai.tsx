@@ -338,13 +338,6 @@ class GhostWriterConfig {
       'stop': ['\n'],
     },
   ];
-  readonly EXTRACT_TEMPLATES = [
-    {
-      'prompt': 'Someone wrote as: "{USER_INPUT}"' +
-                '\nAnd another wrote on the same subject matter as:"',
-      'stop': ['"'],
-    },
-  ];
 
   public generateCompleteParams(seedText: string, writingMode?: string): CompletionParams {
     let params = {} as CompletionParams;
@@ -376,9 +369,9 @@ class GhostWriterConfig {
       let n = Math.ceil(Math.random() * 5) + 3;
       params.n = n > maxN ? maxN : n;
     }
-    else if(writingMode == 'summary' || writingMode == 'extract')
-    { // generate summary or extraction
-      const template = writingMode == 'summary' ? this.SUMMARY_TEMPLATES[0] : this.EXTRACT_TEMPLATES[0];
+    else if(writingMode == 'summary')
+    { // generate summary
+      const template = this.SUMMARY_TEMPLATES[0];
       params.prompt = template.prompt.replaceAll('{USER_INPUT}', seedText.trim());
       params.stop = template.stop;
       params.n = 1;

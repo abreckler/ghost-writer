@@ -6,7 +6,7 @@ import * as Linking from 'expo-linking';
 import styles from './styles';
 import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig } from './openai';
 import { AnswerList } from './answer-list';
-import { TwinwordTopicTaggingApiClient } from './rapidapi';
+import { TextAnalysisTextSummarizationApiClient, TwinwordTopicTaggingApiClient } from './rapidapi';
 
 interface GhostWriterSimpleProps {
   seedText: string,
@@ -61,6 +61,20 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   
       if (json.topic) {
         let choices = Object.keys(json.topic).map(t => { return { text: t } as CompletionChoice; });
+        setAnswers(choices);
+        setAnswersAlert('');
+      } else {
+        setAnswers([]);
+        setAnswersAlert('Ghost Writer could not suggest an answer!');
+      }
+    }
+    else if (writingMode === 'extract')
+    {
+      let writer = new TextAnalysisTextSummarizationApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
+      let json = await writer.textSummarizerText(text.trim());
+  
+      if (json.sentences) {
+        let choices = json.sentences.map(t => { return { text: t } as CompletionChoice; });
         setAnswers(choices);
         setAnswersAlert('');
       } else {
