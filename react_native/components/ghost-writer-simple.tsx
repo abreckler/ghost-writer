@@ -6,7 +6,7 @@ import * as Linking from 'expo-linking';
 import styles from './styles';
 import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig } from './openai';
 import { AnswerList } from './answer-list';
-import { TextAnalysisTextSummarizationApiClient, TwinwordTopicTaggingApiClient } from './rapidapi';
+import { SmodinRewriterApiClient, TextAnalysisTextSummarizationApiClient, TwinwordTopicTaggingApiClient } from './rapidapi';
 
 interface GhostWriterSimpleProps {
   seedText: string,
@@ -82,6 +82,22 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         setAnswersAlert('Ghost Writer could not suggest an answer!');
       }
     }
+    else if (writingMode === 'rewrite-smodin')
+    {
+      let writer = new SmodinRewriterApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
+      let json = await writer.rewrite(text.trim());
+  
+      if (json.rewrite) {
+        let choices = [
+          { text: json.rewrite } as CompletionChoice,
+        ];
+        setAnswers(choices);
+        setAnswersAlert('');
+      } else {
+        setAnswers([]);
+        setAnswersAlert('Ghost Writer could not suggest an answer!');
+      }
+    }
     else
     {
       let writer = new GhostWriterConfig;
@@ -134,11 +150,12 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
               mode='dropdown'
               onValueChange={(itemValue, itemIndex) => setWritingMode(itemValue.toString())}>
             <Picker.Item label="Auto-complete" value="autocomplete" />
-            <Picker.Item label="Re-write" value="rewrite" />
+            <Picker.Item label="Re-write (1st person)" value="rewrite" />
             <Picker.Item label="Q&A" value="qa" />
             <Picker.Item label="Summarize" value="summary" />
             <Picker.Item label="Key Sentences" value="extract" />
             <Picker.Item label="Topic Tagging" value="topic_tagging" />
+            <Picker.Item label="Re-write" value="rewrite-smodin" />
           </Picker>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.button}

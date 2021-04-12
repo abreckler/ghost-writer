@@ -300,8 +300,8 @@ class OpenAiApiClient {
 class GhostWriterConfig {
   readonly REWRITE_TEMPLATES = [
     {
-      'prompt': 'Someone wrote as: "{USER_INPUT}"' +
-                '\nAnd another wrote on the same subject matter as:"',
+      'prompt': 'A source wrote as: "{USER_INPUT}"' +
+                '\nAnd another source wrote on the same subject matter as: "',
       'stop': ['"'],
     },
   ];
