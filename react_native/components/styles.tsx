@@ -23,13 +23,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
-  gwSimple: {
-    flexDirection: width > 600 ? 'row' : 'column',
-    flex: width > 600 ? 0.7 : 0.9,
-  },
-
   gwInputContainer: {
-    flex: 0.5,
     borderColor: borderColor,
     borderWidth: 1,
   },
@@ -42,9 +36,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: mainFontSize,
   },
 
-  gwAnswersContainer: {
-    flex: 0.5,
-  },
   answersAlert: {
     fontSize: mainFontSize * .9,
   },
@@ -67,7 +58,7 @@ const styles = StyleSheet.create({
   settingsContainer: {
     flexShrink: 0,
     flexGrow: 0,
-    display: width > 600 ? 'flex' : 'none',
+    display: 'flex',
   },
   settingsLabel: {
     fontSize: mainFontSize,
@@ -82,12 +73,6 @@ const styles = StyleSheet.create({
     fontSize: mainFontSize,
   },
 
-  buttonsContainerSm: {
-    display: width > 600 ? 'none' : 'flex',
-  },
-  buttonsContainerMdUp: {
-    display: width > 600 ? 'flex' : 'none',
-  },
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: 'center',
