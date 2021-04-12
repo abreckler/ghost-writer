@@ -6,6 +6,7 @@ import * as Linking from 'expo-linking';
 import styles from './styles';
 import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig } from './openai';
 import { AnswerList } from './answer-list';
+import { TwinwordTopicTaggingApiClient } from './rapidapi';
 
 interface GhostWriterSimpleProps {
   seedText: string,
@@ -53,22 +54,39 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
 
     setButtonDisabled(true);
 
-    let writer = new GhostWriterConfig;
-    let params = writer.generateCompleteParams(text.trim(), writingMode);
-    let json = await apiClient.completion(params);
-
-    if (json.choices) {
-      setAnswers(json.choices);
-
-      if (writingMode === 'rewrite')
-        setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
-      else if (writingMode === 'qa')
-        setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
-      else
-        setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
-    } else {
-      setAnswers([]);
-      setAnswersAlert('Ghost Writer could not suggest an answer!');
+    if (writingMode === 'topic_tagging')
+    {
+      let writer = new TwinwordTopicTaggingApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
+      let json = await writer.generate(text.trim());
+  
+      if (json.topic) {
+        let choices = Object.keys(json.topic).map(t => { return { text: t } as CompletionChoice; });
+        setAnswers(choices);
+        setAnswersAlert('');
+      } else {
+        setAnswers([]);
+        setAnswersAlert('Ghost Writer could not suggest an answer!');
+      }
+    }
+    else
+    {
+      let writer = new GhostWriterConfig;
+      let params = writer.generateCompleteParams(text.trim(), writingMode);
+      let json = await apiClient.completion(params);
+  
+      if (json.choices) {
+        setAnswers(json.choices);
+  
+        if (writingMode === 'rewrite')
+          setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
+        else if (writingMode === 'qa')
+          setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
+        else
+          setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
+      } else {
+        setAnswers([]);
+        setAnswersAlert('Ghost Writer could not suggest an answer!');
+      }
     }
 
     setButtonDisabled(false);
@@ -106,6 +124,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
             <Picker.Item label="Q&A" value="qa" />
             <Picker.Item label="Summarize" value="summary" />
             <Picker.Item label="Key Sentences" value="extract" />
+            <Picker.Item label="Topic Tagging" value="topic_tagging" />
           </Picker>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.button}
@@ -154,6 +173,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
               <Picker.Item label="Q&A" value="qa" />
               <Picker.Item label="Summarize" value="summary" />
               <Picker.Item label="Key Sentences" value="extract" />
+              <Picker.Item label="Topic Tagging" value="topic_tagging" />
             </Picker>
           </View>
           <AnswerList data={answers} answersAlert={answersAlert} style={{ flex: 0.6 }}></AnswerList>
