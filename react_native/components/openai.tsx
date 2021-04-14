@@ -320,6 +320,13 @@ class GhostWriterConfig {
                 //   not a complete article for a question.
       ],
     },
+    {
+      'prompt': 'The question is "{USER_INPUT}?"' +
+                '\nAnd possible answers could be: "',
+      'stop': [
+        '"', '.\n',
+      ],
+    },
   ];
   readonly SUMMARY_TEMPLATES = [
     { // basic summary
@@ -359,7 +366,7 @@ class GhostWriterConfig {
     // TODO: consider using "Answers" feature of OpenAI
     else if(writingMode === 'qa')
     {
-      const template = this.QA_TEMPLATES[0];
+      const template = this.QA_TEMPLATES[1];
       params.prompt = template.prompt.replaceAll('{USER_INPUT}', seedText.trim());
       params.stop = template.stop;
       // a single answer's length can be up to 4 times length of the seed text

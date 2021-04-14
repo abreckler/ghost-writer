@@ -202,16 +202,16 @@ class SmodinRewriterApiClient extends RapidApiClient {
 export {
   RapidApiClient,
 
-  // Twinword tagging
+  // Text Tagging by TwinWord
   TwinwordTopicTaggingApiClient,
   TwinwordTopicTaggingGenerateRequest, TwinwordTopicTaggingGenerateResponse,
 
-  // Text summarization
+  // Text summarization by TextAnalysis
   TextAnalysisTextSummarizationApiClient,
   TextAnalysisTextSummarizationTextRequest, TextAnalysisTextSummarizationUrlRequest,
   TextAnalysisTextSummarizationResponse,
 
-  // Rewriter
+  // Rewriter by Smodin
   SmodinRewriterApiClient,
   SmodinRewriteRequest, SmodinRewriteResponse,
 };

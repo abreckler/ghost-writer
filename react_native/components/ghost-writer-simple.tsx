@@ -1,10 +1,10 @@
 import React, { FC, useState, useEffect } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Dimensions } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import * as Linking from 'expo-linking';
 
 import styles from './styles';
 import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig } from './openai';
+import { GhostWriterModeConfig } from './ghost-writer-mode-config';
 import { AnswerList } from './answer-list';
 import { SmodinRewriterApiClient, TextAnalysisTextSummarizationApiClient, TwinwordTopicTaggingApiClient } from './rapidapi';
 
@@ -18,7 +18,6 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [answersAlert, setAnswersAlert] = useState('');
   const [answers, setAnswers] = useState([] as CompletionChoice[]);
-  const [settingsVisible, setSettingsVisible] = useState(false);
 
   const { width, height } = Dimensions.get('window');
 
@@ -122,15 +121,13 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     setButtonDisabled(false);
   };
 
-  const toggleSettingsView = () => {
-    setSettingsVisible(!settingsVisible);
-  }
-
   if (width > 600)
   {
     // wider screen layout
     return (
       <>
+        <GhostWriterModeConfig onModeChange={(mode:string, modeConfig: any) => { setWritingMode(mode); }}></GhostWriterModeConfig>
+
         <View style={{ flexDirection: 'row', flex: 0.7 }}>
           <View style={[styles.gwInputContainer, { flex: 0.5 }]}>
             <TextInput style={styles.gwInput}
@@ -140,31 +137,13 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
           </View>
           <AnswerList data={answers} answersAlert={answersAlert} style={{ flex: 0.5 }}></AnswerList>
         </View>
-
-        <View style={[styles.settingsContainer, { alignSelf: 'center', width: 500 } ]}>
-          <Text style={styles.settingsLabel}>Mode:</Text>
-          <Picker
-              selectedValue={writingMode}
-              style={styles.modePicker}
-              itemStyle={styles.modePickerItemStyle}
-              mode='dropdown'
-              onValueChange={(itemValue, itemIndex) => setWritingMode(itemValue.toString())}>
-            <Picker.Item label="Auto-complete" value="autocomplete" />
-            <Picker.Item label="Re-write (1st person)" value="rewrite" />
-            <Picker.Item label="Q&A" value="qa" />
-            <Picker.Item label="Summarize" value="summary" />
-            <Picker.Item label="Key Sentences" value="extract" />
-            <Picker.Item label="Topic Tagging" value="topic_tagging" />
-            <Picker.Item label="Re-write" value="rewrite-smodin" />
-          </Picker>
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={styles.button}
-                disabled={buttonDisabled}
-                onPress={createCompletion} >
-              <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-              <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
-            </TouchableOpacity>
-          </View>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={styles.button}
+              disabled={buttonDisabled}
+              onPress={createCompletion} >
+            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+            <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+          </TouchableOpacity>
         </View>
       </>
     );
@@ -174,41 +153,23 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     // smaller screen layout
     return (
       <>
-        <View style={{ flexDirection: 'column', flex: 1 }}>
-          <View style={[styles.gwInputContainer, { flex: 0.4 }]}>
-            <TextInput style={styles.gwInput}
-                multiline = {true}
-                placeholder="Type here!"
-                onChangeText={text => setText(text)}></TextInput>
-          </View>
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={styles.button}
-                disabled={buttonDisabled}
-                onPress={createCompletion} >
-              <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-              <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={toggleSettingsView}>
-              <Text style={styles.buttonText}>Mode</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={[styles.settingsContainer, { display: settingsVisible ? 'flex' : 'none', marginBottom: 10 }]}>
-            <Picker
-                selectedValue={writingMode}
-                style={styles.modePicker}
-                itemStyle={styles.modePickerItemStyle}
-                mode='dropdown'
-                onValueChange={(itemValue, itemIndex) => setWritingMode(itemValue.toString())}>
-              <Picker.Item label="Auto-complete" value="autocomplete" />
-              <Picker.Item label="Re-write" value="rewrite" />
-              <Picker.Item label="Q&A" value="qa" />
-              <Picker.Item label="Summarize" value="summary" />
-              <Picker.Item label="Key Sentences" value="extract" />
-              <Picker.Item label="Topic Tagging" value="topic_tagging" />
-            </Picker>
-          </View>
-          <AnswerList data={answers} answersAlert={answersAlert} style={{ flex: 0.6 }}></AnswerList>
+        <GhostWriterModeConfig onModeChange={(mode:string, modeConfig: any) => { setWritingMode(mode); }}></GhostWriterModeConfig>
+
+        <View style={[styles.gwInputContainer, { flex: 0.5 }]}>
+          <TextInput style={styles.gwInput}
+              multiline = {true}
+              placeholder="Type here!"
+              onChangeText={text => setText(text)}></TextInput>
         </View>
+        <View style={styles.buttonsContainer}>
+          <TouchableOpacity style={styles.button}
+              disabled={buttonDisabled}
+              onPress={createCompletion} >
+            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+            <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+          </TouchableOpacity>
+        </View>
+        <AnswerList data={answers} answersAlert={answersAlert} style={{ flex: 0.5 }}></AnswerList>
       </>
     );
   }

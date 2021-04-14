@@ -65,8 +65,10 @@ const styles = StyleSheet.create({
     marginTop: mainFontSize * 1.5,
     color: darkTextcolor,
   },
+
+  // mode picker
   modePicker: {
-    fontSize: mainFontSize * 1.25,
+    fontSize: width > 600 ? mainFontSize * 1.25 : mainFontSize,
     flexBasis: 50,
   },
   modePickerItemStyle: {
@@ -78,19 +80,29 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  // buttons
   button: {
     backgroundColor: primaryColor,
     padding: mainFontSize,
     borderRadius: 5,
     margin: 10,
     flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
-    fontSize: mainFontSize * 1.25,
+    fontSize: width > 600 ? mainFontSize * 1.25 : mainFontSize,
     color: '#fff',
   },
+  buttonSm: {
+    padding: mainFontSize * 0.8,
+  },
+  buttonSmText: {
+    fontSize: width > 600 ? mainFontSize * 1 : mainFontSize * 0.85,
+  },
 
-
+  //
   extModal: {
 	  backgroundColor: 'transparent',
     flex: Platform.OS == 'macos' ? 1 : undefined,
