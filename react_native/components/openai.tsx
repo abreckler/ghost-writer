@@ -322,9 +322,9 @@ class GhostWriterConfig {
     },
     {
       'prompt': 'The question is "{USER_INPUT}?"' +
-                '\nAnd possible answers could be: "',
+                '\nAnd possible answers could be "',
       'stop': [
-        '"', '.\n',
+        '"', '.',
       ],
     },
   ];

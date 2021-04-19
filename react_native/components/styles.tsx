@@ -15,6 +15,47 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 
+  // basic components
+  label: {
+    fontSize: mainFontSize,
+  },
+  picker: {
+    fontSize: mainFontSize,
+    paddingVertical: mainFontSize / 4.0,
+  },
+  pickerItemStyle: {
+    fontSize: mainFontSize,
+  },
+  input: {
+    fontSize: mainFontSize,
+    color: textColor,
+    paddingVertical: mainFontSize / 4.0,
+    paddingHorizontal: mainFontSize / 2.0,
+    borderColor: borderColor,
+    borderWidth: 1,
+  },
+  // buttons
+  button: {
+    backgroundColor: primaryColor,
+    padding: mainFontSize,
+    borderRadius: 5,
+    margin: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: width > 600 ? mainFontSize * 1.25 : mainFontSize,
+    color: '#fff',
+  },
+  buttonSm: {
+    padding: mainFontSize * 0.8,
+  },
+  buttonSmText: {
+    fontSize: width > 600 ? mainFontSize * 1 : mainFontSize * 0.85,
+  },
+
+  // 
   titleText: {
     fontSize: mainFontSize * 1.8,
     color: darkTextcolor,
@@ -35,6 +76,7 @@ const styles = StyleSheet.create({
     paddingVertical: mainFontSize / 2,
     paddingHorizontal: mainFontSize,
   },
+  
 
   answersAlert: {
     fontSize: mainFontSize * .9,
@@ -79,27 +121,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  // buttons
-  button: {
-    backgroundColor: primaryColor,
-    padding: mainFontSize,
-    borderRadius: 5,
-    margin: 10,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  buttonText: {
-    fontSize: width > 600 ? mainFontSize * 1.25 : mainFontSize,
-    color: '#fff',
-  },
-  buttonSm: {
-    padding: mainFontSize * 0.8,
-  },
-  buttonSmText: {
-    fontSize: width > 600 ? mainFontSize * 1 : mainFontSize * 0.85,
   },
 
   //
