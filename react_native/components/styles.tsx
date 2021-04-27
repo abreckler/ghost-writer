@@ -19,6 +19,9 @@ const styles = StyleSheet.create({
   label: {
     fontSize: mainFontSize,
   },
+  textSmall: {
+    fontSize: mainFontSize * 0.8,
+  },
   picker: {
     fontSize: mainFontSize,
     paddingVertical: mainFontSize / 4.0,
