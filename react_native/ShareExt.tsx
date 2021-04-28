@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, TouchableOpacity, View, Alert } from 'react-native';
 import ShareExtension from 'react-native-share-extension';
 
-import styles from './components/styles';
+import { styles } from './components/styles';
 import { ShareExtWrapper } from './components/share-ext-wrapper';
 import GhostWriterSimple from './components/ghost-writer-simple';
 

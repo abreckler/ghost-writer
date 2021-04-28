@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import { TextStyle, Text, TouchableOpacity } from 'react-native';
-import styles from './styles';
+import { styles } from './styles';
 
 interface IAnswerChoiceProps {
   choice?: any;
