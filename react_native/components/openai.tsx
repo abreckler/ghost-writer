@@ -297,14 +297,21 @@ class OpenAiApiClient {
   }
 }
 
+interface CompletionParamsTemplate extends CompletionParams {
+  name: string;
+}
+
 class GhostWriterConfig {
+  //
+  // Templates
+  //
   readonly REWRITE_TEMPLATES = [
     {
       'prompt': 'A source wrote as: "{USER_INPUT}"' +
                 '\nAnd another source wrote on the same subject matter as: "',
       'stop': ['"'],
     },
-  ];
+  ] as CompletionParamsTemplate[];
   readonly QA_TEMPLATES = [
     {
       'prompt': 'Question: "{USER_INPUT}"' +
@@ -327,7 +334,7 @@ class GhostWriterConfig {
         '"', '.',
       ],
     },
-  ];
+  ] as CompletionParamsTemplate[];
   readonly SUMMARY_TEMPLATES = [
     { // basic summary
       'prompt': '{USER_INPUT}' +
@@ -344,9 +351,12 @@ class GhostWriterConfig {
                 '\nI rephrased this for my daughter, in plain language a second grader can understand:',
       'stop': ['\n'],
     },
-  ];
+  ] as CompletionParamsTemplate[];
 
-  public generateCompleteParams(seedText: string, writingMode?: string): CompletionParams {
+  //
+  //
+  //
+  public generateCompleteParams(seedText: string, writingMode?: string, template?: CompletionParams): CompletionParams {
     let params = {} as CompletionParams;
 
     // NOTE: a single token is said to be approximately 4 english characters,
@@ -355,7 +365,7 @@ class GhostWriterConfig {
     if (writingMode === 'rewrite')
     {
       const template = this.REWRITE_TEMPLATES[0];
-      params.prompt = template.prompt.replaceAll('{USER_INPUT}', seedText.trim());
+      params.prompt = (template.prompt || '').replaceAll('{USER_INPUT}', seedText.trim());
       params.stop = template.stop;
       params.temperature = 0.5;
       params.n = 1;
@@ -367,7 +377,7 @@ class GhostWriterConfig {
     else if(writingMode === 'qa')
     {
       const template = this.QA_TEMPLATES[1];
-      params.prompt = template.prompt.replaceAll('{USER_INPUT}', seedText.trim());
+      params.prompt = (template.prompt || '').replaceAll('{USER_INPUT}', seedText.trim());
       params.stop = template.stop;
       // a single answer's length can be up to 4 times length of the seed text
       params.max_tokens = Math.min(Math.ceil(seedText.length), 1024);
@@ -379,7 +389,7 @@ class GhostWriterConfig {
     else if(writingMode == 'summary')
     { // generate summary
       const template = this.SUMMARY_TEMPLATES[0];
-      params.prompt = template.prompt.replaceAll('{USER_INPUT}', seedText.trim());
+      params.prompt = (template.prompt || '').replaceAll('{USER_INPUT}', seedText.trim());
       params.stop = template.stop;
       params.n = 1;
       params.temperature = 0.3;
@@ -388,14 +398,36 @@ class GhostWriterConfig {
     }
     else
     { // autocomplete
-      params.prompt = seedText.trim();
-      params.n = 1;
-      // length of autocomplete text will be proportional to the original text
-      params.max_tokens = Math.min(Math.ceil(seedText.length / 3), 1024);
+      if (template) {
+        params.prompt = (template.prompt || '').replaceAll('{USER_INPUT}', seedText.trim());
+        params.stop = template.stop;
+        params.n = template.n;
+        params.temperature = template.temperature;
+        params.top_p = template.top_p;
+        params.frequency_penalty = template.frequency_penalty;
+        params.presence_penalty = template.presence_penalty;
+        // summary/extracted text should not be longer than the original text
+        params.max_tokens = Math.min(Math.ceil(seedText.length / 4), 1024);
+      } else {
+        params.prompt = seedText.trim();
+        params.n = 1;
+        // length of autocomplete text will be proportional to the original text
+        params.max_tokens = Math.min(Math.ceil(seedText.length / 3), 1024);
+      }
     }
 
     return params;
   }
 }
 
-export { EngineID, CompletionParams, CompletionChoice, CompletionResponse, EngineInfo, ListEnginesResponse, OpenAiApiClient, GhostWriterConfig };
+export {
+  EngineID,
+  CompletionParams,
+  CompletionChoice,
+  CompletionResponse,
+  EngineInfo,
+  ListEnginesResponse,
+  OpenAiApiClient,
+  GhostWriterConfig,
+  CompletionParamsTemplate
+};

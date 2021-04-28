@@ -70,7 +70,7 @@ const Tag = (props: TagProps) => {
 
 interface TagsInputProps {
   initialText: string;
-  initialTags: Array<string>;
+  initialTags?: Array<string>;
   onChangeTags ? (tags: Array<string>): void;
   containerStyle?: ViewStyle;
   style?: ViewStyle;
@@ -93,8 +93,8 @@ class TagsInput extends React.Component<TagsInputProps, TagsInputState> {
     super(props);
 
     this.state = {
-      tags: props.initialTags,
-      text: props.initialText
+      tags: props.initialTags || [],
+      text: props.initialText || ''
     };
   }
 

@@ -3,10 +3,10 @@ import { Alert, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Dime
 import * as Linking from 'expo-linking';
 
 import styles from './styles';
-import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig } from './openai';
+import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig, CompletionParams } from './openai';
 import { GhostWriterModeConfig } from './ghost-writer-mode-config';
 import { AnswerList } from './answer-list';
-import { SmodinRewriterApiClient, TextAnalysisTextSummarizationApiClient, TwinwordTopicTaggingApiClient } from './rapidapi';
+import { SmodinRewriterApiClient, SmodinRewriteRequest, TextAnalysisTextSummarizationApiClient, TextAnalysisTextSummarizationTextRequest, TwinwordTopicTaggingApiClient } from './rapidapi';
 
 interface GhostWriterSimpleProps {
   seedText: string,
@@ -45,9 +45,33 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     checkInitialURL();
   });
 
+  let autocompleteConfig: CompletionParams;
+  let qaConfig: CompletionParams;
+  let summaryConfig: CompletionParams;
+  let rewriteConfig: CompletionParams;
+  let rewriteSmodinConfig: SmodinRewriteRequest;
+  let extractConfig: TextAnalysisTextSummarizationTextRequest;
+
   const onModeConfigChange = (mode: string, config: any) => {
     setWritingMode(mode);
-    console.log('onModeChange', mode, config);
+
+    if (mode === 'topic_tagging')
+    {}
+    else if (mode === 'extract') {
+      extractConfig = config as TextAnalysisTextSummarizationTextRequest;
+    } else if (mode === 'rewrite-smodin') {
+      rewriteSmodinConfig = config as SmodinRewriteRequest;
+    } else {
+      if (mode === 'rewrite') {
+        rewriteConfig = config as CompletionParams;
+      } else if (mode === 'qa') {
+        qaConfig = config as CompletionParams;
+      } else if (mode === 'summary') {
+        summaryConfig = config as CompletionParams;
+      } else {
+        autocompleteConfig = config as CompletionParams;
+      }
+    }
   };
 
   const createCompletion = async () => {
@@ -75,7 +99,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     else if (writingMode === 'extract')
     {
       let writer = new TextAnalysisTextSummarizationApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
-      let json = await writer.textSummarizerText(text.trim());
+      let json = await writer.textSummarizerText(text.trim(), extractConfig && extractConfig.sentnum);
   
       if (json.sentences) {
         let choices = json.sentences.map(t => { return { text: t } as CompletionChoice; });
@@ -89,7 +113,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     else if (writingMode === 'rewrite-smodin')
     {
       let writer = new SmodinRewriterApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
-      let json = await writer.rewrite(text.trim());
+      let json = await writer.rewrite(text.trim(), rewriteSmodinConfig && rewriteSmodinConfig.language, rewriteSmodinConfig && rewriteSmodinConfig.strength);
   
       if (json.rewrite) {
         let choices = [
@@ -105,7 +129,17 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     else
     {
       let writer = new GhostWriterConfig;
-      let params = writer.generateCompleteParams(text.trim(), writingMode);
+      let params : CompletionParams;
+
+      if (writingMode === 'rewrite')
+        params = writer.generateCompleteParams(text.trim(), rewriteConfig ? '' : 'rewrite', rewriteConfig);
+      else if (writingMode === 'qa')
+        params = writer.generateCompleteParams(text.trim(), qaConfig ? '' : 'qa', qaConfig);
+      else if (writingMode === 'summary')
+        params = writer.generateCompleteParams(text.trim(), summaryConfig ? '' : 'summary', summaryConfig);
+      else
+        params = writer.generateCompleteParams(text.trim(), autocompleteConfig ? '' : 'autocomplete', autocompleteConfig);
+
       let json = await apiClient.completion(params);
   
       if (json.choices) {
@@ -158,7 +192,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     // smaller screen layout
     return (
       <>
-        <GhostWriterModeConfig onModeChange={(mode:string, modeConfig: any) => { setWritingMode(mode); }}></GhostWriterModeConfig>
+        <GhostWriterModeConfig onModeChange={onModeConfigChange}></GhostWriterModeConfig>
 
         <View style={[styles.gwInputContainer, { flex: 0.5 }]}>
           <TextInput style={styles.gwInput}
