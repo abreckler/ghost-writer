@@ -174,9 +174,9 @@ class TextAnalysisTextSummarizationApiClient extends RapidApiClient {
 // Rewriter/Paraphraser/Text Changer (Multi-Language) by smodin
 //
 interface SmodinRewriteRequest {
-  language: string,
-  strength: number,
-  text: string,
+  language?: string,
+  strength?: number,
+  text?: string,
 }
 interface SmodinRewriteResponse {
   language: string,

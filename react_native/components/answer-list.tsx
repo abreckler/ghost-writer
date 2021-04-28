@@ -4,11 +4,11 @@ import Clipboard from 'expo-clipboard';
 
 import { AnswerChoice } from './answer-choice';
 import { CompletionChoice } from './openai';
-import styles from './styles';
+import { styles } from './styles';
 
 interface IAnswerListProps {
   data?: CompletionChoice[];
-  answersAlert?: string;
+  noAnswerAlert?: string;
   style?: StyleProp<ViewStyle>;
 }
 
@@ -31,7 +31,13 @@ const AnswerList: FC<IAnswerListProps> = props => {
 
   return (
     <View style={props.style}>
-      {/* <Text style={styles.answersAlert}>{props.answersAlert}</Text> */}
+      {
+        typeof props.data !== 'undefined' && props.data.length == 0 && (
+          <View>
+            <Text style={styles.answersAlert}>{props.noAnswerAlert}</Text>
+          </View>
+        )
+      }
       <FlatList style={styles.answerChoiceList}
         data={props.data}
         renderItem={renderAnswerChoice}

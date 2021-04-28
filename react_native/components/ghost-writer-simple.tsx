@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react';
 import { Alert, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Dimensions } from 'react-native';
 import * as Linking from 'expo-linking';
 
-import styles from './styles';
+import { styles, mdScreenWidth } from './styles';
 import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig, CompletionParams } from './openai';
 import { GhostWriterModeConfig } from './ghost-writer-mode-config';
 import { AnswerList } from './answer-list';
@@ -16,7 +16,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   const [writingMode, setWritingMode] = useState('autocomplete');
   const [text, setText] = useState(props.seedText || '');
   const [buttonDisabled, setButtonDisabled] = useState(false);
-  const [answersAlert, setAnswersAlert] = useState('');
+  const [noAnswerAlert, setAnswersAlert] = useState('');
   const [answers, setAnswers] = useState([] as CompletionChoice[]);
 
   const { width, height } = Dimensions.get('window');
@@ -143,7 +143,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       let json = await apiClient.completion(params);
   
       if (json.choices) {
-        setAnswers(json.choices);
+        setAnswers(json.choices.filter(c => (c.text || '').trim().length > 0));
   
         if (writingMode === 'rewrite')
           setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
@@ -160,7 +160,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     setButtonDisabled(false);
   };
 
-  if (width > 600)
+  if (width > mdScreenWidth)
   {
     // wider screen layout
     return (
@@ -174,7 +174,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
                 placeholder="Type here!"
                 onChangeText={text => setText(text)}></TextInput>
           </View>
-          <AnswerList data={answers} answersAlert={answersAlert} style={{ flex: 0.5 }}></AnswerList>
+          <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.5 }}></AnswerList>
         </View>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity style={styles.button}
@@ -208,7 +208,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
             <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
           </TouchableOpacity>
         </View>
-        <AnswerList data={answers} answersAlert={answersAlert} style={{ flex: 0.5 }}></AnswerList>
+        <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.5 }}></AnswerList>
       </>
     );
   }

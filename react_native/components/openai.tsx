@@ -307,6 +307,7 @@ class GhostWriterConfig {
   //
   readonly REWRITE_TEMPLATES = [
     {
+      'name': 'Template 1',
       'prompt': 'A source wrote as: "{USER_INPUT}"' +
                 '\nAnd another source wrote on the same subject matter as: "',
       'stop': ['"'],
@@ -314,6 +315,7 @@ class GhostWriterConfig {
   ] as CompletionParamsTemplate[];
   readonly QA_TEMPLATES = [
     {
+      'name': 'Template 1',
       'prompt': 'Question: "{USER_INPUT}"' +
                 '\nAnswer: "',
       'stop': [
@@ -328,6 +330,7 @@ class GhostWriterConfig {
       ],
     },
     {
+      'name': 'Template 2',
       'prompt': 'The question is "{USER_INPUT}?"' +
                 '\nAnd possible answers could be "',
       'stop': [
@@ -337,16 +340,19 @@ class GhostWriterConfig {
   ] as CompletionParamsTemplate[];
   readonly SUMMARY_TEMPLATES = [
     { // basic summary
+      'name': 'TL;DR;',
       'prompt': '{USER_INPUT}' +
                 '\ntl;dr:',
       'stop': ['\n'],
     },
     { // one-sentence summary
+      'name': 'One-sentence summary',
       'prompt': '{USER_INPUT}' +
                 '\nOne-sentence summary:',
       'stop': ['\n', '.'],
     },
     { // grader summary
+      'name': 'Grader summary',
       'prompt': '{USER_INPUT}' +
                 '\nI rephrased this for my daughter, in plain language a second grader can understand:',
       'stop': ['\n'],

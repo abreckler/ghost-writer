@@ -3,7 +3,7 @@ import { GestureResponderEvent, Keyboard, Platform, Text, TouchableWithoutFeedba
 import * as Linking from 'expo-linking';
 
 import GhostWriterSimple from './components/ghost-writer-simple';
-import styles from './components/styles';
+import { styles }from './components/styles';
 
 
 export default function App() {

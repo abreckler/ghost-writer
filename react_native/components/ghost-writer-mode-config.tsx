@@ -1,8 +1,8 @@
 import React, { FC, useState, useEffect } from 'react';
-import { Alert, Text, TextInput, TouchableOpacity, View, ViewStyle } from 'react-native';
+import { Alert, Dimensions, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-import styles from './styles';
+import { styles, mdScreenWidth } from './styles';
 import { CompletionParams, CompletionParamsTemplate, GhostWriterConfig } from './openai';
 import { SmodinRewriteRequest, TextAnalysisTextSummarizationTextRequest } from './rapidapi';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,12 +22,17 @@ interface TextInputWithValidityCheckProps {
   label: string;
   multiline?: boolean;
   numberOfLines?: number;
+  required?: boolean;
   initValue?: string;
   value?: string;
   checkValidity? (value: string) : InputValidity;
   onValueChange? (value: string) : void;
   validatorPreset? : 'number';
   validatorPresetOptions? : ValidatorPresetOptions;
+  style?: ViewStyle;
+  labelStyle?: TextStyle;
+  inputStyle?: ViewStyle;
+  messageStyle?: TextStyle;
 }
 
 class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValidityCheckProps, { text?:string, error: string }> {
@@ -52,6 +57,14 @@ class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValid
     }
   }
 
+  componentDidUpdate(prevProps: any) {
+    if (prevProps !== this.props && typeof this.props.value !== 'undefined' && this.state.text != this.props.value) {
+      this.setState({
+        text: this.props.value || ''
+      });
+    }
+  }
+
   dummyValidityChecker(value: string) {
     return {
       value: value,
@@ -67,33 +80,27 @@ class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValid
 
     let v = intVal ? Number.parseInt(value) : Number.parseFloat(value);
     let error = '';
-    if (Number.isNaN(v))
-    {
-      error = `${fieldName} must be a number`;
-    }
-    else if ((typeof min !== 'undefined' && min !== null && v < min) || (typeof max !== 'undefined' && max !== null && v > max))
-    {
-      if (typeof min !== 'undefined' && min !== null && typeof max !== 'undefined' && max !== null) { // both min and max are defined
-        error = `${fieldName} must be in the range of ${min} ~ ${max}.`;
-      } else if (typeof min !== 'undefined' && min !== null) { // only min is defined
-        error = `${fieldName} must be greater than or equal to ${min}.`;
-      } else if (typeof max !== 'undefined' && max !== null) { // only max is defined
-        error = `${fieldName} must be less than or equal to ${max}.`;
+    if (value) {
+      if (Number.isNaN(v)) {
+        error = `${fieldName} must be a number`;
+      } else if ((typeof min !== 'undefined' && min !== null && v < min) || (typeof max !== 'undefined' && max !== null && v > max)) {
+        if (typeof min !== 'undefined' && min !== null && typeof max !== 'undefined' && max !== null) { // both min and max are defined
+          error = `${fieldName} must be in the range of ${min} ~ ${max}.`;
+        } else if (typeof min !== 'undefined' && min !== null) { // only min is defined
+          error = `${fieldName} must be greater than or equal to ${min}.`;
+        } else if (typeof max !== 'undefined' && max !== null) { // only max is defined
+          error = `${fieldName} must be less than or equal to ${max}.`;
+        }
       }
+    } else if(this.props.required) {
+      error = `${fieldName} is required`;
     }
+
     return {
-      value: error ? '' : v.toString(),
+      value: error ? '' : value,
       error: error
     } as InputValidity
   };
-
-  componentDidUpdate(prevProps: any) {
-    if (prevProps !== this.props && typeof this.props.value !== 'undefined' && this.state.text != this.props.value) {
-      this.setState({
-        text: this.props.value || ''
-      });
-    }
-  }
 
   setText = (value: string) => {
     let error = '';
@@ -111,17 +118,21 @@ class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValid
   }
 
   render() {
+    const { width, height } = Dimensions.get('window');
+
     return (
-      <>
-        <Text style={styles.label}>{this.props.label}</Text>
-        <TextInput
-            multiline={this.props.multiline || false} numberOfLines={this.props.numberOfLines || 1}
-            style={[styles.input]}
-            value={this.state.text}
-            onChange={ e => this.setText(e.nativeEvent.text) } >
-        </TextInput>
-        <Text style={[styles.textSmall, styles.textError, { display: this.state.error ? 'flex' : 'none' }]}>{this.state.error}</Text>
-      </>
+      <View style={[styles.inputGroupContainer, this.props.style]}>
+        <Text style={[styles.label, styles.inputGroupLabel, styles.md_1_3rd, this.props.labelStyle]}>{this.props.label}</Text>
+        <View style={[styles.md_2_3rds]}>
+          <TextInput
+              multiline={this.props.multiline || false} numberOfLines={this.props.numberOfLines || 1}
+              style={[styles.input, this.props.inputStyle]}
+              value={this.state.text}
+              onChange={ e => this.setText(e.nativeEvent.text) } >
+          </TextInput>
+          <Text style={[styles.textSmall, styles.textError, this.props.messageStyle, { display: this.state.error ? 'flex' : 'none' }]}>{this.state.error}</Text>
+        </View>
+      </View>
     );
   }
   
@@ -163,13 +174,37 @@ class OpenAiAutocompleteConfig extends React.Component<OpenAiAutocompleteConfigP
   componentDidUpdate(prevProps: any) {
     if (this.props !== prevProps && typeof this.props.value !== 'undefined')
     {
-      this.setState(this.props.value as CompletionParams);
+      this.setState({
+        prompt: this.props.value?.prompt || '',
+        n: this.props.value?.n || 1,
+        max_tokens: this.props.value?.max_tokens,
+        temperature: this.props.value?.temperature,
+        top_p: this.props.value?.top_p,
+        logprobs: this.props.value?.logprobs,
+        echo: this.props.value?.echo,
+        stop: (this.props.value?.stop || []).map(s => s.replaceAll('\n', '\\n').replaceAll('\t', '\\t')),
+        presence_penalty: this.props.value?.presence_penalty || 0,
+        frequency_penalty: this.props.value?.frequency_penalty || 0,
+        best_of: this.props.value?.best_of || 1,
+      });
     }
   }
 
   onValueChange() {
     this.props.onValueChange &&
-      this.props.onValueChange(this.state as CompletionParams);
+      this.props.onValueChange({
+        prompt: this.state.prompt,
+        n: this.state.n,
+        max_tokens: this.state.max_tokens,
+        temperature: this.state.temperature,
+        top_p: this.state.top_p,
+        logprobs: this.state.logprobs,
+        echo: this.state.echo,
+        stop: (this.state.stop || []).map(s => s.replaceAll('\n', '\\n').replaceAll('\t', '\\t')),
+        presence_penalty: this.state.presence_penalty,
+        frequency_penalty: this.state.frequency_penalty,
+        best_of: this.state.best_of,
+      } as CompletionParams);
   }
 
   copyFromTemplate(v: number) {
@@ -181,23 +216,26 @@ class OpenAiAutocompleteConfig extends React.Component<OpenAiAutocompleteConfigP
 
   render() {
     return (
-      <View style={this.props.style}>
+      <View style={[this.props.style]}>
         {
           this.props.templates && (
-            <Picker style={styles.picker} onValueChange={ v => this.copyFromTemplate(Number.parseInt(v as string)) }>
-              <Picker.Item key={-1} label={'Choose a template'} value={-1} />
-              {
-                this.props.templates.map((t, idx) => {
-                  return (
-                    <Picker.Item key={idx} label={t.name || 'Template' + (idx+1)} value={idx} />
-                  );
-                })
-              }
-            </Picker>
+            <View style={[styles.inputGroupContainer]}>
+              <Text style={[styles.label, styles.md_1_3rd]}>{'Choose a template'}</Text>
+              <Picker style={[styles.picker, styles.md_2_3rds]} onValueChange={ v => this.copyFromTemplate(Number.parseInt(v as string)) }>
+                <Picker.Item key={-1} label={'Choose a template'} value={-1} />
+                {
+                  this.props.templates.map((t, idx) => {
+                    return (
+                      <Picker.Item key={idx} label={t.name || 'Template' + (idx+1)} value={idx} />
+                    );
+                  })
+                }
+              </Picker>
+            </View>
           )
         }
 
-        <TextInputGroupWithValidityCheck label={'Prompt'} value={this.state.prompt} multiline={true} numberOfLines={5}
+        <TextInputGroupWithValidityCheck label={'Prompt'} value={this.state.prompt} multiline={true} numberOfLines={5} required={true}
             checkValidity={
               (v) => {
                 let valid = (v || '').indexOf('{USER_INPUT}') >= 0;
@@ -210,28 +248,31 @@ class OpenAiAutocompleteConfig extends React.Component<OpenAiAutocompleteConfigP
             }
             onValueChange={ v => { this.setState({prompt: v}); this.onValueChange(); } } />
 
-        <TextInputGroupWithValidityCheck label={'Number of answers to generate'} value={this.state.n?.toString()}
+        <TextInputGroupWithValidityCheck label={'Number of answers to generate'} value={this.state.n?.toString()} required={true}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of answers to generate', intVal: true, min: 1, max: 10 }}
             onValueChange={ v => { this.setState({ n: Number.parseInt(v) }); this.onValueChange(); } } />
 
         <TextInputGroupWithValidityCheck label={'Sampling Temperature'} value={this.state.temperature?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Sampling Temperature', intVal: false, min: 0.0, max: 1.0 }}
-            onValueChange={ v => { this.setState({temperature : Number.parseFloat(v)}); this.onValueChange(); } } />
+            onValueChange={ v => { this.setState({ temperature : (v && Number.parseFloat(v)) || undefined }); this.onValueChange(); } } />
 
         <TextInputGroupWithValidityCheck label={'Nucleus Sampling Temperature'} value={this.state.top_p?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Nucleus Sampling Temperature', intVal: false, min: 0.0, max: 1.0 }}
-            onValueChange={ v => { this.setState({top_p : Number.parseFloat(v)}); this.onValueChange(); } } />
+            onValueChange={ v => { this.setState({ top_p : (v && Number.parseFloat(v)) || undefined }); this.onValueChange(); } } />
 
-        <Text style={styles.label}>Stop Sequence</Text>
-        <TagsInput initialTags={this.state.stop} initialText={""} maxNumberOfTags={4} onChangeTags={ v => { this.setState({ stop: v }); this.onValueChange(); } } />
+        <View style={styles.inputGroupContainer}>
+          <Text style={[styles.label, styles.inputGroupLabel, styles.md_1_3rd, {paddingTop: 8}]}>Stop Sequence</Text>
+          <TagsInput style={styles.md_2_3rds} initialTags={this.state.stop} initialText={""} maxNumberOfTags={4}
+              onChangeTags={ v => { this.setState({ stop: v }); this.onValueChange(); } } />
+        </View>
 
         <TextInputGroupWithValidityCheck label={'Presence Penalty'} value={this.state.presence_penalty?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Presence Penalty', intVal: false, min: 0.0, max: 1.0 }}
-            onValueChange={ v => { this.setState({presence_penalty : Number.parseFloat(v)}); this.onValueChange(); } } />
+            onValueChange={ v => { this.setState({presence_penalty : (v && Number.parseFloat(v)) || undefined }); this.onValueChange(); } } />
 
         <TextInputGroupWithValidityCheck label={'Frequency Penalty'} value={this.state.frequency_penalty?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Frequency Penalty', intVal: false, min: 0.0, max: 1.0 }}
-            onValueChange={ v => { this.setState({frequency_penalty : Number.parseFloat(v)}); this.onValueChange(); } } />
+            onValueChange={ v => { this.setState({frequency_penalty : (v && Number.parseFloat(v)) || undefined }); this.onValueChange(); } } />
       </View>
     );
   }
@@ -269,7 +310,9 @@ class TextAnalysisTextSummarizationConfig extends React.Component<TextAnalysisTe
 
   onValueChange() {
     this.props.onValueChange &&
-      this.props.onValueChange({ sentnum: this.state.sentnum } as TextAnalysisTextSummarizationTextRequest);
+      this.props.onValueChange({
+        sentnum: this.state.sentnum
+      });
   }
 
   render() {
@@ -319,8 +362,8 @@ class SmodinRewriteConfig extends React.Component<SmodinRewriteConfigProps, { la
     this.props.onValueChange &&
       this.props.onValueChange({
         language: this.state.language,
-        strength: this.state.strength
-      } as SmodinRewriteRequest);
+        strength: this.state.strength,
+      });
   }
 
   render() {
@@ -432,10 +475,10 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         '@gw__mode_config__rewrite_smodin',
         '@gw__mode_config__extract',
       ]);
-      this.autocompleteConfig = (multiGet[0][1] ? JSON.parse(multiGet[0][1]) : {}) as CompletionParams;
-      this.qaConfig = (multiGet[1][1] ? JSON.parse(multiGet[1][1]) : {}) as CompletionParams;
-      this.summaryConfig = (multiGet[2][1] ? JSON.parse(multiGet[2][1]) : {}) as CompletionParams;
-      this.rewriteConfig = (multiGet[3][1] ? JSON.parse(multiGet[3][1]) : {}) as CompletionParams;
+      this.autocompleteConfig = (multiGet[0][1] ? JSON.parse(multiGet[0][1]) : { prompt: '{USER_INPUT}', n: 1 }) as CompletionParams;
+      this.qaConfig = (multiGet[1][1] ? JSON.parse(multiGet[1][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.QA_TEMPLATES[0]))) as CompletionParams;
+      this.summaryConfig = (multiGet[2][1] ? JSON.parse(multiGet[2][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.SUMMARY_TEMPLATES[0]))) as CompletionParams;
+      this.rewriteConfig = (multiGet[3][1] ? JSON.parse(multiGet[3][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.REWRITE_TEMPLATES[0]))) as CompletionParams;
       this.rewriteSmodinConfig = (multiGet[4][1] ? JSON.parse(multiGet[4][1]) : {}) as SmodinRewriteRequest;
       this.extractConfig = (multiGet[5][1] ? JSON.parse(multiGet[5][1]) : {}) as TextAnalysisTextSummarizationTextRequest;
     } catch (e) {
@@ -474,10 +517,10 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
   //
   render() {
     return (
-      <View style={[styles.settingsContainer, { alignSelf: 'flex-start', marginTop: 10, marginBottom: 10 } ]}>
+      <View style={[styles.settingsContainer, { alignSelf: 'flex-start', marginTop: 10, marginBottom: 10, width: '100%', } ]}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <Text style={[styles.label]}>Mode: </Text>
-          <View style={{display: 'flex', flex: 1}}>
+          <View>
             <Picker style={[styles.modePicker]} itemStyle={styles.modePickerItemStyle}
                 selectedValue={this.state.writingMode}
                 onValueChange={ v => this.setWritingMode(v) }

@@ -8,12 +8,33 @@ const darkTextcolor = '#333';
 const borderColor = '#ccc';
 const primaryColor = 'rgb(70, 48, 235)';
 const { width, height } = Dimensions.get('window');
+const mdScreenWidth = 600;
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: bgColor,
     padding: 20,
     flex: 1,
+  },
+
+  // grid
+  md_row: {
+    flexDirection: width > mdScreenWidth ? 'row' : 'column',
+  },
+  md_1_4th: {
+    width: width > mdScreenWidth ? '25%' : '100%',
+  },
+  md_1_3rd: {
+    width: width > mdScreenWidth ? '33.33333%' : '100%',
+  },
+  md_1_2nd: {
+    width: width > mdScreenWidth ? '50%' : '100%',
+  },
+  md_2_3rds: {
+    width: width > mdScreenWidth ? '66.66667%' : '100%',
+  },
+  md_3_4ths: {
+    width: width > mdScreenWidth ? '75%' : '100%',
   },
 
   // basic components
@@ -62,6 +83,16 @@ const styles = StyleSheet.create({
   },
   buttonSmText: {
     fontSize: width > 600 ? mainFontSize * 1 : mainFontSize * 0.85,
+  },
+
+  // input group
+  inputGroupContainer: {
+    flexDirection: width > mdScreenWidth ? 'row' : 'column',
+    alignItems: 'flex-start',
+    marginBottom: 4,
+  },
+  inputGroupLabel: {
+    paddingTop: 4,
   },
 
   // 
@@ -143,4 +174,7 @@ const styles = StyleSheet.create({
   },
 });
 
-export default styles;
+export {
+  styles,
+  mdScreenWidth
+};
