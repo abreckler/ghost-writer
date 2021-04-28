@@ -45,6 +45,11 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     checkInitialURL();
   });
 
+  const onModeConfigChange = (mode: string, config: any) => {
+    setWritingMode(mode);
+    console.log('onModeChange', mode, config);
+  };
+
   const createCompletion = async () => {
     if (text.trim().length < 10) {
       Alert.alert("Please enter seed text!");
@@ -126,7 +131,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     // wider screen layout
     return (
       <>
-        <GhostWriterModeConfig onModeChange={(mode:string, modeConfig: any) => { setWritingMode(mode); }}></GhostWriterModeConfig>
+        <GhostWriterModeConfig onModeChange={onModeConfigChange}></GhostWriterModeConfig>
 
         <View style={{ flexDirection: 'row', flex: 0.7 }}>
           <View style={[styles.gwInputContainer, { flex: 0.5 }]}>

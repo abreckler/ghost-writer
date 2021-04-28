@@ -130,14 +130,36 @@ class TagsInput extends React.Component<TagsInputProps, TagsInputState> {
     }
   };
 
+  onPressTag = (index:number, tag: string, event: any) => {
+    const {
+      deleteOnTagPress,
+      onTagPress,
+    } = this.props;
+
+    if (deleteOnTagPress) {
+      this.setState({
+          tags: [
+            ...this.state.tags.slice(0, index),
+            ...this.state.tags.slice(index + 1)
+          ]
+        },
+        () => {
+          this.props.onChangeTags &&
+            this.props.onChangeTags(this.state.tags);
+          onTagPress && onTagPress(index, tag, event, true);
+        }
+      );
+    } else {
+      onTagPress && onTagPress(index, tag, event, false);
+    }
+  };
+
   render() {
     const {
       containerStyle,
       style,
       tagContainerStyle,
       tagTextStyle,
-      deleteOnTagPress,
-      onTagPress,
       readonly,
       maxNumberOfTags,
       inputStyle
@@ -148,26 +170,7 @@ class TagsInput extends React.Component<TagsInputProps, TagsInputState> {
         {
           this.state.tags.map((tag, i) => (
             <Tag key = {i} label = {tag}
-              onPress = {
-                e => {
-                  if (deleteOnTagPress) {
-                    this.setState({
-                        tags: [
-                          ...this.state.tags.slice(0, i),
-                          ...this.state.tags.slice(i + 1)
-                        ]
-                      },
-                      () => {
-                        this.props.onChangeTags &&
-                          this.props.onChangeTags(this.state.tags);
-                        onTagPress && onTagPress(i, tag, e, true);
-                      }
-                    );
-                  } else {
-                    onTagPress && onTagPress(i, tag, e, false);
-                  }
-                }
-              }
+              onPress = {e => { this.onPressTag(i, tag, e); }}
               readonly = {readonly}
               tagContainerStyle = {tagContainerStyle}
               tagTextStyle = {tagTextStyle}

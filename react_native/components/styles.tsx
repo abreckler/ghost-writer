@@ -3,6 +3,7 @@ import { Platform, StyleSheet, Dimensions } from 'react-native';
 const mainFontSize = 16;
 const bgColor = '#f8f8ff';
 const textColor = '#444';
+const errorColor = '#f00';
 const darkTextcolor = '#333';
 const borderColor = '#ccc';
 const primaryColor = 'rgb(70, 48, 235)';
@@ -22,6 +23,10 @@ const styles = StyleSheet.create({
   textSmall: {
     fontSize: mainFontSize * 0.8,
   },
+  textError: {
+    color: errorColor,
+  },
+  // picker
   picker: {
     fontSize: mainFontSize,
     paddingVertical: mainFontSize / 4.0,
@@ -29,6 +34,7 @@ const styles = StyleSheet.create({
   pickerItemStyle: {
     fontSize: mainFontSize,
   },
+  // text input
   input: {
     fontSize: mainFontSize,
     color: textColor,

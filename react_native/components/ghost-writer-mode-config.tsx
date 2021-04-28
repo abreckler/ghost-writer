@@ -8,76 +8,129 @@ import { SmodinRewriteRequest, TextAnalysisTextSummarizationTextRequest } from '
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TagsInput } from './tags-input';
 
+interface InputValidity {
+  value: string;
+  error: string;
+}
+interface ValidatorPresetOptions {
+  fieldName?: string;
+  min?: number;
+  max?: number;
+  intVal?: boolean;
+}
+interface TextInputWithValidityCheckProps {
+  label: string;
+  multiline?: boolean;
+  numberOfLines?: number;
+  initValue?: string;
+  checkValidity? (value: string) : InputValidity;
+  onValueChange? (value: string) : void;
+  validatorPreset? : 'number';
+  validatorPresetOptions? : ValidatorPresetOptions;
+}
+
+const TextInputGroupWithValidityCheck: FC<TextInputWithValidityCheckProps> = (props: TextInputWithValidityCheckProps) => {
+  const [text, _setText] = useState(props.initValue || '');
+  const [error, setError] = useState('');
+
+  const dummyValidityChecker = (value: string) => {
+    return {
+      value: value,
+      error: ''
+    } as InputValidity;
+  }
+
+  const numberValidityChecker = (value : string) => {
+    let fieldName = (props.validatorPresetOptions && (props.validatorPresetOptions.fieldName || 'This')) || 'This';
+    let intVal = (props.validatorPresetOptions && (props.validatorPresetOptions.intVal || false)) || false;
+    let min = (props.validatorPresetOptions && props.validatorPresetOptions.min) || undefined;
+    let max = (props.validatorPresetOptions && props.validatorPresetOptions.min) || undefined;
+
+    let v = intVal ? Number.parseInt(value) : Number.parseFloat(value);
+    let error = '';
+    if (Number.isNaN(v))
+    {
+      error = `${fieldName} must be a number`;
+    }
+    else if ((typeof min !== 'undefined' && min !== null && v < min) || (typeof max !== 'undefined' && max !== null && v > max))
+    {
+      if (typeof min !== 'undefined' && min !== null && typeof max !== 'undefined' && max !== null) { // both min and max are defined
+        error = `${fieldName} must be in the range of ${min} ~ ${max}.`;
+      } else if (typeof min !== 'undefined' && min !== null) { // only min is defined
+        error = `${fieldName} must be greater than or equal to ${min}.`;
+      } else if (typeof max !== 'undefined' && max !== null) { // only max is defined
+        error = `${fieldName} must be less than or equal to ${max}.`;
+      }
+    }
+    return {
+      value: error ? '' : v.toString(),
+      error: error
+    } as InputValidity
+  };
+
+  var validityChecker = dummyValidityChecker;
+
+  useEffect(() => {
+    // update validity checker
+    if (props.checkValidity) {
+      validityChecker = props.checkValidity;
+    } else if (props.validatorPreset === 'number') {
+      validityChecker = numberValidityChecker;
+    } else {
+      validityChecker = dummyValidityChecker;
+    }
+  });
+
+  const setText = (value: string) => {
+    _setText(value);
+    let valid = validityChecker(value);
+
+    if (valid && !valid.error) {
+      props.onValueChange && props.onValueChange(value);
+      setError('');
+    } else {
+      setError( (valid && valid.error) || 'Your input is invalid' );
+    }
+  }
+
+  return (
+    <>
+      <Text style={styles.label}>{props.label}</Text>
+      <TextInput
+          multiline={props.multiline || false} numberOfLines={props.numberOfLines || 1}
+          style={[styles.input]}
+          defaultValue={text}
+          onChange={ e => setText(e.nativeEvent.text) } >
+      </TextInput>
+      <Text style={[styles.textSmall, styles.textError, { display: error ? 'flex' : 'none' }]}>{error}</Text>
+    </>
+  );
+}
+
 //-------------------------------------
 // OpenAI Completion API
 //-------------------------------------
 interface OpenAiAutocompleteConfigProps {
-  value: CompletionParams;
+  initValue: CompletionParams;
   onValueChange(value: CompletionParams) : void;
   style: ViewStyle;
 }
 
 const OpenAiAutocompleteConfig: FC<OpenAiAutocompleteConfigProps> = (props: OpenAiAutocompleteConfigProps) => {
-  const [n, _setN] = useState(props.value?.n || 1);
-  const [prompt, _setPrompt] = useState(props.value?.prompt);
-  const [max_tokens, setMaxTokens] = useState(props.value?.max_tokens);
-  const [temperature, _setTemperature] = useState(props.value?.temperature);
-  const [top_p, _setTopP] = useState(props.value?.top_p);
-  const [logprobs, setLogprobs] = useState(props.value?.logprobs);
-  const [echo, setEcho] = useState(props.value?.echo);
-  const [stop, _setStop] = useState(props.value?.stop || ['.']);
-  const [presence_penalty, _setPresencePenalty] = useState(props.value?.presence_penalty || 0);
-  const [frequency_penalty, _setFrequencyPenalty] = useState(props.value?.frequency_penalty || 0);
-  const [best_of, setBestOf] = useState(props.value?.best_of || 1);
-
-  const setN = (_value: string) => {
-    let value = Number.parseInt(_value);
-    value = Number.isNaN(value) ? 0 : (value <= 0 ? 0 : value);
-    _setN(Number.parseInt(_value));
-    onValueChange();
-  }
-  const setPrompt = (_value: string) => {
-    if (!_value.indexOf('{USER_INPUT}'))
-    {
-      Alert.alert("Autocomplete prompt template must contain {USER_INPUT} variable.");
-    }
-    else {
-      _setPrompt(_value);
-      onValueChange();
-    }
-  }
-  const setTemperature = (_value: string) => {
-    let value = Number.parseFloat(_value);
-    value = Number.isNaN(value) ? 0 : (value < 0 ? 0 : (value > 1.0 ? 1.0 : value));
-    _setTemperature(value);
-    onValueChange();
-  }
-  const setTopP = (_value: string) => {
-    let value = Number.parseFloat(_value);
-    value = Number.isNaN(value) ? 0 : (value < 0 ? 0 : (value > 1.0 ? 1.0 : value));
-    _setTopP(value);
-    onValueChange();
-  }
-  const setPresencePenalty = (_value: string) => {
-    let value = Number.parseFloat(_value);
-    value = Number.isNaN(value) ? 0 : (value < 0 ? 0 : (value > 1.0 ? 1.0 : value));
-    _setPresencePenalty(value);
-    onValueChange();
-  }
-  const setFrequencyPenalty = (_value: string) => {
-    let value = Number.parseFloat(_value);
-    value = Number.isNaN(value) ? 0 : (value < 0 ? 0 : (value > 1.0 ? 1.0 : value));
-    _setFrequencyPenalty(value);
-    onValueChange();
-  }
-
-  const setStop = (_value: Array<string>) => {
-    _setStop(_value);
-    onValueChange();
-  }
+  const [prompt, setPrompt] = useState(props.initValue?.prompt);
+  const [n, setN] = useState(props.initValue?.n || 1);
+  const [max_tokens, setMaxTokens] = useState(props.initValue?.max_tokens);
+  const [temperature, setTemperature] = useState(props.initValue?.temperature);
+  const [top_p, setTopP] = useState(props.initValue?.top_p);
+  const [logprobs, setLogprobs] = useState(props.initValue?.logprobs);
+  const [echo, setEcho] = useState(props.initValue?.echo);
+  const [stop, setStop] = useState((props.initValue?.stop || []).map(s => s.replaceAll('\n', '\\n').replaceAll('\t', '\\t')));
+  const [presence_penalty, setPresencePenalty] = useState(props.initValue?.presence_penalty || 0);
+  const [frequency_penalty, setFrequencyPenalty] = useState(props.initValue?.frequency_penalty || 0);
+  const [best_of, setBestOf] = useState(props.initValue?.best_of || 1);
 
   const onValueChange = () => {
-    if (props.onValueChange)
+    props.onValueChange &&
       props.onValueChange({
         n: n,
         prompt: prompt,
@@ -85,28 +138,47 @@ const OpenAiAutocompleteConfig: FC<OpenAiAutocompleteConfigProps> = (props: Open
         top_p: top_p,
         presence_penalty: presence_penalty,
         frequency_penalty: frequency_penalty,
+        stop: stop.map(s => s.replaceAll('\\n', '\n').replaceAll('\\t', '\t'))
       } as CompletionParams);
   }
 
   return (
     <View style={props.style}>
-      <Text style={styles.label}>Prompt</Text>
-      <TextInput style={[styles.input]}
-          value={prompt} onChangeText={setPrompt} >
-      </TextInput>
-      <Text style={styles.label}>Number of answers to generate</Text>
-      <TextInput style={[styles.input]}
-          value={n?.toString()} onChangeText={setN} >
-      </TextInput>
-      <Text style={styles.label}>Sampling Temperature</Text>
-      <TextInput style={[styles.input]}
-          value={temperature?.toString()} onChangeText={setTemperature} >
-      </TextInput>
-      <Text style={styles.label}>Nucleus Sampling Temperature</Text>
-      <TextInput style={[styles.input]}
-          value={top_p?.toString()} onChangeText={setTopP} >
-      </TextInput>
+      <TextInputGroupWithValidityCheck label={'Prompt'} initValue={prompt} multiline={true} numberOfLines={5}
+          checkValidity={
+            (v) => {
+              let valid = (v || '').indexOf('{USER_INPUT}') >= 0;
+              let error = valid ? '' : 'Prompt must contain {USER_INPUT} placeholder.';
+              return {
+                value: error ? '' : v,
+                error: error
+              } as InputValidity
+            }
+          }
+          onValueChange={ v => { setPrompt(v); onValueChange(); } } />
+
+      <TextInputGroupWithValidityCheck label={'Number of answers to generate'} initValue={n?.toString()}
+          validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of answers to generate', intVal: true, min: 1, max: 10 }}
+          onValueChange={ v => { setN(Number.parseInt(v)); onValueChange(); } } />
+
+      <TextInputGroupWithValidityCheck label={'Sampling Temperature'} initValue={temperature?.toString()}
+          validatorPreset='number' validatorPresetOptions={{ fieldName: 'Sampling Temperature', intVal: false, min: 0.0, max: 1.0 }}
+          onValueChange={ v => { setTemperature(Number.parseFloat(v)); onValueChange(); } } />
+
+      <TextInputGroupWithValidityCheck label={'Nucleus Sampling Temperature'} initValue={top_p?.toString()}
+          validatorPreset='number' validatorPresetOptions={{ fieldName: 'Nucleus Sampling Temperature', intVal: false, min: 0.0, max: 1.0 }}
+          onValueChange={ v => { setTopP(Number.parseFloat(v)); onValueChange(); } } />
+
+      <Text style={styles.label}>Stop Sequence</Text>
       <TagsInput initialTags={stop} initialText={""} maxNumberOfTags={4} onChangeTags={setStop}></TagsInput>
+
+      <TextInputGroupWithValidityCheck label={'Presence Penalty'} initValue={presence_penalty?.toString()}
+          validatorPreset='number' validatorPresetOptions={{ fieldName: 'Presence Penalty', intVal: false, min: 0.0, max: 1.0 }}
+          onValueChange={ v => { setPresencePenalty(Number.parseFloat(v)); onValueChange(); } } />
+
+      <TextInputGroupWithValidityCheck label={'Frequency Penalty'} initValue={frequency_penalty?.toString()}
+          validatorPreset='number' validatorPresetOptions={{ fieldName: 'Frequency Penalty', intVal: false, min: 0.0, max: 1.0 }}
+          onValueChange={ v => { setFrequencyPenalty(Number.parseFloat(v)); onValueChange(); } } />
     </View>
   );
 }
@@ -116,25 +188,24 @@ const OpenAiAutocompleteConfig: FC<OpenAiAutocompleteConfigProps> = (props: Open
 // Text Summarization API of TextAnalysis
 //-----------------------------------------
 interface TextAnalysisTextSummarizationConfigProps {
-  value: TextAnalysisTextSummarizationTextRequest,
+  initValue: TextAnalysisTextSummarizationTextRequest,
   onValueChange(value: TextAnalysisTextSummarizationTextRequest) : void;
   style: ViewStyle;
 }
 
 const TextAnalysisTextSummarizationConfig: FC<TextAnalysisTextSummarizationConfigProps> = (props: TextAnalysisTextSummarizationConfigProps) => {
-  const [sentnum, setSentnum] = useState(props.value?.sentnum || 5);
+  const [sentnum, setSentnum] = useState(props.initValue?.sentnum || 5);
 
   const onValueChange = () => {
-    if (props.onValueChange)
+    props.onValueChange &&
       props.onValueChange({ sentnum: sentnum } as TextAnalysisTextSummarizationTextRequest);
   }
 
   return (
     <View style={props.style}>
-      <Text>Number of answers to generate</Text>
-      <TextInput style={[styles.input]} placeholder="Type here!"
-          value={sentnum?.toString()} onChangeText={(v) => { setSentnum(Number.parseInt(v)); onValueChange(); }} >
-      </TextInput>
+      <TextInputGroupWithValidityCheck label={'Number of answers to generate'} initValue={sentnum?.toString()}
+          validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of answers to generate', intVal: true, min: 1, max: 10 }}
+          onValueChange={ v => { setSentnum(Number.parseInt(v)); onValueChange(); } } />
     </View>
   );
 }
@@ -143,17 +214,17 @@ const TextAnalysisTextSummarizationConfig: FC<TextAnalysisTextSummarizationConfi
 // Rewrite API of Somdin
 //-----------------------------------------
 interface SmodinRewriteConfigProps {
-  value: SmodinRewriteRequest,
+  initValue: SmodinRewriteRequest,
   onValueChange(value: SmodinRewriteRequest) : void;
   style: ViewStyle;
 }
 
 const SmodinRewriteConfig: FC<SmodinRewriteConfigProps> = (props: SmodinRewriteConfigProps) => {
-  const [language, setLanguage] = useState(props.value?.language || 'en');
-  const [strength, setStrength] = useState(props.value?.strength || 3);
+  const [language, setLanguage] = useState(props.initValue?.language || 'en');
+  const [strength, setStrength] = useState(props.initValue?.strength || 3);
 
   const onValueChange = () => {
-    if (props.onValueChange)
+    props.onValueChange &&
       props.onValueChange({ language: language, strength: strength } as SmodinRewriteRequest);
   }
 
@@ -165,7 +236,7 @@ const SmodinRewriteConfig: FC<SmodinRewriteConfigProps> = (props: SmodinRewriteC
           style={[styles.picker]}
           itemStyle={styles.pickerItemStyle}
           mode='dropdown'
-          onValueChange={(v) => { setLanguage(v); onValueChange(); }}>
+          onValueChange={v => { setLanguage(v); onValueChange(); } }>
         <Picker.Item label="English" value="en" />
         <Picker.Item label="German" value="de" />
         <Picker.Item label="Spanish" value="es" />
@@ -179,7 +250,7 @@ const SmodinRewriteConfig: FC<SmodinRewriteConfigProps> = (props: SmodinRewriteC
           style={[styles.picker]}
           itemStyle={styles.pickerItemStyle}
           mode='dropdown'
-          onValueChange={(v) => { setStrength(Number.parseInt(v)); onValueChange(); }}>
+          onValueChange={ v => { setStrength(Number.parseInt(v)); onValueChange(); }}>
         <Picker.Item label="Strong" value="3" />
         <Picker.Item label="Medium" value="2" />
         <Picker.Item label="Basic" value="1" />
@@ -200,13 +271,13 @@ interface GhostWriterModeConfigProps {
 const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWriterModeConfigProps) => {
   const [settingsVisible, setSettingsVisible] = useState(false);
 
-  const [writingMode, _setWritingMode] = useState(props.mode || 'autocomplete');
-  const [autocompleteConfig, _setAutocompleteConfig] = useState({} as CompletionParams);
-  const [qaConfig, _setQaConfig] = useState({} as CompletionParams);
-  const [summaryConfig, _setSummaryConfig] = useState({} as CompletionParams);
-  const [rewriteConfig, _setRewriteConfig] = useState({} as CompletionParams);
-  const [rewriteSmodinConfig, _setRewriteSmodinConfig] = useState({} as SmodinRewriteRequest);
-  const [extractConfig, _setExtractConfig] = useState({} as TextAnalysisTextSummarizationTextRequest);
+  const [writingMode, setWritingMode] = useState(props.mode || 'autocomplete');
+  const [autocompleteConfig, setAutocompleteConfig] = useState({} as CompletionParams);
+  const [qaConfig, setQaConfig] = useState({} as CompletionParams);
+  const [summaryConfig, setSummaryConfig] = useState({} as CompletionParams);
+  const [rewriteConfig, setRewriteConfig] = useState({} as CompletionParams);
+  const [rewriteSmodinConfig, setRewriteSmodinConfig] = useState({} as SmodinRewriteRequest);
+  const [extractConfig, setExtractConfig] = useState({} as TextAnalysisTextSummarizationTextRequest);
 
   const toggleSettingsView = () => {
     setSettingsVisible(!settingsVisible);
@@ -227,6 +298,8 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
         ['@gw__mode_config__extract', JSON.stringify(extractConfig)],
       ]
       await AsyncStorage.multiSet(multiSet);
+
+      console.log("Stored Data", multiSet);
     } catch (e) {
       // saving error
       console.log('GW mode configurator - Writing Error', e);
@@ -244,23 +317,25 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
         '@gw__mode_config__extract',
       ]);
 
-      _setWritingMode(multiGet[0][1] || 'autocomplete');
-      _setAutocompleteConfig((multiGet[1][1] ? JSON.parse(multiGet[1][1]) : {}) as CompletionParams);
-      _setQaConfig((multiGet[2][1] ? JSON.parse(multiGet[2][1]) : {}) as CompletionParams);
-      _setSummaryConfig((multiGet[3][1] ? JSON.parse(multiGet[3][1]) : {}) as CompletionParams);
-      _setRewriteConfig((multiGet[4][1] ? JSON.parse(multiGet[4][1]) : {}) as CompletionParams);
-      _setRewriteSmodinConfig((multiGet[5][1] ? JSON.parse(multiGet[5][1]) : {}) as SmodinRewriteRequest);
-      _setExtractConfig((multiGet[6][1] ? JSON.parse(multiGet[6][1]) : {}) as TextAnalysisTextSummarizationTextRequest);
+      console.log("Read from Data", multiGet);
+
+      setWritingMode(multiGet[0][1] || 'autocomplete');
+      setAutocompleteConfig((multiGet[1][1] ? JSON.parse(multiGet[1][1]) : {}) as CompletionParams);
+      setQaConfig((multiGet[2][1] ? JSON.parse(multiGet[2][1]) : {}) as CompletionParams);
+      setSummaryConfig((multiGet[3][1] ? JSON.parse(multiGet[3][1]) : {}) as CompletionParams);
+      setRewriteConfig((multiGet[4][1] ? JSON.parse(multiGet[4][1]) : {}) as CompletionParams);
+      setRewriteSmodinConfig((multiGet[5][1] ? JSON.parse(multiGet[5][1]) : {}) as SmodinRewriteRequest);
+      setExtractConfig((multiGet[6][1] ? JSON.parse(multiGet[6][1]) : {}) as TextAnalysisTextSummarizationTextRequest);
+
+      console.log('autocomplete config', (multiGet[1][1] ? JSON.parse(multiGet[1][1]) : {}) as CompletionParams, autocompleteConfig);
     } catch (e) {
       // reading error
       console.log('GW mode configurator - Reading Error', e);
     }
 
-    onModePickerChange();
+    onModePickerChange(false);
   };
-  const onModePickerChange = () => {
-    storeData();
-
+  const onModePickerChange = (updateStore=true) => {
     if (props.onModeChange) {
       if (writingMode === 'autocomplete')
         props.onModeChange('autocomplete', autocompleteConfig);
@@ -277,44 +352,17 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
       else if (writingMode === 'rewrite-smodin')
         props.onModeChange('rewrite-smodin', rewriteSmodinConfig);
     };
-  };
 
-  //
-  // State setter overrides
-  //
-  const setWritingMode = (_value: string, _idx: number) => {
-    _setWritingMode(_value);
-    onModePickerChange();
-  };
-  const setAutocompleteConfig = (_value: CompletionParams) => {
-    _setAutocompleteConfig(_value);
-    onModePickerChange();
-  };
-  const setQaConfig = (_value: CompletionParams) => {
-    _setQaConfig(_value);
-    onModePickerChange();
-  };
-  const setSummaryConfig = (_value: CompletionParams) => {
-    _setSummaryConfig(_value);
-    onModePickerChange();
-  };
-  const setRewriteConfig = (_value: CompletionParams) => {
-    _setRewriteConfig(_value);
-    onModePickerChange();
-  };
-  const setRewriteSmodinConfig = (_value: SmodinRewriteRequest) => {
-    _setRewriteSmodinConfig(_value);
-    onModePickerChange();
-  };
-  const setExtractConfig = (_value: TextAnalysisTextSummarizationTextRequest) => {
-    _setExtractConfig(_value);
-    onModePickerChange();
+    if (updateStore)
+      storeData();
   };
 
   //
   // Initialize
   //
-  readFromData();
+  useEffect(() => {
+    readFromData();
+  }, []);
 
   //
   // View
@@ -344,29 +392,23 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
 
       <View style={{ display: settingsVisible ? 'flex':'none', paddingVertical: 10 }}>
         <OpenAiAutocompleteConfig style={{ display: writingMode === 'autocomplete' ? 'flex' : 'none'}}
-            value={autocompleteConfig}
-            onValueChange={setAutocompleteConfig}>
-        </OpenAiAutocompleteConfig>
+            initValue={autocompleteConfig}
+            onValueChange={v => {setAutocompleteConfig(v); onModePickerChange(); }} />
         <OpenAiAutocompleteConfig style={{ display: writingMode === 'rewrite' ? 'flex' : 'none'}}
-            value={rewriteConfig}
-            onValueChange={setRewriteConfig} >
-        </OpenAiAutocompleteConfig>
+            initValue={rewriteConfig}
+            onValueChange={v => {setRewriteConfig(v); onModePickerChange(); }} />
         <OpenAiAutocompleteConfig style={{ display: writingMode === 'qa' ? 'flex' : 'none'}}
-            value={qaConfig}
-            onValueChange={setQaConfig} >
-        </OpenAiAutocompleteConfig>
+            initValue={qaConfig}
+            onValueChange={v => {setQaConfig(v); onModePickerChange(); }}  />
         <OpenAiAutocompleteConfig style={{ display: writingMode === 'summary' ? 'flex' : 'none'}}
-            value={summaryConfig}
-            onValueChange={setSummaryConfig} >
-        </OpenAiAutocompleteConfig>
+            initValue={summaryConfig}
+            onValueChange={v => {setSummaryConfig(v); onModePickerChange(); }} />
         <TextAnalysisTextSummarizationConfig style={{ display: writingMode === 'extract' ? 'flex' : 'none'}}
-            value={extractConfig}
-            onValueChange={setExtractConfig} >
-        </TextAnalysisTextSummarizationConfig>
+            initValue={extractConfig}
+            onValueChange={v => {setExtractConfig(v); onModePickerChange(); }} />
         <SmodinRewriteConfig style={{ display: writingMode === 'rewrite-smodin' ? 'flex' : 'none'}}
-            value={rewriteSmodinConfig}
-            onValueChange={setRewriteSmodinConfig} >
-        </SmodinRewriteConfig>
+            initValue={rewriteSmodinConfig}
+            onValueChange={v => {setRewriteSmodinConfig(v); onModePickerChange(); }} />
         <View style={{ display: writingMode === 'topic_tagging' ? 'flex' : 'none'}}>
           <Text>No additional settings are available</Text>  
         </View>
