@@ -3,10 +3,17 @@ import { Alert, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Dime
 import * as Linking from 'expo-linking';
 
 import { styles, mdScreenWidth } from './styles';
-import { EngineID, CompletionChoice, OpenAiApiClient, GhostWriterConfig, CompletionParams } from './openai';
+import {
+  EngineID,
+  CompletionChoice,
+  CompletionParams,
+  SmodinRewriteRequest,
+  TextAnalysisTextSummarizationTextRequest,
+} from './lib/types';
+import { GhostWriterConfig } from './lib/writer-config';
+import { MyApiClient } from './lib/api-client';
 import { GhostWriterModeConfig } from './ghost-writer-mode-config';
 import { AnswerList } from './answer-list';
-import { SmodinRewriterApiClient, SmodinRewriteRequest, TextAnalysisTextSummarizationApiClient, TextAnalysisTextSummarizationTextRequest, TwinwordTopicTaggingApiClient } from './rapidapi';
 
 interface GhostWriterSimpleProps {
   seedText: string,
@@ -21,7 +28,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
 
   const { width, height } = Dimensions.get('window');
 
-  const apiClient = new OpenAiApiClient('sk-QaMxHjhRe0ez4v2Vnf6r2junMFSoZ03oZ8CkFdK4', EngineID.Curie);
+  const apiClient = new MyApiClient('abcdefg', EngineID.Curie);
 
   const checkInitialURL = async () => {
     let {path, queryParams} = await Linking.parseInitialURLAsync();
@@ -84,8 +91,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
 
     if (writingMode === 'topic_tagging')
     {
-      let writer = new TwinwordTopicTaggingApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
-      let json = await writer.generate(text.trim());
+      let json = await apiClient.generateTagging(text.trim());
   
       if (json.keyword) {
         let choices = Object.keys(json.keyword).map(t => { return { text: t } as CompletionChoice; });
@@ -98,8 +104,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     }
     else if (writingMode === 'extract')
     {
-      let writer = new TextAnalysisTextSummarizationApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
-      let json = await writer.textSummarizerText(text.trim(), extractConfig && extractConfig.sentnum);
+      let json = await apiClient.textSummarizerText(text.trim(), extractConfig && extractConfig.sentnum);
   
       if (json.sentences) {
         let choices = json.sentences.map(t => { return { text: t } as CompletionChoice; });
@@ -112,8 +117,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     }
     else if (writingMode === 'rewrite-smodin')
     {
-      let writer = new SmodinRewriterApiClient("32adc67923mshf6eaebf96af2bc5p13d6cbjsn67b24e92d24c");
-      let json = await writer.rewrite(text.trim(), rewriteSmodinConfig && rewriteSmodinConfig.language, rewriteSmodinConfig && rewriteSmodinConfig.strength);
+      let json = await apiClient.rewrite(text.trim(), rewriteSmodinConfig && rewriteSmodinConfig.language, rewriteSmodinConfig && rewriteSmodinConfig.strength);
   
       if (json.rewrite) {
         let choices = [
