@@ -1,17 +1,20 @@
 import app from './app';
 import { pingzRouter } from './services/pingz/pingz.router';
 import { noteRouter } from './services/notes/notes.router';
-import { starWarsRouter } from './services/starwars/starwars.router';
 import { apiDocsRouter } from './services/apiDocs/apiDocs.router';
+import { openaiRouter } from './services/openai/openai.router';
+import { rapidapiRouter } from './services/rapidapi/rapidapi.router';
 import { Request, Response, NextFunction } from 'express';
 import middleware from './middleware';
 import errors from './lib/errors';
+
 
 // Routers
 app
   .use('/pingz', pingzRouter)
   .use('/note', noteRouter)
-  .use('/starwars', starWarsRouter)
+  .use('/openai', openaiRouter)
+  .use('/rapidapi', rapidapiRouter)
   .use('/api-docs', apiDocsRouter);
 
 
