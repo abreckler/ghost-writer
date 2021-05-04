@@ -1,0 +1,19 @@
+{
+  "files.autoSave": "afterDelay",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true,
+    "source.fixAll.markdownlint": true
+  },
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "appService.zipIgnorePattern": [
+    "node_modules{,/**}",
+    ".vscode{,/**}"
+  ],
+  "appService.defaultWebAppToDeploy": "/subscriptions/13304cca-660e-436e-b987-094937627256/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/cirrus-dave-test",
+  "appService.deploySubpath": "dist",
+  "editor.formatOnSaveMode": "modifications",
+  "cSpell.words": [
+    "starwars"
+  ]
+}
