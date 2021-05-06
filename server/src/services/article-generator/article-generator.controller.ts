@@ -28,10 +28,17 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     // extract top results
 
     // article extraction and summarization
+    const url = '';
+    const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
+    const extractorResponse = await extractorClient.extractArticleData(url);
+
+    // merge article summaries to generate full text
 
     // rephrase
+    const sourceText = '';
+    const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
+    const rephraserRespone = await rephraserClient.rewrite(sourceText);
 
-    
   } catch (err) {
     next(err);
   }
