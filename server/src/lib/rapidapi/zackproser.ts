@@ -2,7 +2,7 @@ import RapidApiClient from './base';
 
 
 //
-// URL Intelligence
+// URL Intelligence by Zackproser
 // https://rapidapi.com/zackproser/api/url-intelligence
 //
 interface ZackproserUrlIntelligenceRequest {
