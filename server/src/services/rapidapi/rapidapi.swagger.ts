@@ -12,7 +12,7 @@ export const infoBlock = {
   ]
 };
 
-export const starship = {
+export const rapidapi = {
   '/starwars/starship/{id}': {
     get: {
       ...infoBlock,

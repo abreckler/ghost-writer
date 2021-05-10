@@ -1,6 +1,8 @@
 import { pingz } from '../../pingz/pingz.swagger';
 import { notes } from '../../notes/notes.swagger';
-import { starship } from '../../starwars/starwars.swagger';
+import { openai } from '../../openai/openai.swagger';
+import { rapidapi } from '../../rapidapi/rapidapi.swagger';
+import { starship } from '../../article-generator/article-generator.swagger';
 import { info, servers, securitySchemes } from './common';
 import { Pingz, User, Note, Deleted, StarShip } from './common/schemas';
 
@@ -22,6 +24,8 @@ export const swaggerDocument = {
   paths: {
     ...pingz,
     ...notes,
+    ...openai,
+    ...rapidapi,
     ...starship,
   },
 };
