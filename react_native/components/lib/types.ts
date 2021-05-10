@@ -26,6 +26,7 @@ interface CompletionChoice {
   index?: number;
   logprobs?: any;
   finish_reason?: string;
+  html?: boolean;
 }
 
 interface CompletionResponse {

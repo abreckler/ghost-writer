@@ -123,10 +123,9 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         let json = await apiClient.rewrite(text.trim(), rewriteSmodinConfig && rewriteSmodinConfig.language, rewriteSmodinConfig && rewriteSmodinConfig.strength);
     
         if (json.rewrite) {
-          let choices = [
+          setAnswers([
             { text: json.rewrite } as CompletionChoice,
-          ];
-          setAnswers(choices);
+          ]);
           setAnswersAlert('');
         } else {
           setAnswers([]);
@@ -137,10 +136,9 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       {
         let json = await apiClient.generateArticle(text.trim());
         if (json.generated_article) {
-          let choices = [
-            { text: json.generated_article } as CompletionChoice,
-          ];
-          setAnswers(choices);
+          setAnswers([
+            { text: json.generated_article, html: false } as CompletionChoice,
+          ]);
           setAnswersAlert('');
         } else {
           setAnswers([]);

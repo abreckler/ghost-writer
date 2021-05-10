@@ -10,6 +10,7 @@ interface IAnswerListProps {
   data?: CompletionChoice[];
   noAnswerAlert?: string;
   style?: StyleProp<ViewStyle>;
+  html?: boolean;
 }
 
 const AnswerList: FC<IAnswerListProps> = props => {
@@ -25,6 +26,7 @@ const AnswerList: FC<IAnswerListProps> = props => {
         choice={info.item}
         onPress={() => answerclicked(info.item)}
         style={{}}
+        html={props.html}
       />
     );
   };
