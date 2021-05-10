@@ -9,6 +9,7 @@ import {
   SmodinRewriteResponse,
   TextAnalysisTextSummarizationResponse,
   TextAnalysisTextSummarizationTextRequest,
+  ArticleGeneratorResponse,
 } from "./types";
 
 class MyApiClient {
@@ -97,7 +98,16 @@ class MyApiClient {
 
     return await this._doPost<SmodinRewriteRequest, SmodinRewriteResponse>('/rapidapi/rewriter-paraphraser-text-changer-multi-language/rewrite', params);
   }
-  
+
+  //
+  // Custom API - Article Generator
+  //
+
+  public async generateArticle(seedText: string): Promise<ArticleGeneratorResponse> {
+    return await this._doPost<{ seed_text : string }, ArticleGeneratorResponse>('/api/article-generator/write', { seed_text: seedText });
+  }
+
+
   //
   // Internal functions
   //

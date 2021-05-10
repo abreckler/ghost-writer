@@ -3,7 +3,7 @@ import { Alert, FlatList, ListRenderItem, StyleProp, Text, View, ViewStyle } fro
 import Clipboard from 'expo-clipboard';
 
 import { AnswerChoice } from './answer-choice';
-import { CompletionChoice } from './openai';
+import { CompletionChoice } from './lib/types';
 import { styles } from './styles';
 
 interface IAnswerListProps {

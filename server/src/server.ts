@@ -1,9 +1,9 @@
 import app from './app';
 import { pingzRouter } from './services/pingz/pingz.router';
-import { noteRouter } from './services/notes/notes.router';
 import { apiDocsRouter } from './services/apiDocs/apiDocs.router';
 import { openaiRouter } from './services/openai/openai.router';
 import { rapidapiRouter } from './services/rapidapi/rapidapi.router';
+import { articleGeneratorRouter } from './services/article-generator/article-generator.router';
 import { Request, Response, NextFunction } from 'express';
 import middleware from './middleware';
 import errors from './lib/errors';
@@ -12,9 +12,9 @@ import errors from './lib/errors';
 // Routers
 app
   .use('/pingz', pingzRouter)
-  .use('/note', noteRouter)
   .use('/openai', openaiRouter)
   .use('/rapidapi', rapidapiRouter)
+  .use('/api', articleGeneratorRouter)
   .use('/api-docs', apiDocsRouter);
 
 

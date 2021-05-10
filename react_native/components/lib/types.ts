@@ -95,6 +95,13 @@ interface SmodinRewriteResponse {
   text: string,
 }
 
+//
+// Article Generator
+//
+interface ArticleGeneratorResponse {
+  generated_article: string;
+}
+
 
 export {
   //
@@ -117,4 +124,7 @@ export {
   //
   SmodinRewriteRequest,
   SmodinRewriteResponse,
+
+  //
+  ArticleGeneratorResponse
 };

@@ -12,13 +12,18 @@ import { GoogleSearchParameters } from 'google-search-results-nodejs';
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
 
+/**
+ * 
+ * @param req.body.seed_text {string}
+ */
 const writeArticle = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const seedText = req.body.seed_text || '';
     // call serpapi to get google search result with the seed text
     const search = new GoogleSearchAsync(SERPAPI_API_KEY);
     const searchParams = {
       engine: "google",
-      q: "gifts for people who drive a lot after:2021-04-08",
+      q: seedText,
       location: "Austin, Texas, United States",
       google_domain: "google.com",
       gl: "us",
@@ -26,9 +31,11 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     } as GoogleSearchParameters;
     const searchResult = await search.json_async(searchParams);
 
+    console.log('Google Search Result from SerpAPI', searchResult);
+
     // extract top results
     const extractedArticles = [];
-    for (let i = 0; i < (searchResult.organic_results || []).length; i++)
+    for (let i = 0; i < (searchResult.organic_results || []).length && i < 10; i++)
     {
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
@@ -37,13 +44,15 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       {
         const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
         const extractorResponse = await extractorClient.extractArticleData(url);
-        extractedArticles.push(extractorResponse.summary);
+        extractedArticles.push(extractorResponse);
       }
     }
 
+    console.log('Extracted Articles', extractedArticles);
+
     // merge article summaries to generate full text
     // rephrase
-    const sourceText = extractedArticles.join('\n\n');;
+    const sourceText = extractedArticles.map(a => a.summary).join('\n\n');
     const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
     const rephraserRespone = await rephraserClient.rewrite(sourceText);
 

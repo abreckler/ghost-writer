@@ -502,10 +502,12 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         this.props.onModeChange('summary', this.summaryConfig);
       else if (writingMode === 'extract')
         this.props.onModeChange('extract', this.extractConfig);
-      else if (writingMode === 'topic_tagging')
-        this.props.onModeChange('topic_tagging', null);
+      else if (writingMode === 'topic-tagging')
+        this.props.onModeChange('topic-tagging', null);
       else if (writingMode === 'rewrite-smodin')
         this.props.onModeChange('rewrite-smodin', this.rewriteSmodinConfig);
+      else if (writingMode === 'generate-article')
+        this.props.onModeChange('generate-article', null);
     }
 
     if (updateStore)
@@ -530,8 +532,9 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
               <Picker.Item label="Q&A" value="qa" />
               <Picker.Item label="Summarize" value="summary" />
               <Picker.Item label="Key Sentences" value="extract" />
-              <Picker.Item label="Topic Tagging" value="topic_tagging" />
+              <Picker.Item label="Topic Tagging" value='topic-tagging' />
               <Picker.Item label="Re-write" value="rewrite-smodin" />
+              <Picker.Item label="Generate Article" value="generate-article" />
             </Picker>
           </View>
           <TouchableOpacity style={[styles.button, styles.buttonSm, { marginVertical: 0, marginHorizontal: 10 }]} onPress={() => this.toggleSettingsView() } >
@@ -561,7 +564,10 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
           <SmodinRewriteConfig style={{ display: this.state.writingMode === 'rewrite-smodin' ? 'flex' : 'none'}}
               value={this.rewriteSmodinConfig}
               onValueChange={v => {this.rewriteSmodinConfig = v; this.onModePickerChange(); }} />
-          <View style={{ display: this.state.writingMode === 'topic_tagging' ? 'flex' : 'none'}}>
+          <View style={{ display: this.state.writingMode === 'topic-tagging' ? 'flex' : 'none'}}>
+            <Text>No additional settings are available</Text>  
+          </View>
+          <View style={{ display: this.state.writingMode === 'generate-article' ? 'flex' : 'none'}}>
             <Text>No additional settings are available</Text>  
           </View>
         </View>

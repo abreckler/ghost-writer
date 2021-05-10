@@ -60,9 +60,10 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   let extractConfig: TextAnalysisTextSummarizationTextRequest;
 
   const onModeConfigChange = (mode: string, config: any) => {
+    console.log('onModeConfigChange', mode, config);
     setWritingMode(mode);
 
-    if (mode === 'topic_tagging')
+    if (mode === 'topic-tagging' || mode === 'generate-article')
     {}
     else if (mode === 'extract') {
       extractConfig = config as TextAnalysisTextSummarizationTextRequest;
@@ -86,11 +87,12 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       Alert.alert("Please enter seed text!");
       return;
     }
+    console.log(writingMode, text);
 
     setButtonDisabled(true);
 
     try {
-      if (writingMode === 'topic_tagging')
+      if (writingMode === 'topic-tagging')
       {
         let json = await apiClient.generateTagging(text.trim());
     
@@ -123,6 +125,20 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         if (json.rewrite) {
           let choices = [
             { text: json.rewrite } as CompletionChoice,
+          ];
+          setAnswers(choices);
+          setAnswersAlert('');
+        } else {
+          setAnswers([]);
+          setAnswersAlert('Ghost Writer could not suggest an answer!');
+        }
+      }
+      else if (writingMode === 'generate-article')
+      {
+        let json = await apiClient.generateArticle(text.trim());
+        if (json.generated_article) {
+          let choices = [
+            { text: json.generated_article } as CompletionChoice,
           ];
           setAnswers(choices);
           setAnswersAlert('');
