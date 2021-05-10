@@ -1,3 +1,5 @@
+import Axios, { AxiosInstance } from "axios";
+
 enum EngineID {
   Davinci = "davinci",
     Curie = "curie",
@@ -146,10 +148,20 @@ class OpenAiApiClient {
   FILTER_EMPTY_COMPLETION_ANSWER = true;
   BEAUTIFY_COMPLETION_ANSWER = true;
   DEBUG = true;
+  
+  private axios_instance: AxiosInstance;
 
   public constructor(API_KEY: string, DEFAULT_ENGINE: EngineID = EngineID.Curie) {
     this.API_KEY = API_KEY;
     this.DEFAULT_ENGINE = DEFAULT_ENGINE;
+
+    this.axios_instance = Axios.create({
+      baseURL: 'https://api.openai.com/v1/',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + this.API_KEY
+      },
+    });
   }
 
   public setEngine(engine: EngineID) {
@@ -161,7 +173,7 @@ class OpenAiApiClient {
    * @see https://beta.openai.com/docs/api-reference/engines
    */
   public async listEngines(): Promise < ListEnginesResponse > {
-    let json = await this._doGet < ListEnginesResponse > ('https://api.openai.com/v1/engines');
+    let json = await this._doGet < ListEnginesResponse > ('/engines');
     return json;
   }
 
@@ -170,9 +182,8 @@ class OpenAiApiClient {
    * @see https://beta.openai.com/docs/api-reference/create-completion
    */
   public async completion(params: CompletionParams): Promise < CompletionResponse > {
-    let completionUrl = 'https://api.openai.com/v1/engines/' + this.DEFAULT_ENGINE + '/completions';
-    let json = await this._doPost < CompletionParams,
-      CompletionResponse > (completionUrl, params);
+    let completionUrl = '/engines/' + this.DEFAULT_ENGINE + '/completions';
+    let json = await this._doPost <CompletionParams, CompletionResponse> (completionUrl, params);
 
     if (this.FILTER_EMPTY_COMPLETION_ANSWER)
       json.choices = (json.choices || []).filter((c) => {
@@ -192,9 +203,8 @@ class OpenAiApiClient {
    * @see https://beta.openai.com/docs/api-reference/searches/create
    */
   public async search(params: SearchParams): Promise < SearchResponse > {
-    let url = 'https://api.openai.com/v1/engines/' + this.DEFAULT_ENGINE + '/search';
-    let json = await this._doPost < SearchParams,
-      SearchResponse > (url, params);
+    let url = '/engines/' + this.DEFAULT_ENGINE + '/search';
+    let json = await this._doPost <SearchParams, SearchResponse> (url, params);
     return json;
   }
 
@@ -204,8 +214,7 @@ class OpenAiApiClient {
    * @see https://beta.openai.com/docs/api-reference/classifications/create
    */
   public async classification(params: ClassificationParams): Promise < ClassificationResponse > {
-    let json = await this._doPost < ClassificationParams,
-      ClassificationResponse > ('https://api.openai.com/v1/classifications', params);
+    let json = await this._doPost <ClassificationParams, ClassificationResponse> ('/classifications', params);
     return json;
   }
 
@@ -214,8 +223,7 @@ class OpenAiApiClient {
    * @see https://beta.openai.com/docs/api-reference/answers/create
    */
   public async createAnswer(params: CreateAnswerParams): Promise < CreateAnswerResponse > {
-    let json = await this._doPost < CreateAnswerParams,
-      CreateAnswerResponse > ('https://api.openai.com/v1/answers', params);
+    let json = await this._doPost <CreateAnswerParams, CreateAnswerResponse> ('/answers', params);
     return json;
   }
 
@@ -224,7 +232,7 @@ class OpenAiApiClient {
    * @see https://beta.openai.com/docs/api-reference/files
    */
   public async listFiles(): Promise < ListFilesResponse > {
-    let json = await this._doGet < ListFilesResponse > ('https://api.openai.com/v1/files');
+    let json = await this._doGet < ListFilesResponse > ('/files');
     return json;
   }
 
@@ -233,7 +241,7 @@ class OpenAiApiClient {
    * @see https://beta.openai.com/docs/api-reference/files/retrieve
    */
   public async retrieveFile(fileId: string): Promise < File > {
-    let json = await this._doGet < File > ('https://api.openai.com/v1/files/' + fileId);
+    let json = await this._doGet < File > ('/files/' + fileId);
     return json;
   }
 
@@ -242,14 +250,8 @@ class OpenAiApiClient {
    * @see https://beta.openai.com/docs/api-reference/files/delete
    */
   public async deleteFile(fileId: string): Promise < boolean > {
-    let response = await fetch('https://api.openai.com/v1/files/' + fileId, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.API_KEY
-      },
-    });
-    return response.ok;
+    let response = await this.axios_instance.delete('/files/' + fileId);
+    return response.status >= 200 && response.status < 300;
   }
 
   /**
@@ -259,21 +261,9 @@ class OpenAiApiClient {
     if (this.DEBUG)
       console.log(url, params);
 
-    let response = await fetch(url, {
-      method: 'POST',
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.API_KEY
-      },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(params) // body data type must match "Content-Type" header
-    });
+    let response = await this.axios_instance.post(url, params);
 
-    let json: ResponseType = await response.json();
+    let json: ResponseType = await response.data;
     if (this.DEBUG)
       console.log(json);
 
@@ -287,15 +277,9 @@ class OpenAiApiClient {
     if (this.DEBUG)
       console.log(url);
 
-    let response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.API_KEY
-      },
-    });
+    let response = await this.axios_instance.get(url);
 
-    let json: ResponseType = await response.json();
+    let json: ResponseType = await response.data;
     if (this.DEBUG)
       console.log(json);
 

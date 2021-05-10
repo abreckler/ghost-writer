@@ -27,7 +27,7 @@ class TwinwordTopicTaggingApiClient extends RapidApiClient {
       text: text
     } as TwinwordTopicTaggingGenerateRequest;
 
-    return await this._doPostForm<TwinwordTopicTaggingGenerateRequest, TwinwordTopicTaggingGenerateResponse>(this.API_BASEURL + 'generate/', params);
+    return await this._doPostForm<TwinwordTopicTaggingGenerateRequest, TwinwordTopicTaggingGenerateResponse>('/generate/', params);
   }
 }
 

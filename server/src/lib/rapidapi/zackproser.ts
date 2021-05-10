@@ -23,7 +23,7 @@ class ZackproserUrlIntelligenceApiClient extends RapidApiClient {
       target: target,
     };
 
-    return await this._doGet<ZackproserUrlIntelligenceResponse>(this.API_BASEURL + 'rip?' + new URLSearchParams(params));
+    return await this._doGet<ZackproserUrlIntelligenceResponse>('/rip?' + new URLSearchParams(params));
   }
 }
 

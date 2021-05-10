@@ -25,7 +25,7 @@ class TextAnalysisTextSummarizationApiClient extends RapidApiClient {
       sentnum: sentnum ? sentnum : 5,
     } as TextAnalysisTextSummarizationTextRequest;
 
-    return await this._doPostForm<TextAnalysisTextSummarizationTextRequest, TextAnalysisTextSummarizationResponse>(this.API_BASEURL + 'text-summarizer-text', params);
+    return await this._doPostForm<TextAnalysisTextSummarizationTextRequest, TextAnalysisTextSummarizationResponse>('/text-summarizer-text', params);
   }
 
   public async textSummarizerUrl(url: string, sentnum?: number): Promise<TextAnalysisTextSummarizationResponse> {
@@ -34,7 +34,7 @@ class TextAnalysisTextSummarizationApiClient extends RapidApiClient {
       sentnum: sentnum ? sentnum : 5,
     } as TextAnalysisTextSummarizationUrlRequest;
 
-    return await this._doPostForm<TextAnalysisTextSummarizationUrlRequest, TextAnalysisTextSummarizationResponse>(this.API_BASEURL + 'text-summarizer-url', params);
+    return await this._doPostForm<TextAnalysisTextSummarizationUrlRequest, TextAnalysisTextSummarizationResponse>('/text-summarizer-url', params);
   }
 }
 

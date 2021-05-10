@@ -1,3 +1,5 @@
+import Axios, { AxiosInstance } from "axios";
+
 class RapidApiClient {
 
   API_KEY = "";
@@ -5,10 +7,23 @@ class RapidApiClient {
   API_BASEURL = "";
   DEBUG = !1;
 
+  private axios_instance : AxiosInstance;
+
   public constructor(API_KEY: string, API_HOST: string, API_BASEURL: string) {
     this.API_KEY = API_KEY;
     this.API_HOST = API_HOST;
     this.API_BASEURL = API_BASEURL;
+
+    this.axios_instance = Axios.create({
+      baseURL: this.API_BASEURL,
+      withCredentials: true,
+      headers: {
+        "content-type": "application/json",
+        'X-RapidAPI-Key': this.API_KEY,
+        'X-RapidAPI-Host': this.API_HOST,
+        'useQueryString': 'true',
+      },
+    })
   }
 
   /**
@@ -18,23 +33,13 @@ class RapidApiClient {
     if (this.DEBUG)
       console.log(url, params);
 
-    let response = await fetch(url, {
-      method: 'POST',
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
+    let response = await this.axios_instance.post(url, params, {
       headers: {
         "content-type": "application/json",
-        'X-RapidAPI-Key': this.API_KEY,
-        'X-RapidAPI-Host': this.API_HOST,
-        'useQueryString': 'true',
       },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(params), // body data type must match "Content-Type" header
     });
 
-    let json : ResponseType = await response.json();
+    let json : ResponseType = await response.data;
     if (this.DEBUG)
       console.log(json);
 
@@ -53,23 +58,13 @@ class RapidApiClient {
       body.set(k, v);
     }
 
-    let response = await fetch(url, {
-      method: 'POST',
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
+    let response = await this.axios_instance.post(url, body, {
       headers: {
         "content-type": "application/x-www-form-urlencoded",
-        'X-RapidAPI-Key': this.API_KEY,
-        'X-RapidAPI-Host': this.API_HOST,
-        'useQueryString': 'true',
       },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: body // body data type must match "Content-Type" header
     });
 
-    let json : ResponseType = await response.json();
+    let json : ResponseType = await response.data;
     if (this.DEBUG)
       console.log(json);
 
@@ -83,17 +78,13 @@ class RapidApiClient {
     if (this.DEBUG)
       console.log(url);
 
-    let response = await fetch(url, {
-      method: 'GET',
+    let response = await this.axios_instance.get(url, {
       headers: {
         'Content-Type': 'application/json',
-        'X-RapidAPI-Key': this.API_KEY,
-        'X-RapidAPI-Host': this.API_HOST,
-        'useQueryString': 'true',
       },
     });
 
-    let json : ResponseType = await response.json();
+    let json : ResponseType = await response.data;
     if (this.DEBUG)
       console.log(json);
 

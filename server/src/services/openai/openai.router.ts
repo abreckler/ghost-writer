@@ -1,5 +1,5 @@
 import express from "express";
-import versionRouter from '../../lib/versionRouter';
+import middleware from '../../middleware';
 import {
   listEngines,
   completion,
@@ -11,16 +11,27 @@ import {
 
 export const openaiRouter = express.Router();
 
-const listAllEnginesVersions = new Map().set('v1', listEngines);
-const createCompletionVersions = new Map().set('v1', completion);
-const searchVersions = new Map().set('v1', search);
-const classificationVersions = new Map().set('v1', classification);
-const createAnswerVersions = new Map().set('v1', createAnswer);
-const listFilesVersions = new Map().set('v1', listFiles);
-
-openaiRouter.get('/engines', versionRouter(listAllEnginesVersions));
-openaiRouter.post('/engines/:engine/completions', versionRouter(createCompletionVersions));
-openaiRouter.post('/engines/:engine/search', versionRouter(searchVersions));
-openaiRouter.post('/classifications/create', versionRouter(classificationVersions));
-openaiRouter.post('/answers/create', versionRouter(createAnswerVersions));
-openaiRouter.get('/files', versionRouter(listFilesVersions));
+openaiRouter.get('/engines',
+  middleware.authentication,
+  middleware.authorization('a role GET / HEAD'), 
+  listEngines);
+openaiRouter.post('/engines/:engine/completions',
+  middleware.authentication,
+  middleware.authorization('a role GET / HEAD'), 
+  completion);
+openaiRouter.post('/engines/:engine/search',
+  middleware.authentication,
+  middleware.authorization('a role GET / HEAD'), 
+  search);
+openaiRouter.post('/classifications/create',
+  middleware.authentication,
+  middleware.authorization('a role GET / HEAD'), 
+  classification);
+openaiRouter.post('/answers/create',
+  middleware.authentication,
+  middleware.authorization('a role GET / HEAD'), 
+  createAnswer);
+openaiRouter.get('/files',
+  middleware.authentication,
+  middleware.authorization('a role GET / HEAD'), 
+  listFiles);

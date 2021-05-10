@@ -25,7 +25,7 @@ class SmodinRewriterApiClient extends RapidApiClient {
       strength: strength ? strength : 3,
     } as SmodinRewriteRequest;
 
-    return await this._doPostJson<SmodinRewriteRequest, SmodinRewriteResponse>(this.API_BASEURL + 'rewrite', params);
+    return await this._doPostJson<SmodinRewriteRequest, SmodinRewriteResponse>('/rewrite', params);
   }
 }
 

@@ -3,10 +3,11 @@ import { GoogleSearchAsync } from '../../lib/serpapi-async';
 
 import {
   PipfeedArticleDataExtractorApiClient,
-  PipfeedArticleDataExtractorRequest, PipfeedArticleDataExtractorResponse,
+  PipfeedArticleDataExtractorResponse,
   HealthyTechParaphraserApiClient,
-  HealthyTechParaphraserRequest, HealthyTechParaphraserResponse,
+  HealthyTechParaphraserResponse,
 } from "../../lib/rapidapi";
+import { GoogleSearchParameters } from 'google-search-results-nodejs';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
@@ -22,23 +23,33 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       google_domain: "google.com",
       gl: "us",
       hl: "en"
-    };
+    } as GoogleSearchParameters;
     const searchResult = await search.json_async(searchParams);
 
     // extract top results
-
-    // article extraction and summarization
-    const url = '';
-    const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
-    const extractorResponse = await extractorClient.extractArticleData(url);
+    const extractedArticles = [];
+    for (let i = 0; i < (searchResult.organic_results || []).length; i++)
+    {
+      // article extraction and summarization
+      const r = (searchResult.organic_results || [])[i];
+      const url = r.link || '';
+      if (url)
+      {
+        const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
+        const extractorResponse = await extractorClient.extractArticleData(url);
+        extractedArticles.push(extractorResponse.summary);
+      }
+    }
 
     // merge article summaries to generate full text
-
     // rephrase
-    const sourceText = '';
+    const sourceText = extractedArticles.join('\n\n');;
     const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
     const rephraserRespone = await rephraserClient.rewrite(sourceText);
 
+    res.json({
+      'generated_article' : rephraserRespone.newText
+    });
   } catch (err) {
     next(err);
   }

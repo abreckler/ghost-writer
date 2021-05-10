@@ -40,7 +40,7 @@ class PipfeedArticleDataExtractorApiClient extends RapidApiClient {
       useCache: useCache,
     };
 
-    return await this._doGet<PipfeedArticleDataExtractorResponse>(this.API_BASEURL + 'extract/v2/?' + new URLSearchParams(params));
+    return await this._doGet<PipfeedArticleDataExtractorResponse>('/extract/v2/?' + new URLSearchParams(params));
   }
 }
 

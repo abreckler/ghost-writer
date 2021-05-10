@@ -21,7 +21,7 @@ class HealthyTechParaphraserApiClient extends RapidApiClient {
       sourceText: sourceText,
     } as HealthyTechParaphraserRequest;
 
-    return await this._doPostJson<HealthyTechParaphraserRequest, HealthyTechParaphraserResponse>(this.API_BASEURL + 'api/rewrite', params);
+    return await this._doPostJson<HealthyTechParaphraserRequest, HealthyTechParaphraserResponse>('/api/rewrite', params);
   }
 }
 
