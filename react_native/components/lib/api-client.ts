@@ -69,7 +69,7 @@ class MyApiClient {
       text: text
     } as TwinwordTopicTaggingGenerateRequest;
 
-    return await this._doPost<TwinwordTopicTaggingGenerateRequest, TwinwordTopicTaggingGenerateResponse>('/rapidapi/twinword-topic-tagging/generate/', params);
+    return await this._doPost<TwinwordTopicTaggingGenerateRequest, TwinwordTopicTaggingGenerateResponse>('/rapidapi/twinword-topic-tagging/generate', params);
   }
 
   //

@@ -3,8 +3,8 @@ import { Alert, Dimensions, Text, TextInput, TextStyle, TouchableOpacity, View, 
 import { Picker } from '@react-native-picker/picker';
 
 import { styles, mdScreenWidth } from './styles';
-import { CompletionParams, CompletionParamsTemplate, GhostWriterConfig } from './openai';
-import { SmodinRewriteRequest, TextAnalysisTextSummarizationTextRequest } from './rapidapi';
+import { CompletionParams, SmodinRewriteRequest, TextAnalysisTextSummarizationTextRequest } from './lib/types';
+import { CompletionParamsTemplate, GhostWriterConfig } from './lib/writer-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TagsInput } from './tags-input';
 

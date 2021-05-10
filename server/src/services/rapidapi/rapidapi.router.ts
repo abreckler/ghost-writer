@@ -8,7 +8,7 @@ import {
 
 export const rapidapiRouter = express.Router();
 
-rapidapiRouter.get('/twinword-topic-tagging/generate',
+rapidapiRouter.post('/twinword-topic-tagging/generate',
   middleware.authentication,
   middleware.authorization('a role GET / HEAD'), 
   generateTagging);

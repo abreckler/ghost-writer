@@ -28,7 +28,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
 
   const { width, height } = Dimensions.get('window');
 
-  const apiClient = new MyApiClient('abcdefg', EngineID.Curie);
+  const apiClient = new MyApiClient('84PdwfwpSkak79k1mF1BDjagNwpQvSeWtuTiGVWDwF8JyQlD9oS78d9XddI', EngineID.Curie);
 
   const checkInitialURL = async () => {
     let {path, queryParams} = await Linking.parseInitialURLAsync();
@@ -89,77 +89,81 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
 
     setButtonDisabled(true);
 
-    if (writingMode === 'topic_tagging')
-    {
-      let json = await apiClient.generateTagging(text.trim());
-  
-      if (json.keyword) {
-        let choices = Object.keys(json.keyword).map(t => { return { text: t } as CompletionChoice; });
-        setAnswers(choices);
-        setAnswersAlert('');
-      } else {
-        setAnswers([]);
-        setAnswersAlert('Ghost Writer could not suggest an answer!');
+    try {
+      if (writingMode === 'topic_tagging')
+      {
+        let json = await apiClient.generateTagging(text.trim());
+    
+        if (json.keyword) {
+          let choices = Object.keys(json.keyword).map(t => { return { text: t } as CompletionChoice; });
+          setAnswers(choices);
+          setAnswersAlert('');
+        } else {
+          setAnswers([]);
+          setAnswersAlert('Ghost Writer could not suggest an answer!');
+        }
       }
-    }
-    else if (writingMode === 'extract')
-    {
-      let json = await apiClient.textSummarizerText(text.trim(), extractConfig && extractConfig.sentnum);
-  
-      if (json.sentences) {
-        let choices = json.sentences.map(t => { return { text: t } as CompletionChoice; });
-        setAnswers(choices);
-        setAnswersAlert('');
-      } else {
-        setAnswers([]);
-        setAnswersAlert('Ghost Writer could not suggest an answer!');
+      else if (writingMode === 'extract')
+      {
+        let json = await apiClient.textSummarizerText(text.trim(), extractConfig && extractConfig.sentnum);
+    
+        if (json.sentences) {
+          let choices = json.sentences.map(t => { return { text: t } as CompletionChoice; });
+          setAnswers(choices);
+          setAnswersAlert('');
+        } else {
+          setAnswers([]);
+          setAnswersAlert('Ghost Writer could not suggest an answer!');
+        }
       }
-    }
-    else if (writingMode === 'rewrite-smodin')
-    {
-      let json = await apiClient.rewrite(text.trim(), rewriteSmodinConfig && rewriteSmodinConfig.language, rewriteSmodinConfig && rewriteSmodinConfig.strength);
-  
-      if (json.rewrite) {
-        let choices = [
-          { text: json.rewrite } as CompletionChoice,
-        ];
-        setAnswers(choices);
-        setAnswersAlert('');
-      } else {
-        setAnswers([]);
-        setAnswersAlert('Ghost Writer could not suggest an answer!');
+      else if (writingMode === 'rewrite-smodin')
+      {
+        let json = await apiClient.rewrite(text.trim(), rewriteSmodinConfig && rewriteSmodinConfig.language, rewriteSmodinConfig && rewriteSmodinConfig.strength);
+    
+        if (json.rewrite) {
+          let choices = [
+            { text: json.rewrite } as CompletionChoice,
+          ];
+          setAnswers(choices);
+          setAnswersAlert('');
+        } else {
+          setAnswers([]);
+          setAnswersAlert('Ghost Writer could not suggest an answer!');
+        }
       }
-    }
-    else
-    {
-      let writer = new GhostWriterConfig;
-      let params : CompletionParams;
-
-      if (writingMode === 'rewrite')
-        params = writer.generateCompleteParams(text.trim(), rewriteConfig ? '' : 'rewrite', rewriteConfig);
-      else if (writingMode === 'qa')
-        params = writer.generateCompleteParams(text.trim(), qaConfig ? '' : 'qa', qaConfig);
-      else if (writingMode === 'summary')
-        params = writer.generateCompleteParams(text.trim(), summaryConfig ? '' : 'summary', summaryConfig);
       else
-        params = writer.generateCompleteParams(text.trim(), autocompleteConfig ? '' : 'autocomplete', autocompleteConfig);
+      {
+        let writer = new GhostWriterConfig;
+        let params : CompletionParams;
 
-      let json = await apiClient.completion(params);
-  
-      if (json.choices) {
-        setAnswers(json.choices.filter(c => (c.text || '').trim().length > 0));
-  
         if (writingMode === 'rewrite')
-          setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
+          params = writer.generateCompleteParams(text.trim(), rewriteConfig ? '' : 'rewrite', rewriteConfig);
         else if (writingMode === 'qa')
-          setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
+          params = writer.generateCompleteParams(text.trim(), qaConfig ? '' : 'qa', qaConfig);
+        else if (writingMode === 'summary')
+          params = writer.generateCompleteParams(text.trim(), summaryConfig ? '' : 'summary', summaryConfig);
         else
-          setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
-      } else {
-        setAnswers([]);
-        setAnswersAlert('Ghost Writer could not suggest an answer!');
+          params = writer.generateCompleteParams(text.trim(), autocompleteConfig ? '' : 'autocomplete', autocompleteConfig);
+
+        let json = await apiClient.completion(params);
+    
+        if (json.choices) {
+          setAnswers(json.choices.filter(c => (c.text || '').trim().length > 0));
+    
+          if (writingMode === 'rewrite')
+            setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
+          else if (writingMode === 'qa')
+            setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
+          else
+            setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
+        } else {
+          setAnswers([]);
+          setAnswersAlert('Ghost Writer could not suggest an answer!');
+        }
       }
     }
+    catch
+    {}
 
     setButtonDisabled(false);
   };
