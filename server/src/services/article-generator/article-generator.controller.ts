@@ -39,7 +39,8 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
     const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
 
-    for (let i = 0; i < (searchResult.organic_results || []).length && i < MAX_SOURCE_ARTICLES; i++)
+    let j = 0;
+    for (let i = 0; i < (searchResult.organic_results || []).length && j < MAX_SOURCE_ARTICLES; i++)
     {
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
@@ -51,7 +52,7 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
 
         let extractedUrls = extractUrls(extractorResponse.html);
         const internalHostname = new URL(url).hostname;
-        let externalLinks = extractedUrls.links.filter((l, idx, self) => {
+        const externalLinksFilter = (l: string, idx: number, self: Array<string>) => {
           try {
             let u = new URL(l);
             return self.indexOf(l) === idx // uniqueness
@@ -61,38 +62,32 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
           } catch {
             return false;
           }
-        });
+        };
+        let externalLinks = extractedUrls.links.filter(externalLinksFilter);
         if (externalLinks.length == 0)
         {
           let urlIntellResponse = await urlExtractorClient.rip(url);
           console.log('URL Intelligence API Result for ' + url, urlIntellResponse);
-          externalLinks = urlIntellResponse.links.filter((l, idx, self) => {
-            try {
-              let u = new URL(l);
-              return self.indexOf(l) === idx // uniqueness
-                  && u.hostname && u.pathname && u.hostname != internalHostname // external links only
-                  && ['amzn.to', 'www.amazon.com', 'www.etsy.com', ].indexOf(u.hostname) >= 0 // product urls only
-                  && !/cloudflare|googleapis|aspnetcdn|ajax|api|cdn/.test(u.hostname) // avoid some common non-viewable urls
-            } catch {
-              return false;
-            }
-          });
+          externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
         }
         else
         {
           console.log('URL Extraction Result for ' + url, extractedUrls);
         }
 
-        let rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
-
-        extractedArticles.push({
-          source_url: url,
-          title: extractorResponse.title,
-          description: extractorResponse.description,
-          summary: extractorResponse.summary,
-          rephrased_summary: rephraserRespone.newText,
-          external_links: externalLinks,
-        });
+        if (externalLinks.length > 0)
+        {
+          let rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
+          extractedArticles.push({
+            source_url: url,
+            title: extractorResponse.title,
+            description: extractorResponse.description,
+            summary: extractorResponse.summary,
+            rephrased_summary: rephraserRespone.newText,
+            external_links: externalLinks,
+          });
+          j++;
+        }
       }
     }
 
@@ -107,7 +102,7 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     const text = extractedArticles.map(a => {
       return a.rephrased_summary + '\n\n' +
         'Source: ' + a.source_url + '\n' +
-        'Links: \n' + a.external_links.map(l => '  • ' + l).join('\n')
+        'Links: Total ' + a.external_links.length + ' Links\n' + a.external_links.map(l => '  • ' + l).join('\n')
     }).join('\n\n');
 
     res.json({

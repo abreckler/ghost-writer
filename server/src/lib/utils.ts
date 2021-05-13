@@ -1,3 +1,8 @@
+/**
+ * Extracts URL links and hostnames from a string
+ * @param html string
+ * @returns 
+ */
 function extractUrls(html: string) {
   let links: Array<string> = [];
   let hostnames: Array<string> = [];
