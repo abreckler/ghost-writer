@@ -10,6 +10,10 @@ import {
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 
+/**
+ * 
+ * @param req.body {TwinwordTopicTaggingGenerateRequest} 
+ */
 const generateTagging = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const params = req.body as TwinwordTopicTaggingGenerateRequest;
@@ -21,6 +25,10 @@ const generateTagging = async (req: Request, res: Response, next: NextFunction) 
   }
 }
 
+/**
+ * 
+ * @param req.body {TextAnalysisTextSummarizationTextRequest}
+ */
 const summarizeText = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const params = req.body as TextAnalysisTextSummarizationTextRequest;
@@ -32,6 +40,10 @@ const summarizeText = async (req: Request, res: Response, next: NextFunction) =>
   }
 }
 
+/**
+ * 
+ * @param req.body {SmodinRewriteRequest}
+ */
 const rewriteText = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const params = req.body as SmodinRewriteRequest;

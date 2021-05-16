@@ -20,6 +20,11 @@ const listEngines = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
+/**
+ * 
+ * @param req.body {CompletionParams}
+ * @param req.params.engine {string}
+ */
 const completion = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const engine = req.params.engine as EngineID;
@@ -32,7 +37,11 @@ const completion = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-
+/**
+ * 
+ * @param req.body {SearchParams}
+ * @param req.params.engine {string}
+ */
 const search = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const engine = req.params.engine as EngineID;
@@ -45,7 +54,11 @@ const search = async (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-
+/**
+ * 
+ * @param req.body {ClassificationParams}
+ * @param req.params.engine {string}
+ */
 const classification = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const engine = req.params.engine as EngineID;
@@ -58,6 +71,11 @@ const classification = async (req: Request, res: Response, next: NextFunction) =
   }
 }
 
+/**
+ * 
+ * @param req.body {CreateAnswerParams}
+ * @param req.params.engine {string}
+ */
 const createAnswer = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const engine = req.params.engine as EngineID;

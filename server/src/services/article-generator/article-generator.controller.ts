@@ -15,10 +15,15 @@ const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
 /**
  * 
  * @param req.body.seed_text {string}
+ * @param req.body.num_serp_results {number?} - DEFAULT 3.
+ * @param req.body.num_outbound_links_per_serp_result {number?} - DEFAULT 3.
  */
 const writeArticle = async (req: Request, res: Response, next: NextFunction) => {
+  const seedText = req.body.seed_text || '';
+  const numSerpResults = req.body.num_serp_results || 3;
+  const numOutboundLinksPerSerpResult = req.body.num_outbound_links_per_serp_result || 3;
+
   try {
-    const seedText = req.body.seed_text || '';
     // call serpapi to get google search result with the seed text
     const search = new GoogleSearchAsync(SERPAPI_API_KEY);
     const searchParams = {
@@ -33,14 +38,13 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     console.log('Google Search Result from SerpAPI', searchResult);
 
     // extract top results
-    const MAX_SOURCE_ARTICLES = 3;
     const extractedArticles = [];
     const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
     const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
     const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
 
     let j = 0;
-    for (let i = 0; i < (searchResult.organic_results || []).length && j < MAX_SOURCE_ARTICLES; i++)
+    for (let i = 0; i < (searchResult.organic_results || []).length && j < numSerpResults; i++)
     {
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
@@ -102,7 +106,8 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     const text = extractedArticles.map(a => {
       return a.rephrased_summary + '\n\n' +
         'Source: ' + a.source_url + '\n' +
-        'Links: Total ' + a.external_links.length + ' Links\n' + a.external_links.map(l => '  • ' + l).join('\n')
+        'Links: Total ' + a.external_links.length + ' Links\n' +
+        a.external_links.slice(0, numOutboundLinksPerSerpResult).map(l => '  • ' + l).join('\n')
     }).join('\n\n');
 
     res.json({
