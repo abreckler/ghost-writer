@@ -174,7 +174,7 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
     const text = extractedArticles.map(a => {
       return a.rephrased_summary + '\n\n' +
         'Source: ' + a.source_url + '\n' +
-        'Links: Total ' + a.external_links.length + ' Links\n' +
+        'Links: Total ' + (a.external_links.length > numOutboundLinksPerSerpResult ? numOutboundLinksPerSerpResult : a.external_links.length) + ' Link(s)\n' +
         a.external_links.slice(0, numOutboundLinksPerSerpResult).map(l => '  • ' + l).join('\n')
     }).join('\n\n');
 
