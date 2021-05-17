@@ -99,6 +99,11 @@ interface SmodinRewriteResponse {
 //
 // Article Generator
 //
+interface ArticleGeneratorRequest {
+  seed_text ?: string;
+  num_serp_results ?: number;
+  num_outbound_links_per_serp_result ?: number;
+}
 interface ArticleGeneratorResponse {
   generated_article: string;
 }
@@ -127,5 +132,6 @@ export {
   SmodinRewriteResponse,
 
   //
+  ArticleGeneratorRequest,
   ArticleGeneratorResponse
 };

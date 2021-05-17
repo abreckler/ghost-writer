@@ -129,12 +129,17 @@ const styles = StyleSheet.create({
   },
   answerChoice: {
     borderBottomColor: borderColor,
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
+    borderStyle: 'dashed',
     padding: mainFontSize / 2,
   },
   answerChoiceText: {
     fontSize: mainFontSize,
     color: textColor,
+  },
+  answerChoiceActions: {
+    justifyContent: 'flex-end',
+    alignItems: 'flex-end',
   },
 
   settingsContainer: {

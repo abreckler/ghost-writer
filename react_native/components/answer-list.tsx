@@ -1,6 +1,5 @@
 import React, { FC } from 'react';
-import { Alert, FlatList, ListRenderItem, StyleProp, Text, View, ViewStyle } from 'react-native';
-import Clipboard from 'expo-clipboard';
+import { FlatList, ListRenderItem, StyleProp, Text, View, ViewStyle } from 'react-native';
 
 import { AnswerChoice } from './answer-choice';
 import { CompletionChoice } from './lib/types';
@@ -11,20 +10,15 @@ interface IAnswerListProps {
   noAnswerAlert?: string;
   style?: StyleProp<ViewStyle>;
   html?: boolean;
+  placeholder ?: string;
 }
 
 const AnswerList: FC<IAnswerListProps> = props => {
-
-  const answerclicked = (choice: CompletionChoice) => {
-    Clipboard.setString(choice.text || '');
-    Alert.alert('Answer is copied to the clipboard!');
-  };
 
   const renderAnswerChoice : ListRenderItem<CompletionChoice> = (info) => {
     return (
       <AnswerChoice
         choice={info.item}
-        onPress={() => answerclicked(info.item)}
         style={{}}
         html={props.html}
       />

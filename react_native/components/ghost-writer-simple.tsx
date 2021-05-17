@@ -189,14 +189,14 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       <>
         <GhostWriterModeConfig onModeChange={onModeConfigChange}></GhostWriterModeConfig>
 
-        <View style={{ flexDirection: 'row', flex: 0.7 }}>
-          <View style={[styles.gwInputContainer, { flex: 0.5 }]}>
+        <View style={{ flexDirection: 'row', flex: 0.7, justifyContent: 'space-between' }}>
+          <View style={[styles.gwInputContainer, { flex: 0.49 }]}>
             <TextInput style={styles.gwInput}
                 multiline = {true}
                 placeholder="Type here!"
                 onChangeText={text => setText(text)}></TextInput>
           </View>
-          <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.5 }}></AnswerList>
+          <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.49 }} placeholder={''}></AnswerList>
         </View>
         <View style={styles.buttonsContainer}>
           <TouchableOpacity style={styles.button}

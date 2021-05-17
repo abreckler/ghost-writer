@@ -3,7 +3,7 @@ import { Alert, Dimensions, Text, TextInput, TextStyle, TouchableOpacity, View, 
 import { Picker } from '@react-native-picker/picker';
 
 import { styles, mdScreenWidth } from './styles';
-import { CompletionParams, SmodinRewriteRequest, TextAnalysisTextSummarizationTextRequest } from './lib/types';
+import { ArticleGeneratorRequest, CompletionParams, SmodinRewriteRequest, TextAnalysisTextSummarizationTextRequest } from './lib/types';
 import { CompletionParamsTemplate, GhostWriterConfig } from './lib/writer-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TagsInput } from './tags-input';
@@ -399,6 +399,61 @@ class SmodinRewriteConfig extends React.Component<SmodinRewriteConfigProps, { la
   }
 }
 
+//-----------------------------------------
+// Generate Article API
+//-----------------------------------------
+interface ArticleGeneratorConfigProps {
+  initValue?: ArticleGeneratorRequest,
+  value?: ArticleGeneratorRequest,
+  onValueChange(value: ArticleGeneratorRequest) : void;
+  style: ViewStyle;
+}
+
+class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps, { num_serp_results?: number, num_outbound_links_per_serp_result?: number }> {
+
+  constructor (props: ArticleGeneratorConfigProps) {
+    super(props);
+
+    this.state = {
+      num_serp_results : props.initValue?.num_serp_results || props.value?.num_serp_results || undefined,
+      num_outbound_links_per_serp_result : props.initValue?.num_outbound_links_per_serp_result || props.value?.num_outbound_links_per_serp_result || undefined,
+    }
+  }
+
+  componentDidUpdate(prevProps: any) {
+    if (this.props !== prevProps && typeof this.props.value !== 'undefined')
+    {
+      this.setState({
+        num_serp_results : this.props.value?.num_serp_results || 3,
+        num_outbound_links_per_serp_result : this.props.value?.num_outbound_links_per_serp_result || 3,
+      });
+    }
+  }
+
+  onValueChange () {
+    this.props.onValueChange &&
+      this.props.onValueChange({
+        seed_text: '',
+        num_serp_results: this.state.num_serp_results,
+        num_outbound_links_per_serp_result: this.state.num_outbound_links_per_serp_result,
+      });
+  }
+
+  render() {
+    return (
+      <View style={this.props.style}>
+        <TextInputGroupWithValidityCheck label={'Number of SERP API Results'} value={this.state.num_serp_results?.toString()}
+            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of SERP API Results', intVal: true, min: 1, max: 10 }}
+            onValueChange={ v => { this.setState({num_serp_results: Number.parseInt(v)}); this.onValueChange(); } } />
+
+        <TextInputGroupWithValidityCheck label={'Number of outbound links per a SERP API Result'} value={this.state.num_outbound_links_per_serp_result?.toString()}
+            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of outbound links per a SERP API Result', intVal: true, min: 1, max: 10 }}
+            onValueChange={ v => { this.setState({num_outbound_links_per_serp_result: Number.parseInt(v)}); this.onValueChange(); } } />
+      </View>
+    );
+  }
+}
+
 
 //-----------------------------------------
 // Ghost Writer Mode config component
@@ -420,6 +475,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
   private rewriteConfig: CompletionParams = {};
   private rewriteSmodinConfig: SmodinRewriteRequest = { language: 'en', strength: 3, text: '' };
   private extractConfig: TextAnalysisTextSummarizationTextRequest = {};
+  private articleGeneratorConfig : ArticleGeneratorRequest = {};
 
   private ghostWriterConfigPreset = new GhostWriterConfig();
 
@@ -458,6 +514,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         ['@gw__mode_config__rewrite', JSON.stringify(this.rewriteConfig)],
         ['@gw__mode_config__rewrite_smodin', JSON.stringify(this.rewriteSmodinConfig)],
         ['@gw__mode_config__extract', JSON.stringify(this.extractConfig)],
+        ['@gw__mode_config__article_generator', JSON.stringify(this.articleGeneratorConfig)],
       ]
       await AsyncStorage.multiSet(multiSet);
     } catch (e) {
@@ -474,6 +531,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         '@gw__mode_config__rewrite',
         '@gw__mode_config__rewrite_smodin',
         '@gw__mode_config__extract',
+        '@gw__mode_config__article_generator',
       ]);
       this.autocompleteConfig = (multiGet[0][1] ? JSON.parse(multiGet[0][1]) : { prompt: '{USER_INPUT}', n: 1 }) as CompletionParams;
       this.qaConfig = (multiGet[1][1] ? JSON.parse(multiGet[1][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.QA_TEMPLATES[0]))) as CompletionParams;
@@ -481,6 +539,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
       this.rewriteConfig = (multiGet[3][1] ? JSON.parse(multiGet[3][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.REWRITE_TEMPLATES[0]))) as CompletionParams;
       this.rewriteSmodinConfig = (multiGet[4][1] ? JSON.parse(multiGet[4][1]) : {}) as SmodinRewriteRequest;
       this.extractConfig = (multiGet[5][1] ? JSON.parse(multiGet[5][1]) : {}) as TextAnalysisTextSummarizationTextRequest;
+      this.articleGeneratorConfig = (multiGet[6][1] ? JSON.parse(multiGet[6][1]) : { num_serp_results: 3, num_outbound_links_per_serp_result: 3 }) as ArticleGeneratorRequest;
     } catch (e) {
       // reading error
       console.log('GW mode configurator - Reading Error', e);
@@ -507,7 +566,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
       else if (writingMode === 'rewrite-smodin')
         this.props.onModeChange('rewrite-smodin', this.rewriteSmodinConfig);
       else if (writingMode === 'generate-article')
-        this.props.onModeChange('generate-article', null);
+        this.props.onModeChange('generate-article', this.articleGeneratorConfig);
     }
 
     if (updateStore)
@@ -567,9 +626,8 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
           <View style={{ display: this.state.writingMode === 'topic-tagging' ? 'flex' : 'none'}}>
             <Text>No additional settings are available</Text>  
           </View>
-          <View style={{ display: this.state.writingMode === 'generate-article' ? 'flex' : 'none'}}>
-            <Text>No additional settings are available</Text>  
-          </View>
+          <ArticleGeneratorConfig style={{ display: this.state.writingMode === 'generate-article' ? 'flex' : 'none'}}
+              onValueChange={v => {this.articleGeneratorConfig = v; this.onModePickerChange(); }} />
         </View>
       </View>
     );
