@@ -5,6 +5,7 @@ import {
   PipfeedArticleDataExtractorApiClient,
   HealthyTechParaphraserApiClient,
   ZackproserUrlIntelligenceApiClient,
+  HealthyTechParaphraserResponse,
 } from "../../lib/rapidapi";
 import { GoogleSearchParameters } from 'google-search-results-nodejs';
 import { extractUrls } from '../../lib/utils';
@@ -69,7 +70,7 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
 
     let j = 0;
-    for (let i = 0; i < (searchResult.organic_results || []).length && j < numSerpResults; i++)
+    for (let i = 0; i < (searchResult.organic_results || []).length && i < numSerpResults; i++)
     {
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
@@ -77,14 +78,20 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       if (!url)
       {
         // invalid url, skip processing
+        console.log("No valid url is found from search result, skip processing", r);
         continue;
       }
 
-      let extractorResponse = await extractorClient.extractArticleData(url);
-      console.log('Article Extraction Result for ' + url, extractorResponse);
-      if (!extractorResponse.summary)
-      {
-        // summary extraction failed, skip this url from further processing
+      let extractorResponse = null;
+      try {
+        extractorResponse = await extractorClient.extractArticleData(url);
+        if (!extractorResponse.summary)
+        {
+          console.log("Summary extraction API returned invalid response, skip further processing.", url);
+          continue;
+        }
+      } catch {
+        console.log("Summary extraction failed due to API failure, skip further processing.", url);
         continue;
       }
 
@@ -114,24 +121,41 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       else
       {
         // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
-        let urlIntellResponse = await urlExtractorClient.rip(url);
-        console.log('URL Intelligence API Result for ' + url, urlIntellResponse);
-        externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
+        try {
+          let urlIntellResponse = await urlExtractorClient.rip(url);
+          console.log('URL Intelligence API Result for ' + url, urlIntellResponse);
+          externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
+        } catch {
+          console.log('URL Intelligence API Failure: ', url);
+        }
       }
 
-      if (externalLinks.length > 0)
-      {
-        let rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
-        extractedArticles.push({
-          source_url: url,
-          title: extractorResponse.title,
-          description: extractorResponse.description,
-          summary: extractorResponse.summary,
-          rephrased_summary: rephraserRespone.newText,
-          external_links: externalLinks,
-        });
-        j++;
+      if (externalLinks.length == 0) {
+        console.log("could not find valid external links. skip further processing.", url);
+        continue;
       }
+
+      let rephraserRespone : HealthyTechParaphraserResponse | undefined = undefined;
+      try {
+        rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
+        if (!rephraserRespone.newText) {
+          console.log("Rephrasing API returned invalid response, skip further processing.", extractorResponse.summary);
+          continue;
+        }
+      } catch {
+        console.log('Rephraser API Failure: ', extractorResponse.summary);
+        continue;
+      }
+      
+      extractedArticles.push({
+        source_url: url,
+        title: extractorResponse.title,
+        description: extractorResponse.description,
+        summary: extractorResponse.summary,
+        rephrased_summary: rephraserRespone?.newText,
+        external_links: externalLinks,
+      });
+      j++;
     }
 
     // merge article summaries to generate full text
