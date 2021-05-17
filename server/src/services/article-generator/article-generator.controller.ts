@@ -74,54 +74,63 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
       const url = r.link || '';
-      if (url)
+      if (!url)
       {
-        let extractorResponse = await extractorClient.extractArticleData(url);
-        console.log('Article Extraction Result for ' + url, extractorResponse);
+        // invalid url, skip processing
+        continue;
+      }
 
-        let extractedUrls = extractUrls(extractorResponse.html);
-        const internalHostname = new URL(url).hostname;
-        const externalLinksFilter = (l: string, idx: number, self: Array<string>) => {
-          l = l && l.trim();
-          if (!l)
-            return false;
+      let extractorResponse = await extractorClient.extractArticleData(url);
+      console.log('Article Extraction Result for ' + url, extractorResponse);
+      if (!extractorResponse.summary)
+      {
+        // summary extraction failed, skip this url from further processing
+        continue;
+      }
 
-          try {
-            let u = new URL(l);
-            return self.indexOf(l) === idx // uniqueness
-                && u.hostname && u.pathname && u.hostname != internalHostname // external links only
-                && ['amzn.to', 'www.amazon.com', 'www.etsy.com', ].indexOf(u.hostname) >= 0 // product urls only
-                && !/cloudflare|googleapis|aspnetcdn|ajax|api|cdn/.test(u.hostname) // avoid some common non-viewable urls
-          } catch {
-            return false;
-          }
-        };
+      let extractedUrls = extractUrls(extractorResponse.html);
+      const internalHostname = new URL(url).hostname;
+      const externalLinksFilter = (l: string, idx: number, self: Array<string>) => {
+        l = l && l.trim();
+        if (!l)
+          return false;
 
-        let externalLinks = extractedUrls.links.filter(externalLinksFilter);
-        if (externalLinks.length == 0)
-        {
-          let urlIntellResponse = await urlExtractorClient.rip(url);
-          console.log('URL Intelligence API Result for ' + url, urlIntellResponse);
-          externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
+        try {
+          let u = new URL(l);
+          return self.indexOf(l) === idx // uniqueness
+              && u.hostname && u.pathname && u.hostname != internalHostname // external links only
+              && ['amzn.to', 'www.amazon.com', 'www.etsy.com', ].indexOf(u.hostname) >= 0 // product urls only
+              && !/cloudflare|googleapis|aspnetcdn|ajax|api|cdn/.test(u.hostname) // avoid some common non-viewable urls
+        } catch {
+          return false;
         }
-        else
-        {
-          console.log('URL Extraction Result for ' + url, extractedUrls);
-        }
+      };
 
-        if (externalLinks.length > 0)
-        {
-          let rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
-          extractedArticles.push({
-            source_url: url,
-            title: extractorResponse.title,
-            description: extractorResponse.description,
-            summary: extractorResponse.summary,
-            rephrased_summary: rephraserRespone.newText,
-            external_links: externalLinks,
-          });
-          j++;
-        }
+      let externalLinks = extractedUrls.links.filter(externalLinksFilter);
+      if (externalLinks.length > 0)
+      {
+        console.log('URL Extraction Result for ' + url, extractedUrls);
+      }
+      else
+      {
+        // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
+        let urlIntellResponse = await urlExtractorClient.rip(url);
+        console.log('URL Intelligence API Result for ' + url, urlIntellResponse);
+        externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
+      }
+
+      if (externalLinks.length > 0)
+      {
+        let rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
+        extractedArticles.push({
+          source_url: url,
+          title: extractorResponse.title,
+          description: extractorResponse.description,
+          summary: extractorResponse.summary,
+          rephrased_summary: rephraserRespone.newText,
+          external_links: externalLinks,
+        });
+        j++;
       }
     }
 
