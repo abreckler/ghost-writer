@@ -19,7 +19,7 @@ const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
  * @param req.body.num_serp_results {number?} - DEFAULT 3.
  * @param req.body.num_outbound_links_per_serp_result {number?} - DEFAULT 3.
  */
-const writeArticle = async (req: Request, res: Response, next: NextFunction) => {
+const writeProductsReviewArticle = async (req: Request, res: Response, next: NextFunction) => {
   const seedText = req.body.seed_text || '';
   let numSerpResults = req.body.num_serp_results || 3;
   let numOutboundLinksPerSerpResult = req.body.num_outbound_links_per_serp_result || 3;
@@ -58,7 +58,7 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       q: seedText,
       google_domain: "google.com",
       gl: "us",
-      hl: "en"
+      hl: "en",
     } as GoogleSearchParameters;
     const searchResult = await search.json_async(searchParams);
     console.log('Google Search Result from SerpAPI', searchResult);
@@ -70,7 +70,7 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
 
     let j = 0;
-    for (let i = 0; i < (searchResult.organic_results || []).length && i < numSerpResults; i++)
+    for (let i = 0; i < (searchResult.organic_results || []).length && j < numSerpResults; i++)
     {
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
@@ -79,6 +79,14 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       {
         // invalid url, skip processing
         console.log("No valid url is found from search result, skip processing", r);
+        continue;
+      }
+
+      const internalHostname = new URL(url).hostname;
+      if (['amzn.to', 'www.amazon.com', 'www.etsy.com', ].indexOf(internalHostname) >= 0)
+      {
+        // if the url is the direct link to the Product item page of Amazon, Etsy, etc., skip it for now.
+        // TODO: we may need to find a way to process this
         continue;
       }
 
@@ -96,7 +104,6 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       }
 
       let extractedUrls = extractUrls(extractorResponse.html);
-      const internalHostname = new URL(url).hostname;
       const externalLinksFilter = (l: string, idx: number, self: Array<string>) => {
         l = l && l.trim();
         if (!l)
@@ -185,5 +192,5 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
 }
 
 export {
-  writeArticle,
+  writeProductsReviewArticle,
 }
