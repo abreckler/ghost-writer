@@ -27,6 +27,14 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   const [noAnswerAlert, setAnswersAlert] = useState('');
   const [answers, setAnswers] = useState([] as CompletionChoice[]);
 
+  const [autocompleteConfig, setAutocompleteConfig] = useState(undefined as CompletionParams | undefined);
+  const [qaConfig, setQaConfig] = useState(undefined as CompletionParams | undefined);
+  const [summaryConfig, setSummaryConfig] = useState(undefined as CompletionParams | undefined);
+  const [rewriteConfig, setRewriteConfig] = useState(undefined as CompletionParams | undefined);
+  const [rewriteSmodinConfig, setRewriteSmodinConfig] = useState(undefined as SmodinRewriteRequest | undefined);
+  const [extractConfig, setExtractConfig] = useState(undefined as TextAnalysisTextSummarizationTextRequest | undefined);
+  const [generateArticleConfig, setGenerateArticleConfig] = useState(undefined as ArticleGeneratorRequest | undefined);
+
   const { width, height } = Dimensions.get('window');
 
   const apiClient = new MyApiClient('84PdwfwpSkak79k1mF1BDjagNwpQvSeWtuTiGVWDwF8JyQlD9oS78d9XddI', EngineID.Curie);
@@ -53,37 +61,30 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     checkInitialURL();
   });
 
-  let autocompleteConfig: CompletionParams;
-  let qaConfig: CompletionParams;
-  let summaryConfig: CompletionParams;
-  let rewriteConfig: CompletionParams;
-  let rewriteSmodinConfig: SmodinRewriteRequest;
-  let extractConfig: TextAnalysisTextSummarizationTextRequest;
-  let generateArticleConfig: ArticleGeneratorRequest;
 
   const onModeConfigChange = (mode: string, config: any) => {
     console.log('onModeConfigChange', mode, config);
-    setWritingMode(mode);
-
     if (mode === 'topic-tagging')
     {}
     else if (mode === 'extract') {
-      extractConfig = config as TextAnalysisTextSummarizationTextRequest;
+      setExtractConfig(config as TextAnalysisTextSummarizationTextRequest);
     } else if (mode === 'rewrite-smodin') {
-      rewriteSmodinConfig = config as SmodinRewriteRequest;
-    } else if( mode === 'generate-article') {
-      generateArticleConfig = config as ArticleGeneratorRequest;
+      setRewriteSmodinConfig(config as SmodinRewriteRequest);
+    } else if(mode === 'generate-article') {
+      setGenerateArticleConfig(config as ArticleGeneratorRequest);
     } else {
       if (mode === 'rewrite') {
-        rewriteConfig = config as CompletionParams;
+        setRewriteConfig(config as CompletionParams);
       } else if (mode === 'qa') {
-        qaConfig = config as CompletionParams;
+        setQaConfig(config as CompletionParams);
       } else if (mode === 'summary') {
-        summaryConfig = config as CompletionParams;
+        setSummaryConfig(config as CompletionParams);
       } else {
-        autocompleteConfig = config as CompletionParams;
+        setAutocompleteConfig(config as CompletionParams);
       }
     }
+
+    setWritingMode(mode);
   };
 
   const createCompletion = async () => {
@@ -142,7 +143,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         params.seed_text = text.trim();
         params.num_serp_results = generateArticleConfig?.num_serp_results;
         params.num_outbound_links_per_serp_result = generateArticleConfig?.num_outbound_links_per_serp_result;
-        
+
         let json = await apiClient.generateArticle(params);
         if (json.generated_article) {
           setAnswers([

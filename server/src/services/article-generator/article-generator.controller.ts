@@ -34,15 +34,15 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
     return;
   }
 
-  if (numSerpResults >= 10){
-    error.push('"num_serp_results" param can not exceed 10. It is defaulted to 3');
+  if (numSerpResults > 20){
+    error.push('"num_serp_results" param can not exceed 20. It is defaulted to 3');
     numSerpResults = 3;
   } else if (numSerpResults <= 0){
     error.push('"num_serp_results" param must be greater than 0. It is defaulted to 3');
     numSerpResults = 3;
   }
 
-  if (numOutboundLinksPerSerpResult >= 10){
+  if (numOutboundLinksPerSerpResult > 10){
     error.push('"num_outbound_links_per_serp_result" param can not exceed 10. It is defaulted to 3');
     numOutboundLinksPerSerpResult = 3;
   } else if (numOutboundLinksPerSerpResult <= 0){
