@@ -20,8 +20,34 @@ const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
  */
 const writeArticle = async (req: Request, res: Response, next: NextFunction) => {
   const seedText = req.body.seed_text || '';
-  const numSerpResults = req.body.num_serp_results || 3;
-  const numOutboundLinksPerSerpResult = req.body.num_outbound_links_per_serp_result || 3;
+  let numSerpResults = req.body.num_serp_results || 3;
+  let numOutboundLinksPerSerpResult = req.body.num_outbound_links_per_serp_result || 3;
+  const error = [];
+
+  if (seedText.length < 5) {
+    error.push('"seed_text" param\'s length must be longer.');
+    res.json({
+      'generated_article' : '',
+      'error': error,
+    });
+    return;
+  }
+
+  if (numSerpResults >= 10){
+    error.push('"num_serp_results" param can not exceed 10. It is defaulted to 3');
+    numSerpResults = 3;
+  } else if (numSerpResults <= 0){
+    error.push('"num_serp_results" param must be greater than 0. It is defaulted to 3');
+    numSerpResults = 3;
+  }
+
+  if (numOutboundLinksPerSerpResult >= 10){
+    error.push('"num_outbound_links_per_serp_result" param can not exceed 10. It is defaulted to 3');
+    numOutboundLinksPerSerpResult = 3;
+  } else if (numOutboundLinksPerSerpResult <= 0){
+    error.push('"num_outbound_links_per_serp_result" param must be greater than 0. It is defaulted to 3');
+    numOutboundLinksPerSerpResult = 3;
+  }
 
   try {
     // call serpapi to get google search result with the seed text
@@ -29,7 +55,6 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     const searchParams = {
       engine: "google",
       q: seedText,
-      location: "Austin, Texas, United States",
       google_domain: "google.com",
       gl: "us",
       hl: "en"
@@ -95,8 +120,6 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
       }
     }
 
-    console.log('Extracted Articles', extractedArticles);
-
     // merge article summaries to generate full text
     // const text = extractedArticles.map(a => {
     //   return '<p>' + a.rephrased_summary.replace('\n', '<br/>') + '</p>' +
@@ -111,7 +134,8 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     }).join('\n\n');
 
     res.json({
-      'generated_article' : text
+      'generated_article' : text,
+      'error': error,
     });
   } catch (err) {
     next(err);
