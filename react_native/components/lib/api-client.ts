@@ -10,6 +10,7 @@ import {
   TextAnalysisTextSummarizationResponse,
   TextAnalysisTextSummarizationTextRequest,
   ArticleGeneratorResponse,
+  ArticleGeneratorRequest,
 } from "./types";
 
 class MyApiClient {
@@ -103,8 +104,8 @@ class MyApiClient {
   // Custom API - Article Generator
   //
 
-  public async generateArticle(seedText: string): Promise<ArticleGeneratorResponse> {
-    return await this._doPost<{ seed_text : string }, ArticleGeneratorResponse>('/api/article-generator/write', { seed_text: seedText });
+  public async generateArticle(req: ArticleGeneratorRequest): Promise<ArticleGeneratorResponse> {
+    return await this._doPost<ArticleGeneratorRequest, ArticleGeneratorResponse>('/api/article-generator/write', req);
   }
 
 

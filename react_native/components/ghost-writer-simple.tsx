@@ -9,6 +9,7 @@ import {
   CompletionParams,
   SmodinRewriteRequest,
   TextAnalysisTextSummarizationTextRequest,
+  ArticleGeneratorRequest,
 } from './lib/types';
 import { GhostWriterConfig } from './lib/writer-config';
 import { MyApiClient } from './lib/api-client';
@@ -58,17 +59,20 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   let rewriteConfig: CompletionParams;
   let rewriteSmodinConfig: SmodinRewriteRequest;
   let extractConfig: TextAnalysisTextSummarizationTextRequest;
+  let generateArticleConfig: ArticleGeneratorRequest;
 
   const onModeConfigChange = (mode: string, config: any) => {
     console.log('onModeConfigChange', mode, config);
     setWritingMode(mode);
 
-    if (mode === 'topic-tagging' || mode === 'generate-article')
+    if (mode === 'topic-tagging')
     {}
     else if (mode === 'extract') {
       extractConfig = config as TextAnalysisTextSummarizationTextRequest;
     } else if (mode === 'rewrite-smodin') {
       rewriteSmodinConfig = config as SmodinRewriteRequest;
+    } else if( mode === 'generate-article') {
+      generateArticleConfig = config as ArticleGeneratorRequest;
     } else {
       if (mode === 'rewrite') {
         rewriteConfig = config as CompletionParams;
@@ -134,7 +138,12 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       }
       else if (writingMode === 'generate-article')
       {
-        let json = await apiClient.generateArticle(text.trim());
+        let params = {} as ArticleGeneratorRequest;
+        params.seed_text = text.trim();
+        params.num_serp_results = generateArticleConfig?.num_serp_results;
+        params.num_outbound_links_per_serp_result = generateArticleConfig?.num_outbound_links_per_serp_result;
+        
+        let json = await apiClient.generateArticle(params);
         if (json.generated_article) {
           setAnswers([
             { text: json.generated_article, html: false } as CompletionChoice,
