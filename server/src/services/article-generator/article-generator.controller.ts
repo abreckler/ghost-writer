@@ -150,6 +150,10 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
     res.json({
       'generated_article' : text,
       'error': error,
+      'params': {
+        'num_serp_results': numSerpResults,
+        'num_outbound_links_per_serp_result': numOutboundLinksPerSerpResult,
+      }
     });
   } catch (err) {
     next(err);
