@@ -82,6 +82,10 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
         let extractedUrls = extractUrls(extractorResponse.html);
         const internalHostname = new URL(url).hostname;
         const externalLinksFilter = (l: string, idx: number, self: Array<string>) => {
+          l = l && l.trim();
+          if (!l)
+            return false;
+
           try {
             let u = new URL(l);
             return self.indexOf(l) === idx // uniqueness
@@ -92,6 +96,7 @@ const writeArticle = async (req: Request, res: Response, next: NextFunction) => 
             return false;
           }
         };
+
         let externalLinks = extractedUrls.links.filter(externalLinksFilter);
         if (externalLinks.length == 0)
         {
