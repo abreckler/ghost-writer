@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import middleware from './middleware';
 
 dotenv.config();
+console.log('Configured process.env = ', process.env);
 
 const corsOptions: cors.CorsOptions = {
   origin: '*'
