@@ -80,7 +80,7 @@ class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValid
 
     let v = intVal ? Number.parseInt(value) : Number.parseFloat(value);
     let error = '';
-    if (value) {
+    if (!!value) {
       if (Number.isNaN(v)) {
         error = `${fieldName} must be a number`;
       } else if ((typeof min !== 'undefined' && min !== null && v < min) || (typeof max !== 'undefined' && max !== null && v > max)) {
@@ -190,20 +190,22 @@ class OpenAiAutocompleteConfig extends React.Component<OpenAiAutocompleteConfigP
     }
   }
 
-  onValueChange() {
+  setStateWithValueChange(newState: any, changedStateNames: Array<String>=[]) {
+    this.setState(newState);
+
     this.props.onValueChange &&
       this.props.onValueChange({
-        prompt: this.state.prompt,
-        n: this.state.n,
-        max_tokens: this.state.max_tokens,
-        temperature: this.state.temperature,
-        top_p: this.state.top_p,
-        logprobs: this.state.logprobs,
-        echo: this.state.echo,
-        stop: (this.state.stop || []).map(s => s.replaceAll('\n', '\\n').replaceAll('\t', '\\t')),
-        presence_penalty: this.state.presence_penalty,
-        frequency_penalty: this.state.frequency_penalty,
-        best_of: this.state.best_of,
+        prompt: changedStateNames.indexOf('prompt') < 0 ? this.state.prompt : newState.prompt,
+        n: changedStateNames.indexOf('n') < 0 ? this.state.n : newState.n,
+        max_tokens: changedStateNames.indexOf('max_tokens') < 0 ? this.state.max_tokens : newState.max_tokens,
+        temperature: changedStateNames.indexOf('temperature') < 0 ? this.state.temperature : newState.temperature,
+        top_p: changedStateNames.indexOf('top_p') < 0 ? this.state.top_p : newState.top_p,
+        logprobs: changedStateNames.indexOf('logprobs') < 0 ? this.state.logprobs : newState.logprobs,
+        echo: changedStateNames.indexOf('echo') < 0 ? this.state.echo : newState.echo,
+        stop: ((changedStateNames.indexOf('stop') < 0 ? this.state.stop : newState.stop) || []).map((s: string) => s.replaceAll('\n', '\\n').replaceAll('\t', '\\t')),
+        presence_penalty: changedStateNames.indexOf('presence_penalty') < 0 ? this.state.presence_penalty : newState.presence_penalty,
+        frequency_penalty: changedStateNames.indexOf('frequency_penalty') < 0 ? this.state.frequency_penalty : newState.frequency_penalty,
+        best_of: changedStateNames.indexOf('best_of') < 0 ? this.state.best_of : newState.best_of,
       } as CompletionParams);
   }
 
@@ -246,33 +248,33 @@ class OpenAiAutocompleteConfig extends React.Component<OpenAiAutocompleteConfigP
                 } as InputValidity
               }
             }
-            onValueChange={ v => { this.setState({prompt: v}); this.onValueChange(); } } />
+            onValueChange={ v => { this.setStateWithValueChange({prompt: v}, ['prompt']); } } />
 
         <TextInputGroupWithValidityCheck label={'Number of answers to generate'} value={this.state.n?.toString()} required={true}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of answers to generate', intVal: true, min: 1, max: 10 }}
-            onValueChange={ v => { this.setState({ n: Number.parseInt(v) }); this.onValueChange(); } } />
+            onValueChange={ v => { this.setStateWithValueChange({ n: Number.parseInt(v) }, ['n']); } } />
 
         <TextInputGroupWithValidityCheck label={'Sampling Temperature'} value={this.state.temperature?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Sampling Temperature', intVal: false, min: 0.0, max: 1.0 }}
-            onValueChange={ v => { this.setState({ temperature : (v && Number.parseFloat(v)) || undefined }); this.onValueChange(); } } />
+            onValueChange={ v => { this.setStateWithValueChange({ temperature : (v && Number.parseFloat(v)) || undefined }, ['temperature']); } } />
 
         <TextInputGroupWithValidityCheck label={'Nucleus Sampling Temperature'} value={this.state.top_p?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Nucleus Sampling Temperature', intVal: false, min: 0.0, max: 1.0 }}
-            onValueChange={ v => { this.setState({ top_p : (v && Number.parseFloat(v)) || undefined }); this.onValueChange(); } } />
+            onValueChange={ v => { this.setStateWithValueChange({ top_p : (v && Number.parseFloat(v)) || undefined }, ['top_p']); } } />
 
         <View style={styles.inputGroupContainer}>
           <Text style={[styles.label, styles.inputGroupLabel, styles.md_1_3rd, {paddingTop: 8}]}>Stop Sequence</Text>
           <TagsInput style={styles.md_2_3rds} initialTags={this.state.stop} initialText={""} maxNumberOfTags={4}
-              onChangeTags={ v => { this.setState({ stop: v }); this.onValueChange(); } } />
+              onChangeTags={ v => { this.setStateWithValueChange({ stop: v }, ['stop']); } } />
         </View>
 
         <TextInputGroupWithValidityCheck label={'Presence Penalty'} value={this.state.presence_penalty?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Presence Penalty', intVal: false, min: 0.0, max: 1.0 }}
-            onValueChange={ v => { this.setState({presence_penalty : (v && Number.parseFloat(v)) || undefined }); this.onValueChange(); } } />
+            onValueChange={ v => { this.setStateWithValueChange({presence_penalty : (v && Number.parseFloat(v)) || undefined }, ['presence_penalty']); } } />
 
         <TextInputGroupWithValidityCheck label={'Frequency Penalty'} value={this.state.frequency_penalty?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Frequency Penalty', intVal: false, min: 0.0, max: 1.0 }}
-            onValueChange={ v => { this.setState({frequency_penalty : (v && Number.parseFloat(v)) || undefined }); this.onValueChange(); } } />
+            onValueChange={ v => { this.setStateWithValueChange({frequency_penalty : (v && Number.parseFloat(v)) || undefined }, ['frequency_penalty']); } } />
       </View>
     );
   }
@@ -308,11 +310,16 @@ class TextAnalysisTextSummarizationConfig extends React.Component<TextAnalysisTe
     }
   }
 
-  onValueChange() {
+  setStateWithValueChange(newState: any, changedStateNames: Array<String>=[]) {
+    this.setState(newState);
     this.props.onValueChange &&
       this.props.onValueChange({
-        sentnum: this.state.sentnum
+        sentnum: changedStateNames.indexOf('sentnum') < 0 ? this.state.sentnum : newState.sentnum,
       });
+  }
+
+  onValueChange() {
+    
   }
 
   render() {
@@ -320,7 +327,7 @@ class TextAnalysisTextSummarizationConfig extends React.Component<TextAnalysisTe
       <View style={this.props.style}>
         <TextInputGroupWithValidityCheck label={'Number of answers to generate'} value={this.state.sentnum?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of answers to generate', intVal: true, min: 1, max: 10 }}
-            onValueChange={ v => { this.setState({sentnum: Number.parseInt(v)}); this.onValueChange(); } } />
+            onValueChange={ v => { this.setStateWithValueChange({sentnum: Number.parseInt(v)}, ['sentnum']); } } />
       </View>
     );
   }
@@ -358,11 +365,12 @@ class SmodinRewriteConfig extends React.Component<SmodinRewriteConfigProps, { la
     }
   }
 
-  onValueChange () {
+  setStateWithValueChange(newState: any, changedStateNames: Array<String>=[]) {
+    this.setState(newState);
     this.props.onValueChange &&
       this.props.onValueChange({
-        language: this.state.language,
-        strength: this.state.strength,
+        language: changedStateNames.indexOf('language') < 0 ? this.state.language : newState.language,
+        strength: changedStateNames.indexOf('strength') < 0 ? this.state.strength : newState.strength,
       });
   }
 
@@ -375,7 +383,7 @@ class SmodinRewriteConfig extends React.Component<SmodinRewriteConfigProps, { la
             style={[styles.picker]}
             itemStyle={styles.pickerItemStyle}
             mode='dropdown'
-            onValueChange={v => { this.setState({ language : v }); this.onValueChange(); } }>
+            onValueChange={v => { this.setStateWithValueChange({ language : v }, ['language']); } }>
           <Picker.Item label="English" value="en" />
           <Picker.Item label="German" value="de" />
           <Picker.Item label="Spanish" value="es" />
@@ -389,7 +397,7 @@ class SmodinRewriteConfig extends React.Component<SmodinRewriteConfigProps, { la
             style={[styles.picker]}
             itemStyle={styles.pickerItemStyle}
             mode='dropdown'
-            onValueChange={ v => { this.setState({ strength: Number.parseInt(v) }); this.onValueChange(); }}>
+            onValueChange={ v => { this.setStateWithValueChange({ strength: Number.parseInt(v) }, ['strength']); }}>
           <Picker.Item label="Strong" value="3" />
           <Picker.Item label="Medium" value="2" />
           <Picker.Item label="Basic" value="1" />
@@ -430,12 +438,12 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
     }
   }
 
-  onValueChange () {
+  setStateWithValueChange(newState: any, changedStateNames: Array<String>=[]) {
+    this.setState(newState);
     this.props.onValueChange &&
       this.props.onValueChange({
-        seed_text: '',
-        num_serp_results: this.state.num_serp_results,
-        num_outbound_links_per_serp_result: this.state.num_outbound_links_per_serp_result,
+        num_serp_results: changedStateNames.indexOf('num_serp_results') < 0 ? this.state.num_serp_results : newState.num_serp_results,
+        num_outbound_links_per_serp_result: changedStateNames.indexOf('num_outbound_links_per_serp_result') < 0 ? this.state.num_outbound_links_per_serp_result : newState.num_outbound_links_per_serp_result,
       });
   }
 
@@ -443,12 +451,12 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
     return (
       <View style={this.props.style}>
         <TextInputGroupWithValidityCheck label={'Number of SERP API Results'} value={this.state.num_serp_results?.toString()}
-            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of SERP API Results', intVal: true, min: 1, max: 10 }}
-            onValueChange={ v => { this.setState({num_serp_results: Number.parseInt(v)}); this.onValueChange(); } } />
+            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of SERP API Results', intVal: true, min: 1, max: 9 }}
+            onValueChange={ v => { this.setStateWithValueChange({num_serp_results: (v && Number.parseInt(v)) || undefined}, ['num_serp_results']); } } />
 
         <TextInputGroupWithValidityCheck label={'Number of outbound links per a SERP API Result'} value={this.state.num_outbound_links_per_serp_result?.toString()}
-            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of outbound links per a SERP API Result', intVal: true, min: 1, max: 10 }}
-            onValueChange={ v => { this.setState({num_outbound_links_per_serp_result: Number.parseInt(v)}); this.onValueChange(); } } />
+            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of outbound links per a SERP API Result', intVal: true, min: 1, max: 9 }}
+            onValueChange={ v => { this.setStateWithValueChange({num_outbound_links_per_serp_result: (v && Number.parseInt(v)) || undefined}, ['num_outbound_links_per_serp_result']); } } />
       </View>
     );
   }
