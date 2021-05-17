@@ -377,31 +377,33 @@ class SmodinRewriteConfig extends React.Component<SmodinRewriteConfigProps, { la
   render() {
     return (
       <View style={this.props.style}>
-        <Text>Language</Text> 
-        <Picker
-            selectedValue={this.state.language}
-            style={[styles.picker]}
-            itemStyle={styles.pickerItemStyle}
-            mode='dropdown'
-            onValueChange={v => { this.setStateWithValueChange({ language : v }, ['language']); } }>
-          <Picker.Item label="English" value="en" />
-          <Picker.Item label="German" value="de" />
-          <Picker.Item label="Spanish" value="es" />
-          <Picker.Item label="French" value="fr" />
-          <Picker.Item label="Arabic" value="ar" />
-          <Picker.Item label="Chinese" value="zh" />
-        </Picker>
-        <Text>Strength</Text>
-        <Picker
-            selectedValue={this.state.strength.toString()}
-            style={[styles.picker]}
-            itemStyle={styles.pickerItemStyle}
-            mode='dropdown'
-            onValueChange={ v => { this.setStateWithValueChange({ strength: Number.parseInt(v) }, ['strength']); }}>
-          <Picker.Item label="Strong" value="3" />
-          <Picker.Item label="Medium" value="2" />
-          <Picker.Item label="Basic" value="1" />
-        </Picker>
+        <View style={[styles.inputGroupContainer]}>
+          <Text style={[styles.label, styles.md_1_3rd]}>Language</Text>
+          <Picker style={[styles.picker, styles.md_2_3rds]}
+              selectedValue={this.state.language}
+              itemStyle={styles.pickerItemStyle}
+              mode='dropdown'
+              onValueChange={v => { this.setStateWithValueChange({ language : v }, ['language']); } }>
+            <Picker.Item label="English" value="en" />
+            <Picker.Item label="German" value="de" />
+            <Picker.Item label="Spanish" value="es" />
+            <Picker.Item label="French" value="fr" />
+            <Picker.Item label="Arabic" value="ar" />
+            <Picker.Item label="Chinese" value="zh" />
+          </Picker>
+        </View>
+        <View style={[styles.inputGroupContainer]}>
+          <Text style={[styles.label, styles.md_1_3rd]}>{'Choose a template'}</Text>
+          <Picker style={[styles.picker, styles.md_2_3rds]}
+              selectedValue={this.state.strength.toString()}
+              itemStyle={styles.pickerItemStyle}
+              mode='dropdown'
+              onValueChange={ v => { this.setStateWithValueChange({ strength: Number.parseInt(v) }, ['strength']); }}>
+            <Picker.Item label="Strong" value="3" />
+            <Picker.Item label="Medium" value="2" />
+            <Picker.Item label="Basic" value="1" />
+          </Picker>
+        </View>
       </View>
     );
   }
@@ -585,10 +587,12 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
   // View
   //
   render() {
+    const { width, height } = Dimensions.get('window');
+
     return (
-      <View style={[styles.settingsContainer, { alignSelf: 'flex-start', marginTop: 10, marginBottom: 10, width: '100%', } ]}>
-        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={[styles.label]}>Mode: </Text>
+      <View style={{ position: 'relative', backgroundColor: 'rgb(248, 248, 255)', zIndex: 100 }}>
+        <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginVertical: 10, paddingHorizontal: 10 }}>
+          <Text style={[styles.label, { display: width > mdScreenWidth ? 'flex' : 'none' }]}>Mode: </Text>
           <View>
             <Picker style={[styles.modePicker]} itemStyle={styles.modePickerItemStyle}
                 selectedValue={this.state.writingMode}
@@ -609,7 +613,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
           </TouchableOpacity>
         </View>
 
-        <View style={{ display: this.state.settingsVisible ? 'flex':'none', paddingVertical: 10 }}>
+        <View style={[styles.settingsOverlay, { display: this.state.settingsVisible ? 'flex':'none' }]}>
           <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === 'autocomplete' ? 'flex' : 'none'}}
               value={this.autocompleteConfig}
               onValueChange={v => { this.autocompleteConfig = v; this.onModePickerChange(); }} />

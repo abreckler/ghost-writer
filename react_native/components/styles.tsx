@@ -142,11 +142,20 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 
-  settingsContainer: {
-    flexShrink: 0,
-    flexGrow: 0,
-    display: 'flex',
+  settingsOverlay: {
+    width: '100%',
+    paddingHorizontal: width > mdScreenWidth ? 40 : 20,
+    paddingVertical: width > mdScreenWidth ? 40 : 20,
+    position: 'absolute',
+    backgroundColor: '#fff',
+    opacity: 1,
+    shadowColor: '#000',
+    shadowOpacity: 0.4,
+    shadowRadius: 10,
+    zIndex: 100,
+    top: mainFontSize * 4.2,
   },
+
   settingsLabel: {
     fontSize: mainFontSize,
     marginTop: mainFontSize * 1.5,
