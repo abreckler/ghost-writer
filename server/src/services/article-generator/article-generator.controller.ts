@@ -70,7 +70,7 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
     const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
 
     let j = 0;
-    for (let i = 0; i < (searchResult.organic_results || []).length && j < numSerpResults; i++)
+    for (let i = 0; i < (searchResult.organic_results || []).length && i < numSerpResults; i++)
     {
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
