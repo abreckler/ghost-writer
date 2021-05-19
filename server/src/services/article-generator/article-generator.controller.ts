@@ -61,7 +61,7 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
       hl: "en",
     } as GoogleSearchParameters;
     const searchResult = await search.json_async(searchParams);
-    console.log('Google Search Result from SerpAPI', searchResult);
+    console.debug('Google Search Result from SerpAPI', searchResult);
 
     // extract top results
     const extractedArticles = [];
@@ -78,7 +78,7 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
       if (!url)
       {
         // invalid url, skip processing
-        console.log("No valid url is found from search result, skip processing", r);
+        console.debug("No valid url is found from search result, skip processing", r);
         continue;
       }
 
@@ -87,6 +87,7 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
       {
         // if the url is the direct link to the Product item page of Amazon, Etsy, etc., skip it for now.
         // TODO: we may need to find a way to process this
+        console.debug("The URL seems to be Amazon URL, skip further processing.", url);
         continue;
       }
 
@@ -95,11 +96,11 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
         extractorResponse = await extractorClient.extractArticleData(url);
         if (!extractorResponse.summary)
         {
-          console.log("Summary extraction API returned invalid response, skip further processing.", url);
+          console.debug("Summary extraction API returned invalid response, skip further processing.", url);
           continue;
         }
-      } catch {
-        console.log("Summary extraction failed due to API failure, skip further processing.", url);
+      } catch (e) {
+        console.error("Summary extraction failed due to API failure, skip further processing.", e);
         continue;
       }
 
@@ -123,34 +124,33 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
       let externalLinks = extractedUrls.links.filter(externalLinksFilter);
       if (externalLinks.length > 0)
       {
-        console.log('URL Extraction Result for ' + url, extractedUrls);
+        console.debug('URL Extraction Result for ' + url, extractedUrls);
       }
       else
       {
         // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
         try {
           let urlIntellResponse = await urlExtractorClient.rip(url);
-          console.log('URL Intelligence API Result for ' + url, urlIntellResponse);
+          console.debug('URL Intelligence API Result for ' + url, urlIntellResponse);
           externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
-        } catch {
-          console.log('URL Intelligence API Failure: ', url);
+        } catch(e) {
+          console.error('RapidAPI - URL Intelligence API Failure: ', e);
         }
       }
 
       if (externalLinks.length == 0) {
-        console.log("could not find valid external links. skip further processing.", url);
-        continue;
+        console.debug("could not find valid external links. yet include it in the result.", url);
       }
 
       let rephraserRespone : HealthyTechParaphraserResponse | undefined = undefined;
       try {
         rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
         if (!rephraserRespone.newText) {
-          console.log("Rephrasing API returned invalid response, skip further processing.", extractorResponse.summary);
+          console.debug("Rephrasing API returned invalid response, skip further processing.", extractorResponse.summary);
           continue;
         }
-      } catch {
-        console.log('Rephraser API Failure: ', extractorResponse.summary);
+      } catch (e) {
+        console.error('RapidAPI - Rephraser API Failure: ', e);
         continue;
       }
       

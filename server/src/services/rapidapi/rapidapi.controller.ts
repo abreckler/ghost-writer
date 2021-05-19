@@ -21,6 +21,7 @@ const generateTagging = async (req: Request, res: Response, next: NextFunction) 
     const response = await client.generate(params.text);
     res.status(200).json(response);
   } catch (err) {
+    console.error('RapidAPI - Topic Tagging API by Twinword failed with error', err);
     next(err);
   }
 }
@@ -36,6 +37,7 @@ const summarizeText = async (req: Request, res: Response, next: NextFunction) =>
     const response = await client.textSummarizerText(params.text || '');
     res.status(200).json(response);
   } catch (err) {
+    console.error('RapidAPI - Text Summarization API by TextAnalysis failed with error', err);
     next(err);
   }
 }
@@ -51,6 +53,7 @@ const rewriteText = async (req: Request, res: Response, next: NextFunction) => {
     const response = await client.rewrite(params.text || '', params.language, params.strength);
     res.status(200).json(response);
   } catch (err) {
+    console.error('RapidAPI - Text Rewrite API by Smodin failed with error', err);
     next(err);
   }
 }
