@@ -2,6 +2,8 @@ import RapidApiClient from './base';
 
 //
 // Text Summarization API of TextAnalysis
+// Can be used for Key sentence extraction.
+// https://rapidapi.com/textanalysis/api/text-summarization
 //
 interface TextAnalysisTextSummarizationTextRequest {
   text?:string,

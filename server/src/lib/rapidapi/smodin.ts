@@ -2,6 +2,7 @@ import RapidApiClient from './base';
 
 //
 // Rewriter/Paraphraser/Text Changer (Multi-Language) by smodin
+// https://rapidapi.com/smodin/api/rewriter-paraphraser-text-changer-multi-language
 //
 interface SmodinRewriteRequest {
   language?: string,

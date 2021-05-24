@@ -32,7 +32,11 @@ import {
   ZackproserUrlIntelligenceRequest, ZackproserUrlIntelligenceResponse,
 } from './zackproser';
 
-
+import {
+  ZombieBestAmazonProductsApiClient,
+  ZombieBestAmazonProductDetailRequest, ZombieBestAmazonProductDetailResponse,
+  ZombieBestASINRequest, ZombieBestASINResponse,
+} from './amazon-products';
 
 export {
   RapidApiClient,
@@ -56,4 +60,8 @@ export {
   // Zackproser - URL intelligence
   ZackproserUrlIntelligenceApiClient,
   ZackproserUrlIntelligenceRequest, ZackproserUrlIntelligenceResponse,
+  // ZombieBest - Amazon Products
+  ZombieBestAmazonProductsApiClient,
+  ZombieBestAmazonProductDetailRequest, ZombieBestAmazonProductDetailResponse,
+  ZombieBestASINRequest, ZombieBestASINResponse,
 }
