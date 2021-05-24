@@ -101,6 +101,7 @@ interface SmodinRewriteResponse {
 //
 interface ArticleGeneratorRequest {
   seed_text ?: string;
+  output_format ?: string; // text,markdown,html
   num_serp_results ?: number;
   num_outbound_links_per_serp_result ?: number;
 }

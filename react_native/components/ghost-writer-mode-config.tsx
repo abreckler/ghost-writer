@@ -419,7 +419,13 @@ interface ArticleGeneratorConfigProps {
   style: ViewStyle;
 }
 
-class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps, { num_serp_results?: number, num_outbound_links_per_serp_result?: number }> {
+interface ArticleGeneratorConfigStates {
+  num_serp_results?: number;
+  num_outbound_links_per_serp_result?: number;
+  output_format: string;
+}
+
+class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps, ArticleGeneratorConfigStates> {
 
   constructor (props: ArticleGeneratorConfigProps) {
     super(props);
@@ -427,6 +433,7 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
     this.state = {
       num_serp_results : props.initValue?.num_serp_results || props.value?.num_serp_results || 3,
       num_outbound_links_per_serp_result : props.initValue?.num_outbound_links_per_serp_result || props.value?.num_outbound_links_per_serp_result || 3,
+      output_format: props.initValue?.output_format || props.value?.output_format || 'text',
     }
   }
 
@@ -436,6 +443,7 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
       this.setState({
         num_serp_results : this.props.value?.num_serp_results || 3,
         num_outbound_links_per_serp_result : this.props.value?.num_outbound_links_per_serp_result || 3,
+        output_format: this.props.value?.output_format || 'text',
       });
     }
   }
@@ -446,6 +454,7 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
       this.props.onValueChange({
         num_serp_results: changedStateNames.indexOf('num_serp_results') < 0 ? this.state.num_serp_results : newState.num_serp_results,
         num_outbound_links_per_serp_result: changedStateNames.indexOf('num_outbound_links_per_serp_result') < 0 ? this.state.num_outbound_links_per_serp_result : newState.num_outbound_links_per_serp_result,
+        output_format: changedStateNames.indexOf('output_format') < 0 ? this.state.output_format : newState.output_format,
       });
   }
 
@@ -458,6 +467,18 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
         <TextInputGroupWithValidityCheck label={'Number of outbound links per a SERP API Result'} value={this.state.num_outbound_links_per_serp_result?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of outbound links per a SERP API Result', intVal: true, min: 1, max: 10 }}
             onValueChange={ v => { this.setStateWithValueChange({num_outbound_links_per_serp_result: (v && Number.parseInt(v)) || undefined}, ['num_outbound_links_per_serp_result']); } } />
+        <View style={[styles.inputGroupContainer]}>
+          <Text style={[styles.label, styles.md_1_3rd]}>{'Output Format'}</Text>
+          <Picker style={[styles.picker, styles.md_2_3rds]}
+              selectedValue={this.state.output_format.toString()}
+              itemStyle={styles.pickerItemStyle}
+              mode='dropdown'
+              onValueChange={ v => { this.setStateWithValueChange({ output_format: v }, ['output_format']); }}>
+            <Picker.Item label="Plain Text" value="text" />
+            <Picker.Item label="Markdown" value="markdown" />
+            <Picker.Item label="HTML" value="html" />
+          </Picker>
+        </View>
       </View>
     );
   }

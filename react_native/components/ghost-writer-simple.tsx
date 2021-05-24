@@ -141,6 +141,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       {
         let params = {} as ArticleGeneratorRequest;
         params.seed_text = text.trim();
+        params.output_format = generateArticleConfig?.output_format || 'text';
         params.num_serp_results = generateArticleConfig?.num_serp_results;
         params.num_outbound_links_per_serp_result = generateArticleConfig?.num_outbound_links_per_serp_result;
 
