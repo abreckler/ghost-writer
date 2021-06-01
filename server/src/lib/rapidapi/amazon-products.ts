@@ -69,7 +69,7 @@ class ZombieBestAmazonProductsApiClient extends RapidApiClient {
       asin: asin,
       country: country,
     };
-    return await this._doGet<ZombieBestAmazonProductDetailResponse>('/product' + new URLSearchParams(params));
+    return await this._doGet<ZombieBestAmazonProductDetailResponse>('/product?' + new URLSearchParams(params));
   }
 
   // GET ASIN
@@ -77,7 +77,7 @@ class ZombieBestAmazonProductsApiClient extends RapidApiClient {
     let params = {
       url: url,
     };
-    return await this._doGet<ZombieBestASINResponse>('/asin' + new URLSearchParams(params));
+    return await this._doGet<ZombieBestASINResponse>('/asin?' + new URLSearchParams(params));
   }
 }
 
