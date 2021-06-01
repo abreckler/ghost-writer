@@ -15,7 +15,8 @@ import {
 
 class MyApiClient {
 
-  MY_API_BASE_URL = "https://api.ghost-writer.io"; //"http://localhost:3000";
+  MY_API_BASE_URL = "https://api.ghost-writer.io";
+  // MY_API_BASE_URL = "http://localhost:3000";
   API_KEY = "";
   DEFAULT_ENGINE : EngineID = EngineID.Curie;
   FILTER_EMPTY_COMPLETION_ANSWER = true;

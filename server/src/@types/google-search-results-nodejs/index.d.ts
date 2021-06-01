@@ -77,11 +77,18 @@ declare module 'google-search-results-nodejs' {
     link ?: string;
     thumbnail ?: string;
   }
+  interface SerpApiSearchResultInlinePeopleAlsoSearchFor {
+    title ?: string;
+    items ?: Array<{name ?: string, image ?: string, link ?: string, serpapi_link ?: string }>;
+    see_more_link ?: string;
+    see_more_serpapi_link ?: string;
+  }
   interface SerpApiSearchResultRelatedQuestion {
     question ?: string;
     snippet ?: string;
     title ?: string;
     link ?: string;
+    displayed_link ?: string;
   }
 
   interface SerpApiSearchResult {
@@ -93,7 +100,7 @@ declare module 'google-search-results-nodejs' {
     organic_results ?: Array<SerpApiSearchResultOrganicResult>;
     images_results ?: Array<SerpApiSearchResultImageResult>;
     inline_images ?: Array<SerpApiSearchResultInlineImage>;
-    inline_people_also_search_for ?: Array<any>;
+    inline_people_also_search_for ?: Array<SerpApiSearchResultInlinePeopleAlsoSearchFor>;
     suggested_searches ?: Array<SerpApiSearchResultSuggestedSearch>;
     related_questions ?: Array<SerpApiSearchResultRelatedQuestion>;
     related_searches ?: Array<SerpApiSearchResultRelatedSearch>;

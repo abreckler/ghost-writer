@@ -462,7 +462,7 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
     return (
       <View style={this.props.style}>
         <TextInputGroupWithValidityCheck label={'Number of SERP API Results'} value={this.state.num_serp_results?.toString()}
-            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of SERP API Results', intVal: true, min: 1, max: 20 }}
+            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of SERP API Results', intVal: true, min: 1, max: 10 }}
             onValueChange={ v => { this.setStateWithValueChange({num_serp_results: (v && Number.parseInt(v)) || undefined}, ['num_serp_results']); } } />
         <TextInputGroupWithValidityCheck label={'Number of outbound links per a SERP API Result'} value={this.state.num_outbound_links_per_serp_result?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of outbound links per a SERP API Result', intVal: true, min: 1, max: 10 }}

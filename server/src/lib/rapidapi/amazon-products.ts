@@ -1,7 +1,7 @@
 import RapidApiClient from './base';
 
 //
-// News Article Data Extract and Summarization by Pipfeed
+// "Amazon Products API" by ZombieBest
 // https://rapidapi.com/ZombieBest/api/amazon-products1
 //
 interface ZombieBestAmazonProductDetailRequest {

@@ -1,17 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { GoogleSearchAsync } from '../../lib/serpapi-async';
-
-import {
-  PipfeedArticleDataExtractorApiClient,
-  HealthyTechParaphraserApiClient,
-  ZackproserUrlIntelligenceApiClient,
-  HealthyTechParaphraserResponse,
-} from "../../lib/rapidapi";
 import { GoogleSearchParameters } from 'google-search-results-nodejs';
-import { extractUrls } from '../../lib/utils';
-import middleware from '../../middleware';
+import { ArticleGeneratorConfigs, ArticleParagraph, paragraphForAmazonProduct, paragraphForGeneralPages2, paraphraser } from './article-generator.service';
 
-const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
 
 /**
@@ -23,10 +14,12 @@ const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
  */
 const writeProductsReviewArticle = async (req: Request, res: Response, next: NextFunction) => {
   const seedText = req.body.seed_text || '';
-  const outputFormat = req.body.output_format || 'text';
+  const configs = {
+    numSerpResults: req.body.num_serp_results || 3,
+    numOutboundLinksPerSerpResult: req.body.num_outbound_links_per_serp_result || 3,
+    outputFormat: req.body.output_format || 'text',
+  } as ArticleGeneratorConfigs;
 
-  let numSerpResults = req.body.num_serp_results || 3;
-  let numOutboundLinksPerSerpResult = req.body.num_outbound_links_per_serp_result || 3;
   const error = [];
 
   if (seedText.length < 5) {
@@ -38,337 +31,114 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
     return;
   }
 
-  if (numSerpResults > 20){
-    error.push('"num_serp_results" param can not exceed 20. It is defaulted to 3');
-    numSerpResults = 3;
-  } else if (numSerpResults <= 0){
+  if (configs.numSerpResults > 10){
+    error.push('"num_serp_results" param can not exceed 10. It is defaulted to 3');
+    configs.numSerpResults = 3;
+  } else if (configs.numSerpResults <= 0){
     error.push('"num_serp_results" param must be greater than 0. It is defaulted to 3');
-    numSerpResults = 3;
+    configs.numSerpResults = 3;
   }
 
-  if (numOutboundLinksPerSerpResult > 10){
+  if (configs.numOutboundLinksPerSerpResult > 10){
     error.push('"num_outbound_links_per_serp_result" param can not exceed 10. It is defaulted to 3');
-    numOutboundLinksPerSerpResult = 3;
-  } else if (numOutboundLinksPerSerpResult <= 0){
+    configs.numOutboundLinksPerSerpResult = 3;
+  } else if (configs.numOutboundLinksPerSerpResult <= 0){
     error.push('"num_outbound_links_per_serp_result" param must be greater than 0. It is defaulted to 3');
-    numOutboundLinksPerSerpResult = 3;
+    configs.numOutboundLinksPerSerpResult = 3;
   }
-
-  //
-  // METHOD 1
-  //   1. Google Search through SerpAPI
-  //   2. Extract and summarize each result
-  //   3. Extract external URLs (product links) from each result
-  //   4. Rephrase each summaries
-  //   5. Combine them to generate full text
-  //
-  const method1 = async () => {
-    // call serpapi to get google search result with the seed text
-    const search = new GoogleSearchAsync(SERPAPI_API_KEY);
-    const searchParams = {
-      engine: "google",
-      q: seedText,
-      google_domain: "google.com",
-      gl: "us",
-      hl: "en",
-    } as GoogleSearchParameters;
-    const searchResult = await search.json_async(searchParams);
-    console.debug('Google Search Result from SerpAPI', searchResult);
-
-    // extract top results
-    const extractedArticles = [];
-    const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
-    const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
-    const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
-
-    let j = 0;
-    for (let i = 0; i < (searchResult.organic_results || []).length && i < numSerpResults; i++)
-    {
-      // article extraction and summarization
-      const r = (searchResult.organic_results || [])[i];
-      const url = r.link || '';
-      if (!url)
-      {
-        // invalid url, skip processing
-        console.debug("No valid url is found from search result, skip processing", r);
-        continue;
-      }
-
-      const internalHostname = new URL(url).hostname;
-      if (['amzn.to', 'www.amazon.com', 'www.etsy.com',
-            'www.target.com', 'www.walmart.com', 'www.ebay.com', ].indexOf(internalHostname) >= 0)
-      {
-        // if the url is the direct link to the Product item page of Amazon, Etsy, etc., skip it for now.
-        // TODO: we may need to find a way to process this
-        console.debug("The URL seems to be Amazon URL, skip further processing.", url);
-        continue;
-      }
-
-      let extractorResponse = null;
-      try {
-        extractorResponse = await extractorClient.extractArticleData(url);
-        if (!extractorResponse.summary)
-        {
-          console.debug("Summary extraction API returned invalid response, skip further processing.", url);
-          continue;
-        }
-      } catch (e) {
-        console.error("Summary extraction failed due to API failure, skip further processing.", e);
-        continue;
-      }
-
-      let extractedUrls = extractUrls(extractorResponse.html);
-      const externalLinksFilter = (l: string, idx: number, self: Array<string>) => {
-        l = l && l.trim();
-        if (!l)
-          return false;
-
-        try {
-          let u = new URL(l);
-          return self.indexOf(l) === idx // uniqueness
-              && u.hostname && u.pathname && u.hostname != internalHostname // external links only
-              && ['amzn.to', 'www.amazon.com', 'www.etsy.com',
-                  'www.target.com', 'www.walmart.com', 'www.ebay.com', ].indexOf(u.hostname) >= 0 // product urls only
-              && !/cloudflare|googleapis|aspnetcdn|ajax|api|cdn/.test(u.hostname) // avoid some common non-viewable urls
-        } catch {
-          return false;
-        }
-      };
-
-      let externalLinks = extractedUrls.links.filter(externalLinksFilter);
-      if (externalLinks.length > 0)
-      {
-        console.debug('URL Extraction Result for ' + url, extractedUrls);
-      }
-      else
-      {
-        // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
-        try {
-          let urlIntellResponse = await urlExtractorClient.rip(url);
-          console.debug('URL Intelligence API Result for ' + url, urlIntellResponse);
-          externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
-        } catch(e) {
-          console.error('RapidAPI - URL Intelligence API Failure: ', e);
-        }
-      }
-
-      if (externalLinks.length == 0) {
-        console.debug("could not find valid external links. yet include it in the result.", url);
-      }
-
-      let rephraserRespone : HealthyTechParaphraserResponse | undefined = undefined;
-      try {
-        rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
-        if (!rephraserRespone.newText) {
-          console.debug("Rephrasing API returned invalid response, skip further processing.", extractorResponse.summary);
-          continue;
-        }
-      } catch (e) {
-        console.error('RapidAPI - Rephraser API Failure: ', e);
-        continue;
-      }
-      
-      extractedArticles.push({
-        source_url: url,
-        title: extractorResponse.title,
-        description: extractorResponse.description,
-        summary: extractorResponse.summary,
-        rephrased_summary: rephraserRespone?.newText,
-        external_links: externalLinks,
-      });
-      j++;
-    }
-
-    // merge article summaries to generate full text
-    // const text = extractedArticles.map(a => {
-    //   return '<p>' + a.rephrased_summary.replace('\n', '<br/>') + '</p>' +
-    //     '<a href="' + a.source_url + '">Source</a><br/>' +
-    //     '<p>Links: <ul>' + a.external_links.map(l => `<li><a href="${l}">${l}</a></li>`).join('') + '</ul></p>'
-    // }).join('<br/><br/>');
-    const text = extractedArticles.map(a => {
-      return a.rephrased_summary + '\n\n' +
-        'Source: ' + a.source_url + '\n' +
-        'Links: Total ' + (a.external_links.length > numOutboundLinksPerSerpResult ? numOutboundLinksPerSerpResult : a.external_links.length) + ' Link(s)\n' +
-        a.external_links.slice(0, numOutboundLinksPerSerpResult).map(l => '  • ' + l).join('\n')
-    }).join('\n\n');
-
-    return text;
-  };
-
-
-  //
-  // METHOD 2
-  //   1. Extract Key sentences from article text via [News Article Data Extract](https://rapidapi.com/pipfeed-pipfeed-default/api/news-article-data-extract-and-summarization1)
-  //   2. Re-write the article title to use as a header for each SERP result
-  //   3. Re-write the key sentences
-  //   4. Combine them to generate full text
-  //      {TITLE}
-  //      {Rewritten article text}
-  //      {Display outbound links (amazon only for now)}
-  //      {Link to Article Source}
-  //      {Tags: tags for each section}
-  //      {Related search queries}
-  //
-  const method2 = async () => {
-    // call serpapi to get google search result with the seed text
-    const search = new GoogleSearchAsync(SERPAPI_API_KEY);
-    const searchParams = {
-      engine: "google",
-      q: seedText,
-      google_domain: "google.com",
-      gl: "us",
-      hl: "en",
-    } as GoogleSearchParameters;
-    const searchResult = await search.json_async(searchParams);
-    console.debug('Google Search Result from SerpAPI', searchResult);
-
-    // extract top results
-    const extractedArticles = [];
-    const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
-    const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
-    const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
-
-    let j = 0;
-    for (let i = 0; i < (searchResult.organic_results || []).length && i < numSerpResults; i++)
-    {
-      // article extraction and summarization
-      const r = (searchResult.organic_results || [])[i];
-      const url = r.link || '';
-      if (!url)
-      {
-        // invalid url, skip processing
-        console.debug("No valid url is found from search result, skip processing", r);
-        continue;
-      }
-
-      const internalHostname = new URL(url).hostname;
-      if (['amzn.to', 'www.amazon.com', 'www.etsy.com',
-            'www.target.com', 'www.walmart.com', 'www.ebay.com', ].indexOf(internalHostname) >= 0)
-      {
-        // if the url is the direct link to the Product item page of Amazon, Etsy, etc., skip it for now.
-        // TODO: we may need to find a way to process this
-        console.debug("The URL seems to be Amazon URL, skip further processing.", url);
-        continue;
-      }
-
-      let extractorResponse = null;
-      try {
-        extractorResponse = await extractorClient.extractArticleData(url);
-        if (!extractorResponse.summary)
-        {
-          console.debug("Summary extraction API returned invalid response, skip further processing.", url);
-          continue;
-        }
-      } catch (e) {
-        console.error("Summary extraction failed due to API failure, skip further processing.", e);
-        continue;
-      }
-
-      let extractedUrls = extractUrls(extractorResponse.html);
-      const externalLinksFilter = (l: string, idx: number, self: Array<string>) => {
-        l = l && l.trim();
-        if (!l)
-          return false;
-
-        try {
-          let u = new URL(l);
-          return self.indexOf(l) === idx // uniqueness
-              && u.hostname && u.pathname && u.hostname != internalHostname // external links only
-              && ['amzn.to', 'www.amazon.com', 'www.etsy.com',
-                  'www.target.com', 'www.walmart.com', 'www.ebay.com', ].indexOf(u.hostname) >= 0 // product urls only
-              && !/cloudflare|googleapis|aspnetcdn|ajax|api|cdn/.test(u.hostname) // avoid some common non-viewable urls
-        } catch {
-          return false;
-        }
-      };
-
-      let externalLinks = extractedUrls.links.filter(externalLinksFilter);
-      if (externalLinks.length > 0)
-      {
-        console.debug('URL Extraction Result for ' + url, extractedUrls);
-      }
-      else
-      {
-        // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
-        try {
-          let urlIntellResponse = await urlExtractorClient.rip(url);
-          console.debug('URL Intelligence API Result for ' + url, urlIntellResponse);
-          externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
-        } catch(e) {
-          console.error('RapidAPI - URL Intelligence API Failure: ', e);
-        }
-      }
-
-      if (externalLinks.length == 0) {
-        console.debug("could not find valid external links. yet include it in the result.", url);
-      }
-
-      let rephraserRespone : HealthyTechParaphraserResponse | undefined = undefined;
-      try {
-        rephraserRespone = await rephraserClient.rewrite(extractorResponse.summary);
-        if (!rephraserRespone.newText) {
-          console.debug("Rephrasing API returned invalid response, skip further processing.", extractorResponse.summary);
-          continue;
-        }
-      } catch (e) {
-        console.error('RapidAPI - Rephraser API Failure: ', e);
-        continue;
-      }
-      
-      extractedArticles.push({
-        source_url: url,
-        title: extractorResponse.title,
-        description: extractorResponse.description,
-        summary: extractorResponse.summary,
-        rephrased_summary: rephraserRespone?.newText,
-        external_links: externalLinks,
-      });
-      j++;
-    }
-
-    if (outputFormat === 'text')
-    {
-      const text = extractedArticles.map(a => {
-        return a.rephrased_summary + '\n\n' +
-          'Source: ' + a.source_url + '\n' +
-          'Links: Total ' + (a.external_links.length > numOutboundLinksPerSerpResult ? numOutboundLinksPerSerpResult : a.external_links.length) + ' Link(s)\n' +
-          a.external_links.slice(0, numOutboundLinksPerSerpResult).map(l => '  • ' + l).join('\n')
-      }).join('\n\n');
-      return text;
-    }
-    else if (outputFormat === 'markdown')
-    {
-      const md = extractedArticles.map(a => {
-        return '<p>' + a.rephrased_summary.replace('\n', '<br/>') + '</p>' +
-          '<a href="' + a.source_url + '">Source</a><br/>' +
-          '<p>Links: <ul>' + a.external_links.map(l => `<li><a href="${l}">${l}</a></li>`).join('') + '</ul></p>'
-      }).join('<br/><br/>');
-      return md;
-    }
-    else if (outputFormat === 'html')
-    {
-      const html = extractedArticles.map(a => {
-        return '<p>' + a.rephrased_summary.replace('\n', '<br/>') + '</p>' +
-          '<a href="' + a.source_url + '">Source</a><br/>' +
-          '<p>Links: <ul>' + a.external_links.map(l => `<li><a href="${l}">${l}</a></li>`).join('') + '</ul></p>'
-      }).join('<br/><br/>');
-      return html
-    }
-
-    return null;
-  };
-
 
   try {
-    const text = await method2();
+    // call serpapi to get google search result with the seed text
+    const search = new GoogleSearchAsync(SERPAPI_API_KEY);
+    const searchParams = {
+      engine: "google",
+      q: seedText,
+      google_domain: "google.com",
+      gl: "us",
+      hl: "en",
+    } as GoogleSearchParameters;
+    const searchResult = await search.json_async(searchParams);
+    console.debug('Google Search Result from SerpAPI', searchResult);
+
+    const paragraphs : Array<ArticleParagraph> = [];
+
+    for (let i = 0; i < (searchResult.organic_results || []).length && i < configs.numSerpResults; i++)
+    {
+      // article extraction and summarization
+      const r = (searchResult.organic_results || [])[i];
+      const url = r.link || '';
+      if (url) {
+        const internalHostname = new URL(url).hostname;
+        if (['amzn.to', 'www.amazon.com', ].indexOf(internalHostname) >= 0) {
+          let p = await paragraphForAmazonProduct(url);
+          p && paragraphs.push(p);
+        } else if (['www.etsy.com', 'www.target.com', 'www.walmart.com', 'www.ebay.com', ].indexOf(internalHostname) >= 0) {
+          
+        } else {
+          let p = await paragraphForGeneralPages2(url);
+          p && paragraphs.push(p);
+        }
+      } else {
+        // invalid url, skip processing
+        console.debug("No valid url is found from search result, skip processing", r);
+        continue;
+      }
+    }
+
+    paragraphs.forEach((p, i, ary) => {
+      if (p.external_links.length > configs.numOutboundLinksPerSerpResult)
+        ary[i].external_links = p.external_links.slice(0, configs.numOutboundLinksPerSerpResult);
+    });
+
+    // Title generation from seed text
+    let generatedTitle = await paraphraser(seedText.replace(/(site:[^\s]+)/g, '').trim());
+
+    // Merge paragraphs to generate full article
+    let text = '';
+    if (configs.outputFormat === 'text') {
+      text = (generatedTitle ? generatedTitle + '\n\n' : '') +
+        paragraphs.map(a => {
+          return (a.generated.title ? a.generated?.title + '\n' : '') +
+            a.generated?.text + '\n' +
+            (a.external_links && a.external_links.length > 0 ? `Found ${a.external_links.length} Link(s) in total\n` + a.external_links.map(l => '  • ' + l).join('\n') + '\n': '') +
+            (a.source_url ? `[Source: ${a.source_url}]\n` : '') +
+            (a.source.tags && a.source.tags.length > 0 ? 'Tags: ' + a.source.tags?.join(',') + '\n' : '')
+        }).join('\n') + '\n' +
+        (searchResult.related_searches && searchResult.related_searches.length > 0 ? 'Related searches:\n' + searchResult.related_searches.map(s=>'  - '+s.query).join('\n') + '\n\n' : '') +
+        (searchResult.related_questions && searchResult.related_questions.length > 0 ? 'Related questions:\n' + searchResult.related_questions.map(q=>'  - '+q.question).join('\n') + '\n' : '');
+    } else if (configs.outputFormat === 'markdown') {
+      text = (generatedTitle ? `# ${generatedTitle}  \n\n` : '') +
+        paragraphs.map(a => {
+          return (a.generated.title ? `### ${a.generated.title}\n` : '') +
+            a.generated?.text?.replace('\n', '  \n') + '  \n' +
+            (a.external_links && a.external_links.length > 0 ? `Found ${a.external_links.length} Link(s) in total\n` + a.external_links.map(l => `  * [${l}](${l})`).join('\n') + '  \n' : '') +
+            (a.source_url ? `[Source](${a.source_url})  \n` : '')+
+            (a.source.tags && a.source.tags.length > 0 ? 'Tags: ' + a.source.tags?.join(',') + '  \n' : '')
+        }).join('  \n') + '  \n' +
+        (searchResult.related_searches && searchResult.related_searches.length > 0 ? 'Related searches:  \n\n' + searchResult.related_searches.map(s=>'* ' + s.query).join('\n') + '  \n\n' : '') +
+        (searchResult.related_questions && searchResult.related_questions.length > 0 ? 'Related questions:  \n\n' + searchResult.related_questions.map(q=>'* ' + q.question).join('\n') + '  \n\n' : '');
+    } else if (configs.outputFormat === 'html') {
+      text = (generatedTitle ? `<h1>${generatedTitle}</h1>\n` : '') +
+        paragraphs.map(a => {
+          return (a.generated.title ? `<h3>${a.generated?.title}</h3>\n` : '') +
+            '<p>' + a.generated?.text?.replace('\n', '<br/>') + '</p>\n' +
+            (a.external_links && a.external_links.length > 0 ? `<p>Found ${a.external_links.length} Link(s) in total\n` + '<ul>' + a.external_links.map(l => `<li><a href="${l}">${l}</a></li>`).join('') + '</ul></p><br/>\n' : '') +
+            (a.source_url ? `<p><a href="${a.source_url}">Source</a></p>\n` : '')+
+            (a.source.tags && a.source.tags.length > 0 ? '<p>Tags: ' + a.source.tags?.join(',') + '</p>\n' : '')
+        }).join('<br/>\n') + '<br/>' +
+        (searchResult.related_searches && searchResult.related_searches.length > 0 ? '<p>Related searches:\n' + '<ul>'+searchResult.related_searches.map(s=>'<li>'+s.query+'</li>').join('\n')+'</ul></p><br/><br/>\n' : '') +
+        (searchResult.related_questions && searchResult.related_questions.length > 0 ? '<p>Related questions:\n' + '<ul>'+searchResult.related_questions.map(q=>'<li>'+q.question+'</li>').join('\n')+'</ul></p><br/><br/>\n' : '');
+    }
 
     res.json({
       'generated_article' : text,
       'error': error,
       'params': {
-        'num_serp_results': numSerpResults,
-        'num_outbound_links_per_serp_result': numOutboundLinksPerSerpResult,
-      }
+        'num_serp_results': configs.numSerpResults,
+        'num_outbound_links_per_serp_result': configs.numOutboundLinksPerSerpResult,
+      },
+      // 'related_searches' : searchResult.related_searches?.map(rs => rs.query),
+      // 'related_queries' : searchResult.related_questions?.map(rq => rq.question),
     });
   } catch (err) {
     next(err);
