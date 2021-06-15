@@ -25,6 +25,8 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
     numOutboundLinksPerSerpResult: req.body.num_outbound_links_per_serp_result || 3,
     outputFormat: req.body.output_format || 'text',
   } as ArticleGeneratorConfigs;
+  const amazonDomains = ['amzn.to', 'www.amazon.com'];
+  const otherShoppingDomains = ['www.etsy.com', 'www.target.com', 'www.walmart.com', 'www.ebay.com'];
 
   const error = [];
 
@@ -74,12 +76,12 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
       const url = r.link || '';
       if (url) {
         const internalHostname = new URL(url).hostname;
-        if (['amzn.to', 'www.amazon.com'].indexOf(internalHostname) >= 0) {
+        if (amazonDomains.indexOf(internalHostname) >= 0) {
           const p = await paragraphForAmazonProduct(url);
           p && paragraphs.push(p);
-        } else if (
-          ['www.etsy.com', 'www.target.com', 'www.walmart.com', 'www.ebay.com'].indexOf(internalHostname) >= 0
-        ) {
+        } else if (otherShoppingDomains.indexOf(internalHostname) >= 0) {
+          const p = await paragraphForGeneralPages2(url);
+          p && paragraphs.push(p);
         } else {
           const p = await paragraphForGeneralPages2(url);
           p && paragraphs.push(p);

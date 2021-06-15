@@ -31,6 +31,15 @@ interface ArticleParagraph {
   external_links: Array<string>;
 }
 
+const shoppingDomains = [
+  'amzn.to',
+  'www.amazon.com',
+  'www.etsy.com',
+  'www.target.com',
+  'www.walmart.com',
+  'www.ebay.com',
+];
+
 const externalLinksFilterFactory = (internalHostname: string) => {
   return (l: string, idx: number, self: Array<string>) => {
     l = l && l.trim();
@@ -43,9 +52,7 @@ const externalLinksFilterFactory = (internalHostname: string) => {
         u.hostname &&
         u.pathname &&
         u.hostname != internalHostname && // external links only
-        ['amzn.to', 'www.amazon.com', 'www.etsy.com', 'www.target.com', 'www.walmart.com', 'www.ebay.com'].indexOf(
-          u.hostname,
-        ) >= 0 && // product urls only
+        shoppingDomains.indexOf(u.hostname) >= 0 && // product urls only
         !/cloudflare|googleapis|aspnetcdn|ajax|api|cdn/.test(u.hostname)
       ); // avoid some common non-viewable urls
     } catch {
