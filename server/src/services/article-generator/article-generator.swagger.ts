@@ -1,4 +1,4 @@
-import { acceptVersion } from "../apiDocs/swaggerDocs/common"
+import { acceptVersion } from '../apiDocs/swaggerDocs/common';
 
 export const infoBlock = {
   tags: ['starwars'],
@@ -9,14 +9,14 @@ export const infoBlock = {
     {
       bearerAuth: [],
     },
-  ]
+  ],
 };
 
 export const starship = {
   '/starwars/starship/{id}': {
     get: {
       ...infoBlock,
-      description: "Get starship by its id",
+      description: 'Get starship by its id',
       parameters: [
         acceptVersion,
         {
@@ -26,7 +26,7 @@ export const starship = {
           required: true,
           schema: {
             type: 'string',
-            example: '12'
+            example: '12',
           },
         },
       ],
@@ -44,6 +44,6 @@ export const starship = {
         },
         400: {},
       },
-    }
-  }
-}
+    },
+  },
+};

@@ -6,13 +6,13 @@ import {
   SmodinRewriterApiClient,
   TextAnalysisTextSummarizationTextRequest,
   TextAnalysisTextSummarizationApiClient,
-} from "../../lib/rapidapi";
+} from '../../lib/rapidapi';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 
 /**
- * 
- * @param req.body {TwinwordTopicTaggingGenerateRequest} 
+ *
+ * @param req.body {TwinwordTopicTaggingGenerateRequest}
  */
 const generateTagging = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -24,10 +24,10 @@ const generateTagging = async (req: Request, res: Response, next: NextFunction) 
     console.error('RapidAPI - Topic Tagging API by Twinword failed with error', err);
     next(err);
   }
-}
+};
 
 /**
- * 
+ *
  * @param req.body {TextAnalysisTextSummarizationTextRequest}
  */
 const summarizeText = async (req: Request, res: Response, next: NextFunction) => {
@@ -40,10 +40,10 @@ const summarizeText = async (req: Request, res: Response, next: NextFunction) =>
     console.error('RapidAPI - Text Summarization API by TextAnalysis failed with error', err);
     next(err);
   }
-}
+};
 
 /**
- * 
+ *
  * @param req.body {SmodinRewriteRequest}
  */
 const rewriteText = async (req: Request, res: Response, next: NextFunction) => {
@@ -56,10 +56,6 @@ const rewriteText = async (req: Request, res: Response, next: NextFunction) => {
     console.error('RapidAPI - Text Rewrite API by Smodin failed with error', err);
     next(err);
   }
-}
+};
 
-export {
-  generateTagging,
-  summarizeText,
-  rewriteText,
-}
+export { generateTagging, summarizeText, rewriteText };

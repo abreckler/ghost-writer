@@ -1,12 +1,12 @@
-import express from "express";
+import express from 'express';
 import middleware from '../../middleware';
-import {
-  writeProductsReviewArticle,
-} from "./article-generator.controller";
+import { writeProductsReviewArticle } from './article-generator.controller';
 
 export const articleGeneratorRouter = express.Router();
 
-articleGeneratorRouter.post('/article-generator/write',
+articleGeneratorRouter.post(
+  '/article-generator/write',
   middleware.authentication,
-  middleware.authorization('a role GET / HEAD'), 
-  writeProductsReviewArticle);
+  middleware.authorization('a role GET / HEAD'),
+  writeProductsReviewArticle,
+);

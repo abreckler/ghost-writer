@@ -6,11 +6,11 @@ import {
   SearchParams,
   ClassificationParams,
   CreateAnswerParams,
-} from "../../lib/openai";
+} from '../../lib/openai';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
-const listEngines = async (req: Request, res: Response, next: NextFunction) => {
+const listEngines = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const client = new OpenAiApiClient(OPENAI_API_KEY);
     const response = await client.listEngines();
@@ -19,10 +19,10 @@ const listEngines = async (req: Request, res: Response, next: NextFunction) => {
     console.error('OpenAI(a.k.a. GPT-3) - Listing Engines API failed with error', err);
     next(err);
   }
-}
+};
 
 /**
- * 
+ *
  * @param req.body {CompletionParams}
  * @param req.params.engine {string}
  */
@@ -37,10 +37,10 @@ const completion = async (req: Request, res: Response, next: NextFunction) => {
     console.error('OpenAI(a.k.a. GPT-3) - Text Completion API failed with error', err);
     next(err);
   }
-}
+};
 
 /**
- * 
+ *
  * @param req.body {SearchParams}
  * @param req.params.engine {string}
  */
@@ -55,10 +55,10 @@ const search = async (req: Request, res: Response, next: NextFunction) => {
     console.error('OpenAI(a.k.a. GPT-3) - Search API failed with error', err);
     next(err);
   }
-}
+};
 
 /**
- * 
+ *
  * @param req.body {ClassificationParams}
  * @param req.params.engine {string}
  */
@@ -73,10 +73,10 @@ const classification = async (req: Request, res: Response, next: NextFunction) =
     console.error('OpenAI(a.k.a. GPT-3) - Classification API failed with error', err);
     next(err);
   }
-}
+};
 
 /**
- * 
+ *
  * @param req.body {CreateAnswerParams}
  * @param req.params.engine {string}
  */
@@ -91,9 +91,9 @@ const createAnswer = async (req: Request, res: Response, next: NextFunction) => 
     console.error('OpenAI(a.k.a. GPT-3) - Create Answer API failed with error', err);
     next(err);
   }
-}
+};
 
-const listFiles = async (req: Request, res: Response, next: NextFunction) => {
+const listFiles = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const client = new OpenAiApiClient(OPENAI_API_KEY);
     const response = await client.listFiles();
@@ -102,14 +102,6 @@ const listFiles = async (req: Request, res: Response, next: NextFunction) => {
     console.error('OpenAI(a.k.a. GPT-3) - List Files API failed with error', err);
     next(err);
   }
-}
+};
 
-
-export {
-  listEngines,
-  completion,
-  search,
-  classification,
-  createAnswer,
-  listFiles,
-}
+export { listEngines, completion, search, classification, createAnswer, listFiles };
