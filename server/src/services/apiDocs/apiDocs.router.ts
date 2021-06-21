@@ -11,24 +11,21 @@ const options: swaggerUI.SwaggerOptions = {
     urls: [
       {
         url: 'http://localhost:3000/api-docs/version/v1',
-        name: 'Apple',
+        name: 'v1',
       },
     ],
   },
 };
 
-apiDocsRouter.get('/version/1_0', (req: Request, res: Response, next: NextFunction) => res.status(200).json(v1));
-// eslint-disable-next-line
-// @ts-ignore
+apiDocsRouter.get('/version/v1', (req: Request, res: Response, next: NextFunction) => res.status(200).json(v1));
+
 apiDocsRouter.get('/open-api/doc.json', (req: Request, res: Response, next: NextFunction) =>
   res.status(200).json(swaggerUI.serveFiles(undefined, options)),
 );
 
 apiDocsRouter.use('/', swaggerUI.serve, (req: Request, res: Response, next: NextFunction) => {
   try {
-    // eslint-disable-next-line
-    // @ts-ignore
-    return swaggerUI.setup(null, options)(req, res, next);
+    return swaggerUI.setup(undefined, options)(req, res, next);
   } catch (error) {
     next(error);
   }

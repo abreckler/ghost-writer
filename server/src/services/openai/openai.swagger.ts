@@ -1,8 +1,6 @@
-import { acceptVersion } from '../apiDocs/swaggerDocs/common';
-
 export const infoBlock = {
-  tags: ['OpenAI', 'GPT-3'],
-  description: '',
+  tags: ['OpenAI'],
+  description: 'OpenAI API wrapper',
   produces: ['application/json', 'charset=utf-8'],
   summary: 'OpenAI APIs',
   security: [
@@ -17,7 +15,7 @@ export const openai = {
     get: {
       ...infoBlock,
       description: 'OpenAI - List engines',
-      parameters: [acceptVersion],
+      parameters: [],
       responses: {
         '200': {
           description: 'List of available engines',
@@ -25,7 +23,49 @@ export const openai = {
             'application/json; charset=utf-8': {
               schema: {
                 type: 'object',
-                $ref: '#/components/schemas/StarShip',
+                $ref: '#/components/schemas/UnknownYet',
+              },
+            },
+          },
+        },
+        400: {},
+      },
+    },
+  },
+  '/openai/engines/{engine}/search': {
+    post: {
+      ...infoBlock,
+      description: 'OpenAI - Search engines',
+      parameters: [],
+      responses: {
+        '200': {
+          description: 'Search engines',
+          content: {
+            'application/json; charset=utf-8': {
+              schema: {
+                type: 'object',
+                $ref: '#/components/schemas/UnknownYet',
+              },
+            },
+          },
+        },
+        400: {},
+      },
+    },
+  },
+  '/openai/engines/{engine}/completions': {
+    post: {
+      ...infoBlock,
+      description: 'OpenAI - Completion API',
+      parameters: [],
+      responses: {
+        '200': {
+          description: 'Auto-completed text',
+          content: {
+            'application/json; charset=utf-8': {
+              schema: {
+                type: 'object',
+                $ref: '#/components/schemas/UnknownYet',
               },
             },
           },

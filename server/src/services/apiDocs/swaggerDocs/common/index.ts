@@ -41,7 +41,6 @@ export const securitySchemes = {
   },
 };
 
-
 export const acceptVersion = {
   name: 'Accept-version',
   in: 'header',
@@ -54,4 +53,4 @@ export const acceptVersion = {
     nullable: false,
     required: true,
   },
-}
+};

@@ -1,7 +1,5 @@
-import { acceptVersion } from '../apiDocs/swaggerDocs/common';
-
 export const infoBlock = {
-  tags: ['article generator'],
+  tags: ['Article Generator'],
   description: '',
   produces: ['application/json', 'charset=utf-8'],
   summary: 'Article Generator API',
@@ -12,7 +10,7 @@ export const infoBlock = {
   ],
 };
 
-export const articleGeneratorResponseSchema = {
+export const ArticleGeneratorResponseSchema = {
   properties: {
     text: {
       type: 'string',
@@ -22,12 +20,11 @@ export const articleGeneratorResponseSchema = {
 };
 
 export const articleGenerator = {
-  '/article-generator/write': {
+  '/api/article-generator/write': {
     get: {
       ...infoBlock,
       description: 'Generate an article from the seed text',
       parameters: [
-        acceptVersion,
         {
           name: 'seed_text',
           in: 'params',
@@ -76,7 +73,7 @@ export const articleGenerator = {
             'application/json; charset=utf-8': {
               schema: {
                 type: 'object',
-                $ref: '#/components/schemas/articleGeneratorResponseSchema',
+                $ref: '#/components/schemas/ArticleGeneratorResponse',
               },
             },
           },

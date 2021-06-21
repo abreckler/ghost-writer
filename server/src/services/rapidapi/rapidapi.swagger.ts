@@ -1,10 +1,8 @@
-import { acceptVersion } from '../apiDocs/swaggerDocs/common';
-
 export const infoBlock = {
-  tags: ['starwars'],
-  description: '',
+  tags: ['RapidAPI'],
+  description: 'RapidAPI wrapper',
   produces: ['application/json', 'charset=utf-8'],
-  summary: 'StarWars starship API',
+  summary: 'RapidAPI wrapper',
   security: [
     {
       bearerAuth: [],
@@ -13,12 +11,85 @@ export const infoBlock = {
 };
 
 export const rapidapi = {
-  '/starwars/starship/{id}': {
-    get: {
+  '/rapidapi/twinword-topic-tagging/generate': {
+    post: {
       ...infoBlock,
-      description: 'Get starship by its id',
+      description: 'Topic Tagging API by Twinword',
       parameters: [
-        acceptVersion,
+        {
+          name: 'text',
+          in: 'params',
+          description: 'Source Text',
+          required: true,
+          schema: {
+            type: 'string',
+            example: '12',
+          },
+        },
+      ],
+      responses: {
+        '200': {
+          description: '',
+          content: {
+            'application/json; charset=utf-8': {
+              schema: {
+                type: 'object',
+                $ref: '#/components/schemas/UnknownYet',
+              },
+            },
+          },
+        },
+        400: {},
+      },
+    },
+  },
+  '/rapidapi/textanalysis-text-summarization/text-summarizer-text': {
+    post: {
+      ...infoBlock,
+      description: 'Text summarization API by textanalysis',
+      parameters: [
+        {
+          name: 'text',
+          in: 'params',
+          description: 'Source Text',
+          required: true,
+          schema: {
+            type: 'string',
+            example: '12',
+          },
+        },
+        {
+          name: 'sentnum',
+          in: 'params',
+          description: 'Level',
+          required: false,
+          schema: {
+            type: 'number',
+            example: '12',
+          },
+        },
+      ],
+      responses: {
+        '200': {
+          description: '',
+          content: {
+            'application/json; charset=utf-8': {
+              schema: {
+                type: 'object',
+                $ref: '#/components/schemas/UnknownYet',
+              },
+            },
+          },
+        },
+        400: {},
+      },
+    },
+  },
+  '/rapidapi/rewriter-paraphraser-text-changer-multi-language/rewrite': {
+    post: {
+      ...infoBlock,
+      description: 'Text rewrite API by smodin',
+      parameters: [
         {
           name: 'starship id',
           in: 'params',
@@ -32,12 +103,12 @@ export const rapidapi = {
       ],
       responses: {
         '200': {
-          description: 'StarWars API: starship',
+          description: '',
           content: {
             'application/json; charset=utf-8': {
               schema: {
                 type: 'object',
-                $ref: '#/components/schemas/StarShip',
+                $ref: '#/components/schemas/UnknownYet',
               },
             },
           },

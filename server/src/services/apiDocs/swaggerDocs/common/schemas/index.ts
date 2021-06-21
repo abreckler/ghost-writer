@@ -46,3 +46,7 @@ export const Note = {
     },
   },
 };
+
+export const UnknownYet = {
+  properties: {},
+};

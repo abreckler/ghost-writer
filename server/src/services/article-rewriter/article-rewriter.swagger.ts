@@ -1,7 +1,5 @@
-import { acceptVersion } from '../apiDocs/swaggerDocs/common';
-
 export const infoBlock = {
-  tags: ['rewriter'],
+  tags: ['Article Rewriter'],
   description: '',
   produces: ['application/json', 'charset=utf-8'],
   summary: 'Article Rewriter API',
@@ -12,7 +10,7 @@ export const infoBlock = {
   ],
 };
 
-export const articleRewriterResponseSchema = {
+export const ArticleRewriterResponseSchema = {
   properties: {
     text: {
       type: 'string',
@@ -27,15 +25,24 @@ export const articleRewriter = {
       ...infoBlock,
       description: 'Rewrite an article',
       parameters: [
-        acceptVersion,
         {
           name: 'text',
           in: 'params',
-          description: 'Input text',
-          required: true,
+          description: 'Source article text to rewrite',
+          required: false,
           schema: {
             type: 'string',
-            example: '12',
+            example: 'Source article text to rewrite',
+          },
+        },
+        {
+          name: 'url',
+          in: 'params',
+          description: 'Source article url to rewrite',
+          required: false,
+          schema: {
+            type: 'string',
+            example: 'https://example.com/article-url',
           },
         },
       ],
@@ -46,7 +53,7 @@ export const articleRewriter = {
             'application/json; charset=utf-8': {
               schema: {
                 type: 'object',
-                $ref: '#/components/schemas/articleRewriterResponseSchema',
+                $ref: '#/components/schemas/ArticleRewriterResponse',
               },
             },
           },
