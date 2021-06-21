@@ -1,10 +1,10 @@
 import { acceptVersion } from '../apiDocs/swaggerDocs/common';
 
 export const infoBlock = {
-  tags: ['starwars'],
+  tags: ['rewriter'],
   description: '',
   produces: ['application/json', 'charset=utf-8'],
-  summary: 'StarWars starship API',
+  summary: 'Article Rewriter API',
   security: [
     {
       bearerAuth: [],
@@ -12,17 +12,26 @@ export const infoBlock = {
   ],
 };
 
-export const starship = {
-  '/starwars/starship/{id}': {
-    get: {
+export const articleRewriterResponseSchema = {
+  properties: {
+    text: {
+      type: 'string',
+      example: 'x-wing',
+    },
+  },
+};
+
+export const articleRewriter = {
+  '/api/article-rewriter/write': {
+    post: {
       ...infoBlock,
-      description: 'Get starship by its id',
+      description: 'Rewrite an article',
       parameters: [
         acceptVersion,
         {
-          name: 'starship id',
+          name: 'text',
           in: 'params',
-          description: 'Starship ID',
+          description: 'Input text',
           required: true,
           schema: {
             type: 'string',
@@ -32,12 +41,12 @@ export const starship = {
       ],
       responses: {
         '200': {
-          description: 'StarWars API: starship',
+          description: 'Rewritten Article',
           content: {
             'application/json; charset=utf-8': {
               schema: {
                 type: 'object',
-                $ref: '#/components/schemas/StarShip',
+                $ref: '#/components/schemas/articleRewriterResponseSchema',
               },
             },
           },

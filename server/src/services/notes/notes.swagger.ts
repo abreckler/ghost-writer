@@ -1,4 +1,4 @@
-import { acceptVersion } from "../apiDocs/swaggerDocs/common"
+import { acceptVersion } from '../apiDocs/swaggerDocs/common';
 
 export const infoBlock = {
   tags: ['notes'],
@@ -10,17 +10,15 @@ export const infoBlock = {
     {
       bearerAuth: [],
     },
-  ]
+  ],
 };
 
 export const notes = {
   '/note/all': {
     get: {
       ...infoBlock,
-      description: "Get all notes",
-      parameters: [
-        acceptVersion,
-      ],
+      description: 'Get all notes',
+      parameters: [acceptVersion],
       responses: {
         '200': {
           description: 'Collection of notes',
@@ -37,12 +35,12 @@ export const notes = {
         },
         400: {},
       },
-    }
+    },
   },
   '/note/{note_id}': {
     get: {
       ...infoBlock,
-      description: "Get note by ID",
+      description: 'Get note by ID',
       parameters: [
         acceptVersion,
         {
@@ -52,7 +50,7 @@ export const notes = {
           required: true,
           schema: {
             type: 'string',
-            example: '12345-6789'
+            example: '12345-6789',
           },
         },
       ],
@@ -73,7 +71,7 @@ export const notes = {
     },
     delete: {
       ...infoBlock,
-      description: "Delete note by ID",
+      description: 'Delete note by ID',
       parameters: [
         acceptVersion,
         {
@@ -83,7 +81,7 @@ export const notes = {
           required: true,
           schema: {
             type: 'string',
-            example: '12345-6789'
+            example: '12345-6789',
           },
         },
       ],
@@ -96,7 +94,7 @@ export const notes = {
     },
     put: {
       ...infoBlock,
-      description: "Update note by ID",
+      description: 'Update note by ID',
       parameters: [
         acceptVersion,
         {
@@ -106,7 +104,7 @@ export const notes = {
           required: true,
           schema: {
             type: 'string',
-            example: '12345-6789'
+            example: '12345-6789',
           },
         },
       ],
@@ -127,7 +125,7 @@ export const notes = {
     },
     head: {
       ...infoBlock,
-      description: "Validate note exists by ID",
+      description: 'Validate note exists by ID',
       parameters: [
         acceptVersion,
         {
@@ -137,7 +135,7 @@ export const notes = {
           required: true,
           schema: {
             type: 'string',
-            example: '12345-6789'
+            example: '12345-6789',
           },
         },
       ],
@@ -148,5 +146,5 @@ export const notes = {
         400: {},
       },
     },
-  }
+  },
 };

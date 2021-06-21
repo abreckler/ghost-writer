@@ -20,29 +20,6 @@ export const Pingz = {
   },
 };
 
-export const User = {
-  properties: {
-    id: {
-      type: 'integer',
-    },
-    name: {
-      type: 'string',
-    },
-  },
-};
-
-export const Deleted = {
-  properties: {
-    deletedOn: {
-      type: 'string',
-      example: '2020-09-14T12:01:45.807Z',
-    },
-    user: {
-      $ref: '#/components/schemas/User',
-    },
-  },
-};
-
 export const Note = {
   properties: {
     _id: {
@@ -69,13 +46,3 @@ export const Note = {
     },
   },
 };
-
-
-export const StarShip = {
-  properties: {
-    name: {
-      type: 'string',
-      example: 'x-wing',
-    },
-  },
-}

@@ -5,22 +5,26 @@ import RapidApiClient from './base';
 // https://rapidapi.com/smodin/api/rewriter-paraphraser-text-changer-multi-language
 //
 interface SmodinRewriteRequest {
-  language?: string,
-  strength?: number,
-  text?: string,
+  language?: string;
+  strength?: number;
+  text?: string;
 }
 interface SmodinRewriteResponse {
-  language: string,
-  rewrite: string,
-  text: string,
+  language: string;
+  rewrite: string;
+  text: string;
 }
 class SmodinRewriterApiClient extends RapidApiClient {
   public constructor(API_KEY: string) {
-    super(API_KEY, "rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com", "https://rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com/");
+    super(
+      API_KEY,
+      'rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com',
+      'https://rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com/',
+    );
   }
 
   public async rewrite(text: string, lang?: string, strength?: number): Promise<SmodinRewriteResponse> {
-    let params = {
+    const params = {
       text: text,
       language: lang ? lang : 'en',
       strength: strength ? strength : 3,
@@ -30,7 +34,4 @@ class SmodinRewriterApiClient extends RapidApiClient {
   }
 }
 
-export {
-	SmodinRewriterApiClient,
-  SmodinRewriteRequest, SmodinRewriteResponse,
-};
+export { SmodinRewriterApiClient, SmodinRewriteRequest, SmodinRewriteResponse };

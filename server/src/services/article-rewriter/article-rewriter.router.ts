@@ -1,12 +1,12 @@
 import express from 'express';
 import middleware from '../../middleware';
-import { writeProductsReviewArticle } from './article-rewriter.controller';
+import { rewriteArticle } from './article-rewriter.controller';
 
-export const articleGeneratorRouter = express.Router();
+export const articleRewriterRouter = express.Router();
 
-articleGeneratorRouter.post(
-  '/article-generator/write',
+articleRewriterRouter.post(
+  '/article-rewriter/write',
   middleware.authentication,
   middleware.authorization('a role GET / HEAD'),
-  writeProductsReviewArticle,
+  rewriteArticle,
 );

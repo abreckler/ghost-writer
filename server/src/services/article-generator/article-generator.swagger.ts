@@ -1,10 +1,10 @@
 import { acceptVersion } from '../apiDocs/swaggerDocs/common';
 
 export const infoBlock = {
-  tags: ['starwars'],
+  tags: ['article generator'],
   description: '',
   produces: ['application/json', 'charset=utf-8'],
-  summary: 'StarWars starship API',
+  summary: 'Article Generator API',
   security: [
     {
       bearerAuth: [],
@@ -12,17 +12,56 @@ export const infoBlock = {
   ],
 };
 
-export const starship = {
-  '/starwars/starship/{id}': {
+export const articleGeneratorResponseSchema = {
+  properties: {
+    text: {
+      type: 'string',
+      example: 'x-wing',
+    },
+  },
+};
+
+export const articleGenerator = {
+  '/article-generator/write': {
     get: {
       ...infoBlock,
-      description: 'Get starship by its id',
+      description: 'Generate an article from the seed text',
       parameters: [
         acceptVersion,
         {
-          name: 'starship id',
+          name: 'seed_text',
           in: 'params',
-          description: 'Starship ID',
+          description: 'Seed Text',
+          required: true,
+          schema: {
+            type: 'string',
+            example: '12',
+          },
+        },
+        {
+          name: 'output_format',
+          in: 'params',
+          description: 'Output Format',
+          required: true,
+          schema: {
+            type: 'string',
+            example: '12',
+          },
+        },
+        {
+          name: 'num_serp_results',
+          in: 'params',
+          description: 'Number of SERP API Result to include in the article generation process',
+          required: true,
+          schema: {
+            type: 'string',
+            example: '12',
+          },
+        },
+        {
+          name: 'num_outbound_links_per_serp_result',
+          in: 'params',
+          description: 'Number of outbound links to include in each paragraph',
           required: true,
           schema: {
             type: 'string',
@@ -32,12 +71,12 @@ export const starship = {
       ],
       responses: {
         '200': {
-          description: 'StarWars API: starship',
+          description: 'Generated Text',
           content: {
             'application/json; charset=utf-8': {
               schema: {
                 type: 'object',
-                $ref: '#/components/schemas/StarShip',
+                $ref: '#/components/schemas/articleGeneratorResponseSchema',
               },
             },
           },

@@ -1,38 +1,26 @@
-import { acceptVersion } from "../apiDocs/swaggerDocs/common"
+import { acceptVersion } from '../apiDocs/swaggerDocs/common';
 
 export const infoBlock = {
   tags: ['starwars'],
   description: '',
   produces: ['application/json', 'charset=utf-8'],
-  summary: 'StarWars starship API',
+  summary: 'OpenAI APIs',
   security: [
     {
       bearerAuth: [],
     },
-  ]
+  ],
 };
 
 export const openai = {
-  '/starwars/starship/{id}': {
+  '/openai/engines': {
     get: {
       ...infoBlock,
-      description: "Get starship by its id",
-      parameters: [
-        acceptVersion,
-        {
-          name: 'starship id',
-          in: 'params',
-          description: 'Starship ID',
-          required: true,
-          schema: {
-            type: 'string',
-            example: '12'
-          },
-        },
-      ],
+      description: 'OpenAI - List engines',
+      parameters: [acceptVersion],
       responses: {
         '200': {
-          description: 'StarWars API: starship',
+          description: 'List of available engines',
           content: {
             'application/json; charset=utf-8': {
               schema: {
@@ -44,6 +32,6 @@ export const openai = {
         },
         400: {},
       },
-    }
-  }
-}
+    },
+  },
+};

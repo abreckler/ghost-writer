@@ -2,21 +2,21 @@ import { pingz } from '../../pingz/pingz.swagger';
 import { notes } from '../../notes/notes.swagger';
 import { openai } from '../../openai/openai.swagger';
 import { rapidapi } from '../../rapidapi/rapidapi.swagger';
-import { starship } from '../../article-generator/article-generator.swagger';
+import { articleGenerator, articleGeneratorResponseSchema } from '../../article-generator/article-generator.swagger';
+import { articleRewriter, articleRewriterResponseSchema } from '../../article-rewriter/article-rewriter.swagger';
 import { servers, info, securitySchemes } from './common';
-import { Pingz, User, Note, Deleted, StarShip } from './common/schemas';
+import { Pingz, Note } from './common/schemas';
 
 export const swaggerDocument = {
   openapi: '3.0.1',
-  info: { ...info, version: 'Apple' },
+  info: { ...info, version: '1.0' },
   servers,
   components: {
     schemas: {
       Pingz,
-      User,
       Note,
-      Deleted,
-      StarShip,
+      articleGeneratorResponseSchema,
+      articleRewriterResponseSchema,
     },
   },
   securitySchemes,
@@ -26,6 +26,7 @@ export const swaggerDocument = {
     ...notes,
     ...openai,
     ...rapidapi,
-    ...starship,
+    ...articleGenerator,
+    ...articleRewriter,
   },
 };
