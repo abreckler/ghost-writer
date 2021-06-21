@@ -1,13 +1,13 @@
 import RapidApiClient from './base';
 
-
 //
 // URL Intelligence by Zackproser
 // https://rapidapi.com/zackproser/api/url-intelligence
 //
 interface ZackproserUrlIntelligenceRequest {
-  target?: string,
+  target?: string;
 }
+
 interface ZackproserUrlIntelligenceResponse {
   links: Array<string>;
   hostnames: Map<string, number>;
@@ -15,11 +15,11 @@ interface ZackproserUrlIntelligenceResponse {
 
 class ZackproserUrlIntelligenceApiClient extends RapidApiClient {
   public constructor(API_KEY: string) {
-    super(API_KEY, "url-intelligence.p.rapidapi.com", "https://url-intelligence.p.rapidapi.com/");
+    super(API_KEY, 'url-intelligence.p.rapidapi.com', 'https://url-intelligence.p.rapidapi.com/');
   }
 
   public async rip(target: string): Promise<ZackproserUrlIntelligenceResponse> {
-    let params = {
+    const params = {
       target: target,
     };
 
@@ -27,7 +27,4 @@ class ZackproserUrlIntelligenceApiClient extends RapidApiClient {
   }
 }
 
-export {
-  ZackproserUrlIntelligenceApiClient,
-  ZackproserUrlIntelligenceRequest, ZackproserUrlIntelligenceResponse,
-};
+export { ZackproserUrlIntelligenceApiClient, ZackproserUrlIntelligenceRequest, ZackproserUrlIntelligenceResponse };

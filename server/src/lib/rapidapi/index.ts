@@ -8,34 +8,37 @@ import {
 
 import {
   TextAnalysisTextSummarizationApiClient,
-  TextAnalysisTextSummarizationTextRequest, TextAnalysisTextSummarizationUrlRequest,
+  TextAnalysisTextSummarizationTextRequest,
+  TextAnalysisTextSummarizationUrlRequest,
   TextAnalysisTextSummarizationResponse,
 } from './textanalysis';
 
-import {
-  SmodinRewriterApiClient,
-  SmodinRewriteRequest, SmodinRewriteResponse,
-} from './smodin';
+import { SmodinRewriterApiClient, SmodinRewriteRequest, SmodinRewriteResponse } from './smodin';
 
 import {
   PipfeedArticleDataExtractorApiClient,
-  PipfeedArticleDataExtractorRequest, PipfeedArticleDataExtractorResponse,
+  PipfeedArticleDataExtractorRequest,
+  PipfeedArticleDataExtractorResponse,
 } from './pipfeed';
 
 import {
   HealthyTechParaphraserApiClient,
-  HealthyTechParaphraserRequest, HealthyTechParaphraserResponse,
+  HealthyTechParaphraserRequest,
+  HealthyTechParaphraserResponse,
 } from './healthy-tech';
 
 import {
   ZackproserUrlIntelligenceApiClient,
-  ZackproserUrlIntelligenceRequest, ZackproserUrlIntelligenceResponse,
+  ZackproserUrlIntelligenceRequest,
+  ZackproserUrlIntelligenceResponse,
 } from './zackproser';
 
 import {
   ZombieBestAmazonProductsApiClient,
-  ZombieBestAmazonProductDetailRequest, ZombieBestAmazonProductDetailResponse,
-  ZombieBestASINRequest, ZombieBestASINResponse,
+  ZombieBestAmazonProductDetailRequest,
+  ZombieBestAmazonProductDetailResponse,
+  ZombieBestASINRequest,
+  ZombieBestASINResponse,
 } from './amazon-products';
 
 export {
@@ -46,22 +49,29 @@ export {
   TwinwordTopicTaggingApiClient,
   // Textanalysis - Text summarization
   TextAnalysisTextSummarizationApiClient,
-  TextAnalysisTextSummarizationTextRequest, TextAnalysisTextSummarizationUrlRequest,
+  TextAnalysisTextSummarizationTextRequest,
+  TextAnalysisTextSummarizationUrlRequest,
   TextAnalysisTextSummarizationResponse,
   // Smodin - Rewriter
   SmodinRewriterApiClient,
-  SmodinRewriteRequest, SmodinRewriteResponse,
+  SmodinRewriteRequest,
+  SmodinRewriteResponse,
   // Pipfeed - Article Data Extract and Summarize
   PipfeedArticleDataExtractorApiClient,
-  PipfeedArticleDataExtractorRequest, PipfeedArticleDataExtractorResponse,
+  PipfeedArticleDataExtractorRequest,
+  PipfeedArticleDataExtractorResponse,
   // Healthy Tech - Paraphraser
   HealthyTechParaphraserApiClient,
-  HealthyTechParaphraserRequest, HealthyTechParaphraserResponse,
+  HealthyTechParaphraserRequest,
+  HealthyTechParaphraserResponse,
   // Zackproser - URL intelligence
   ZackproserUrlIntelligenceApiClient,
-  ZackproserUrlIntelligenceRequest, ZackproserUrlIntelligenceResponse,
+  ZackproserUrlIntelligenceRequest,
+  ZackproserUrlIntelligenceResponse,
   // ZombieBest - Amazon Products
   ZombieBestAmazonProductsApiClient,
-  ZombieBestAmazonProductDetailRequest, ZombieBestAmazonProductDetailResponse,
-  ZombieBestASINRequest, ZombieBestASINResponse,
-}
+  ZombieBestAmazonProductDetailRequest,
+  ZombieBestAmazonProductDetailResponse,
+  ZombieBestASINRequest,
+  ZombieBestASINResponse,
+};

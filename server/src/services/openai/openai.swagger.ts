@@ -1,7 +1,7 @@
 import { acceptVersion } from '../apiDocs/swaggerDocs/common';
 
 export const infoBlock = {
-  tags: ['starwars'],
+  tags: ['OpenAI', 'GPT-3'],
   description: '',
   produces: ['application/json', 'charset=utf-8'],
   summary: 'OpenAI APIs',

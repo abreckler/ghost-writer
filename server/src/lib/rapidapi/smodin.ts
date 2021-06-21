@@ -9,11 +9,13 @@ interface SmodinRewriteRequest {
   strength?: number;
   text?: string;
 }
+
 interface SmodinRewriteResponse {
   language: string;
   rewrite: string;
   text: string;
 }
+
 class SmodinRewriterApiClient extends RapidApiClient {
   public constructor(API_KEY: string) {
     super(

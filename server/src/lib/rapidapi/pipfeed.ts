@@ -5,9 +5,10 @@ import RapidApiClient from './base';
 // https://rapidapi.com/pipfeed-pipfeed-default/api/news-article-data-extract-and-summarization1
 //
 interface PipfeedArticleDataExtractorRequest {
-  url?: string,
-  useCache?: string,
+  url?: string;
+  useCache?: string;
 }
+
 interface PipfeedArticleDataExtractorResponse {
   authors: Array<string>;
   blogLogoUrl: string;
@@ -16,7 +17,7 @@ interface PipfeedArticleDataExtractorResponse {
   category: string;
   description: string;
   html: string;
-  images:Array<string>;
+  images: Array<string>;
   keywords: Array<string>;
   language: string;
   mainImage: string;
@@ -31,11 +32,15 @@ interface PipfeedArticleDataExtractorResponse {
 
 class PipfeedArticleDataExtractorApiClient extends RapidApiClient {
   public constructor(API_KEY: string) {
-    super(API_KEY, "news-article-data-extract-and-summarization1.p.rapidapi.com", "https://news-article-data-extract-and-summarization1.p.rapidapi.com/");
+    super(
+      API_KEY,
+      'news-article-data-extract-and-summarization1.p.rapidapi.com',
+      'https://news-article-data-extract-and-summarization1.p.rapidapi.com/',
+    );
   }
 
-  public async extractArticleData(url: string, useCache: string = 'true'): Promise<PipfeedArticleDataExtractorResponse> {
-    let params = {
+  public async extractArticleData(url: string, useCache = 'true'): Promise<PipfeedArticleDataExtractorResponse> {
+    const params = {
       url: url,
       useCache: useCache,
     };
@@ -46,5 +51,6 @@ class PipfeedArticleDataExtractorApiClient extends RapidApiClient {
 
 export {
   PipfeedArticleDataExtractorApiClient,
-  PipfeedArticleDataExtractorRequest, PipfeedArticleDataExtractorResponse,
+  PipfeedArticleDataExtractorRequest,
+  PipfeedArticleDataExtractorResponse,
 };
