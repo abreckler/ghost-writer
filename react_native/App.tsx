@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GestureResponderEvent, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
+import { Dimensions, GestureResponderEvent, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import * as Linking from 'expo-linking';
 
 import GhostWriterSimple from './components/ghost-writer-simple';
@@ -36,9 +36,11 @@ export default function App() {
     checkInitialURL();
   });
 
+  const { width, height } = Dimensions.get('window');
+
   return (
-    <TouchableWithoutFeedback onPress={touchOutsideInput} accessible={false} style={{flex:1}}>
-      <View style={styles.container}>
+    <TouchableWithoutFeedback onPress={touchOutsideInput} accessible={false}>
+      <View style={[styles.container, { maxHeight: height + 'px' }]}>
         <Text style={styles.titleText}>Ghost Writer</Text>
 
         <GhostWriterSimple seedText={text}></GhostWriterSimple>

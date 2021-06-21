@@ -7,9 +7,9 @@ import {
   EngineID,
   CompletionChoice,
   CompletionParams,
-  SmodinRewriteRequest,
   TextAnalysisTextSummarizationTextRequest,
   ArticleGeneratorRequest,
+  ArticleRewriterRequest,
 } from './lib/types';
 import { GhostWriterConfig } from './lib/writer-config';
 import { MyApiClient } from './lib/api-client';
@@ -31,7 +31,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   const [qaConfig, setQaConfig] = useState(undefined as CompletionParams | undefined);
   const [summaryConfig, setSummaryConfig] = useState(undefined as CompletionParams | undefined);
   const [rewriteConfig, setRewriteConfig] = useState(undefined as CompletionParams | undefined);
-  const [rewriteSmodinConfig, setRewriteSmodinConfig] = useState(undefined as SmodinRewriteRequest | undefined);
+  const [rewriteSmodinConfig, setRewriteSmodinConfig] = useState(undefined as ArticleRewriterRequest | undefined);
   const [extractConfig, setExtractConfig] = useState(undefined as TextAnalysisTextSummarizationTextRequest | undefined);
   const [generateArticleConfig, setGenerateArticleConfig] = useState(undefined as ArticleGeneratorRequest | undefined);
 
@@ -68,8 +68,8 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     {}
     else if (mode === 'extract') {
       setExtractConfig(config as TextAnalysisTextSummarizationTextRequest);
-    } else if (mode === 'rewrite-smodin') {
-      setRewriteSmodinConfig(config as SmodinRewriteRequest);
+    } else if (mode === 'rewrite-article') {
+      setRewriteSmodinConfig(config as ArticleRewriterRequest);
     } else if(mode === 'generate-article') {
       setGenerateArticleConfig(config as ArticleGeneratorRequest);
     } else {
@@ -123,10 +123,20 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
           setAnswersAlert('Ghost Writer could not suggest an answer!');
         }
       }
-      else if (writingMode === 'rewrite-smodin')
+      else if (writingMode === 'rewrite-article')
       {
-        let json = await apiClient.rewrite(text.trim(), rewriteSmodinConfig && rewriteSmodinConfig.language, rewriteSmodinConfig && rewriteSmodinConfig.strength);
-    
+        let params = {} as ArticleRewriterRequest;
+        let text1 = text.trim();
+        if (/^(ftp|http|https):\/\/[^ "]+$/.test(text1))
+          params.url = text1;
+        else
+          params.text = text1;
+        if (rewriteSmodinConfig) {
+          params.language = rewriteSmodinConfig.language;
+          params.strength = rewriteSmodinConfig.strength;
+        }
+
+        let json = await apiClient.rewriteArticle(params);
         if (json.rewrite) {
           setAnswers([
             { text: json.rewrite } as CompletionChoice,
@@ -200,7 +210,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       <>
         <GhostWriterModeConfig onModeChange={onModeConfigChange}></GhostWriterModeConfig>
 
-        <View style={{ flexDirection: 'row', flex: 0.7, justifyContent: 'space-between' }}>
+        <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
           <View style={[styles.gwInputContainer, { flex: 0.49 }]}>
             <TextInput style={styles.gwInput}
                 multiline = {true}
@@ -227,7 +237,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       <>
         <GhostWriterModeConfig onModeChange={onModeConfigChange}></GhostWriterModeConfig>
 
-        <View style={[styles.gwInputContainer, { flex: 0.5 }]}>
+        <View style={[styles.gwInputContainer, { flex: 0.45 }]}>
           <TextInput style={styles.gwInput}
               multiline = {true}
               placeholder="Type here!"

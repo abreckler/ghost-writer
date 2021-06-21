@@ -5,8 +5,8 @@ import {
   CompletionResponse,
   TwinwordTopicTaggingGenerateResponse,
   TwinwordTopicTaggingGenerateRequest,
-  SmodinRewriteRequest,
-  SmodinRewriteResponse,
+  ArticleRewriterRequest,
+  ArticleRewriterResponse,
   TextAnalysisTextSummarizationResponse,
   TextAnalysisTextSummarizationTextRequest,
   ArticleGeneratorResponse,
@@ -41,7 +41,7 @@ class MyApiClient {
    * @see https://beta.openai.com/docs/api-reference/engines
    */
   public async listOpenAiEngines() : Promise<ListEnginesResponse> {
-    let json = await this._doGet<ListEnginesResponse>('/openai/engines');  
+    const json = await this._doGet<ListEnginesResponse>('/openai/engines');  
     return json;
   }
 
@@ -50,8 +50,8 @@ class MyApiClient {
    * @see https://beta.openai.com/docs/api-reference/create-completion
    */
   public async completion(params: CompletionParams) : Promise<CompletionResponse> {
-    let completionUrl = '/openai/engines/'+ this.DEFAULT_ENGINE +'/completions';
-    let json = await this._doPost<CompletionParams, CompletionResponse>(completionUrl, params);  
+    const completionUrl = '/openai/engines/'+ this.DEFAULT_ENGINE +'/completions';
+    const json = await this._doPost<CompletionParams, CompletionResponse>(completionUrl, params);  
 
     if (this.FILTER_EMPTY_COMPLETION_ANSWER)
       json.choices = (json.choices || []).filter((c) => { return !!((c.text || '').trim())});
@@ -68,7 +68,7 @@ class MyApiClient {
   // RapidAPI - Twinword - Topic Tagging
   //
   public async generateTagging(text: string): Promise<TwinwordTopicTaggingGenerateResponse> {
-    let params = {
+    const params = {
       text: text
     } as TwinwordTopicTaggingGenerateRequest;
 
@@ -79,7 +79,7 @@ class MyApiClient {
   //  RapidAPI - TextAnalysis - Text Summarization
   //
   public async textSummarizerText(text: string, sentnum?: number): Promise<TextAnalysisTextSummarizationResponse> {
-    let params = {
+    const params = {
       text: text,
       sentnum: sentnum ? sentnum : 5,
     } as TextAnalysisTextSummarizationTextRequest;
@@ -88,17 +88,11 @@ class MyApiClient {
   }
 
   //
-  //  RapidAPI - smodin - Rewriter/Paraphraser/Text Changer (Multi-Language)
+  // Custom API - Article Rewriter
   //
 
-  public async rewrite(text: string, lang?: string, strength?: number): Promise<SmodinRewriteResponse> {
-    let params = {
-      text: text,
-      language: lang ? lang : 'en',
-      strength: strength ? strength : 3,
-    } as SmodinRewriteRequest;
-
-    return await this._doPost<SmodinRewriteRequest, SmodinRewriteResponse>('/rapidapi/rewriter-paraphraser-text-changer-multi-language/rewrite', params);
+  public async rewriteArticle(req: ArticleRewriterRequest): Promise<ArticleRewriterResponse> {
+    return await this._doPost<ArticleRewriterRequest, ArticleRewriterResponse>('/api/article-rewriter/write', req);
   }
 
   //
@@ -121,7 +115,7 @@ class MyApiClient {
     if (this.DEBUG)
       console.log(url, params);
 
-    let response = await fetch(this.MY_API_BASE_URL + url, {
+    const response = await fetch(this.MY_API_BASE_URL + url, {
       method: 'POST',
       mode: 'cors', // no-cors, *cors, same-origin
       cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
@@ -149,15 +143,15 @@ class MyApiClient {
     if (this.DEBUG)
       console.log(url);
 
-    let response = await fetch(this.MY_API_BASE_URL + url, {
+    const response = await fetch(this.MY_API_BASE_URL + url, {
       method: 'GET',
       headers: {
       'Content-Type': 'application/json',
       'X-MyApi-Key': this.API_KEY,
       },
     });
+    const json : ResponseType = await response.json();
 
-    let json : ResponseType = await response.json();
     if (this.DEBUG)
       console.log(json);
 

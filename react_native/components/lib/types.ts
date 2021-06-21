@@ -81,16 +81,16 @@ interface TextAnalysisTextSummarizationResponse {
   sentences: Array<string>;
 }
 
-
 //
-// Rewriter/Paraphraser/Text Changer (Multi-Language) by smodin
+// Article Rewriter
 //
-interface SmodinRewriteRequest {
+interface ArticleRewriterRequest {
   language?: string,
   strength?: number,
   text?: string,
+  url?: string,
 }
-interface SmodinRewriteResponse {
+interface ArticleRewriterResponse {
   language: string,
   rewrite: string,
   text: string,
@@ -129,8 +129,8 @@ export {
   TextAnalysisTextSummarizationResponse,
 
   //
-  SmodinRewriteRequest,
-  SmodinRewriteResponse,
+  ArticleRewriterRequest,
+  ArticleRewriterResponse,
 
   //
   ArticleGeneratorRequest,

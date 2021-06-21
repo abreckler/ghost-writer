@@ -33,13 +33,12 @@ function extractUrls(html: string): { links: Array<string>; hostnames: Array<str
 }
 
 /**
- _ Enforces the scheme of the URL is https
- _ and returns the new URL
+ * Enforces the scheme of the URL is https and returns the new URL
  */
 const enforceHttpsUrl = (url: string) => url.replace(/^(https?:)?\/\//, 'https://');
 
 /**
- - Loads the html string returned for the given URL
+ * Loads the html string returned for the given URL
  */
 const fetchHtmlFromUrl = async (url: string): Promise<string> => {
   return await axios
@@ -52,7 +51,7 @@ const fetchHtmlFromUrl = async (url: string): Promise<string> => {
 };
 
 /**
- - Parse the string from the HTML returned for the given URL
+ * Parse the string from the HTML returned for the given URL
  */
 const parseTextFromUrl = async (url: string): Promise<string> => {
   const html = await fetchHtmlFromUrl(url);
@@ -61,4 +60,40 @@ const parseTextFromUrl = async (url: string): Promise<string> => {
   return text;
 };
 
-export { extractUrls, fetchHtmlFromUrl, parseTextFromUrl };
+/**
+ * Split long text into multiple substrings.
+ * Slice by paragraphs.
+ * @param text - long text
+ * @param maxlen - maximum length of each slice
+ */
+const splitText = (text: string, maxlen: number): Array<string> => {
+  const res = [];
+  while (text.length > 0) {
+    if (text.length < maxlen) {
+      res.push(text);
+      text = '';
+    } else {
+      let i = text.substring(0, maxlen).lastIndexOf('\n');
+      if (i < 0) {
+        i = text.substring(0, maxlen).lastIndexOf('.');
+      }
+      if (i < 0) {
+        i = text.substring(0, maxlen).lastIndexOf(' ');
+      }
+
+      if (i >= 0) {
+        const t = text.substring(0, i + 1).trim();
+        if (t.length > 0) {
+          res.push(t);
+        }
+        text = text.substring(i + 1).trim();
+      } else {
+        res.push(text);
+        text = '';
+      }
+    }
+  }
+  return res;
+};
+
+export { extractUrls, fetchHtmlFromUrl, parseTextFromUrl, splitText };

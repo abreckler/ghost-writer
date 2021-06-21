@@ -3,7 +3,7 @@ import { Alert, Dimensions, Text, TextInput, TextStyle, TouchableOpacity, View, 
 import { Picker } from '@react-native-picker/picker';
 
 import { styles, mdScreenWidth } from './styles';
-import { ArticleGeneratorRequest, CompletionParams, SmodinRewriteRequest, TextAnalysisTextSummarizationTextRequest } from './lib/types';
+import { ArticleGeneratorRequest, CompletionParams, ArticleRewriterRequest, TextAnalysisTextSummarizationTextRequest } from './lib/types';
 import { CompletionParamsTemplate, GhostWriterConfig } from './lib/writer-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TagsInput } from './tags-input';
@@ -337,16 +337,16 @@ class TextAnalysisTextSummarizationConfig extends React.Component<TextAnalysisTe
 //-----------------------------------------
 // Rewrite API of Somdin
 //-----------------------------------------
-interface SmodinRewriteConfigProps {
-  initValue?: SmodinRewriteRequest,
-  value?: SmodinRewriteRequest,
-  onValueChange(value: SmodinRewriteRequest) : void;
+interface ArticleRewriterConfigProps {
+  initValue?: ArticleRewriterRequest,
+  value?: ArticleRewriterRequest,
+  onValueChange(value: ArticleRewriterRequest) : void;
   style: ViewStyle;
 }
 
-class SmodinRewriteConfig extends React.Component<SmodinRewriteConfigProps, { language: string, strength: number }> {
+class ArticleRewriterConfig extends React.Component<ArticleRewriterConfigProps, { language: string, strength: number }> {
 
-  constructor (props: SmodinRewriteConfigProps) {
+  constructor (props: ArticleRewriterConfigProps) {
     super(props);
 
     this.state = {
@@ -393,7 +393,7 @@ class SmodinRewriteConfig extends React.Component<SmodinRewriteConfigProps, { la
           </Picker>
         </View>
         <View style={[styles.inputGroupContainer]}>
-          <Text style={[styles.label, styles.md_1_3rd]}>{'Choose a template'}</Text>
+          <Text style={[styles.label, styles.md_1_3rd]}>Strength</Text>
           <Picker style={[styles.picker, styles.md_2_3rds]}
               selectedValue={this.state.strength.toString()}
               itemStyle={styles.pickerItemStyle}
@@ -503,7 +503,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
   private qaConfig: CompletionParams = {};
   private summaryConfig: CompletionParams = {};
   private rewriteConfig: CompletionParams = {};
-  private rewriteSmodinConfig: SmodinRewriteRequest = { language: 'en', strength: 3, text: '' };
+  private rewriteSmodinConfig: ArticleRewriterRequest = { language: 'en', strength: 3, text: '' };
   private extractConfig: TextAnalysisTextSummarizationTextRequest = {};
   private articleGeneratorConfig : ArticleGeneratorRequest = {};
 
@@ -567,7 +567,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
       this.qaConfig = (multiGet[1][1] ? JSON.parse(multiGet[1][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.QA_TEMPLATES[0]))) as CompletionParams;
       this.summaryConfig = (multiGet[2][1] ? JSON.parse(multiGet[2][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.SUMMARY_TEMPLATES[0]))) as CompletionParams;
       this.rewriteConfig = (multiGet[3][1] ? JSON.parse(multiGet[3][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.REWRITE_TEMPLATES[0]))) as CompletionParams;
-      this.rewriteSmodinConfig = (multiGet[4][1] ? JSON.parse(multiGet[4][1]) : {}) as SmodinRewriteRequest;
+      this.rewriteSmodinConfig = (multiGet[4][1] ? JSON.parse(multiGet[4][1]) : {}) as ArticleRewriterRequest;
       this.extractConfig = (multiGet[5][1] ? JSON.parse(multiGet[5][1]) : {}) as TextAnalysisTextSummarizationTextRequest;
       this.articleGeneratorConfig = (multiGet[6][1] ? JSON.parse(multiGet[6][1]) : { num_serp_results: 3, num_outbound_links_per_serp_result: 3 }) as ArticleGeneratorRequest;
     } catch (e) {
@@ -593,8 +593,8 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         this.props.onModeChange('extract', this.extractConfig);
       else if (writingMode === 'topic-tagging')
         this.props.onModeChange('topic-tagging', null);
-      else if (writingMode === 'rewrite-smodin')
-        this.props.onModeChange('rewrite-smodin', this.rewriteSmodinConfig);
+      else if (writingMode === 'rewrite-article')
+        this.props.onModeChange('rewrite-article', this.rewriteSmodinConfig);
       else if (writingMode === 'generate-article')
         this.props.onModeChange('generate-article', this.articleGeneratorConfig);
     }
@@ -624,7 +624,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
               <Picker.Item label="Summarize" value="summary" />
               <Picker.Item label="Key Sentences" value="extract" />
               <Picker.Item label="Topic Tagging" value='topic-tagging' />
-              <Picker.Item label="Re-write" value="rewrite-smodin" />
+              <Picker.Item label="Re-write" value="rewrite-article" />
               <Picker.Item label="Generate Article" value="generate-article" />
             </Picker>
           </View>
@@ -652,7 +652,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
           <TextAnalysisTextSummarizationConfig style={{ display: this.state.writingMode === 'extract' ? 'flex' : 'none'}}
               value={this.extractConfig}
               onValueChange={v => {this.extractConfig = v; this.onModePickerChange(); }} />
-          <SmodinRewriteConfig style={{ display: this.state.writingMode === 'rewrite-smodin' ? 'flex' : 'none'}}
+          <ArticleRewriterConfig style={{ display: this.state.writingMode === 'rewrite-article' ? 'flex' : 'none'}}
               value={this.rewriteSmodinConfig}
               onValueChange={v => {this.rewriteSmodinConfig = v; this.onModePickerChange(); }} />
           <View style={{ display: this.state.writingMode === 'topic-tagging' ? 'flex' : 'none'}}>

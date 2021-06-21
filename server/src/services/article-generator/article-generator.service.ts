@@ -63,7 +63,7 @@ const externalLinksFilterFactory = (internalHostname: string) => {
 
 const paraphraser = async (text: string, apiName: 'smodin' | 'healthytech' = 'smodin'): Promise<string | null> => {
   switch (apiName) {
-    case 'smodin':
+    case 'healthytech':
       try {
         const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
         const rephraserRespone = await rephraserClient.rewrite(text);
@@ -77,12 +77,12 @@ const paraphraser = async (text: string, apiName: 'smodin' | 'healthytech' = 'sm
         console.error('RapidAPI - Rephraser API Failure: ', e);
         return null;
       }
-    case 'healthytech':
+    case 'smodin':
       try {
         const rephraserClient = new SmodinRewriterApiClient(RAPIDAPI_API_KEY);
         const rephraserRespone = await rephraserClient.rewrite(text, 'en', 3);
-        if (rephraserRespone.text) {
-          return rephraserRespone.text;
+        if (rephraserRespone.rewrite) {
+          return rephraserRespone.rewrite;
         } else {
           console.debug(
             'Rewriter/Paraphraser/Text Changer API returned invalid response, skip further processing.',

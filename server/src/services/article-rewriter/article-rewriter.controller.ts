@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { PipfeedArticleDataExtractorApiClient, SmodinRewriterApiClient } from '../../lib/rapidapi';
+import { splitText } from '../../lib/utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 
@@ -10,7 +11,7 @@ interface RewriteArticleRequest {
 
 /**
  *
- * @param req.body {SmodinRewriteRequest}
+ * @param req.body {RewriteArticleRequest}
  */
 const rewriteArticle = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -26,8 +27,17 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction) =
 
     if (text) {
       const client = new SmodinRewriterApiClient(RAPIDAPI_API_KEY);
-      const response = await client.rewrite(text || '', 'en', 3);
-      res.status(200).json(response);
+      const texts = splitText(text, 9999); // Smodin API restricts input length to 10000
+      const para = [];
+      for (let i = 0; i < texts.length; i++) {
+        const response = await client.rewrite(texts[i], 'en', 3);
+        para.push(response.rewrite);
+      }
+      res.status(200).json({
+        language: 'en',
+        rewrite: para.join('\n'),
+        text: text,
+      });
     } else {
       throw new Error('Invalid argument');
     }
