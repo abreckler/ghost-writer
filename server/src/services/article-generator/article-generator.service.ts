@@ -167,12 +167,12 @@ const paragraphForGeneralPages1 = async (url: string): Promise<ArticleParagraph 
   let extractorResponse = null;
   try {
     extractorResponse = await extractorClient.extractArticleData(url);
-    if (!extractorResponse.summary) {
-      console.debug('Summary extraction API returned invalid response, skip further processing.', url);
+    if (!extractorResponse.summary && !extractorResponse.text) {
+      console.debug('Article Data Extraction API returned invalid response, skip further processing.', url);
       return null;
     }
   } catch (e) {
-    console.error('Summary extraction failed due to API failure, skip further processing.', e);
+    console.error('RapidAPI - Article Data Extraction API Failure, skip further processing.', e);
     return null;
   }
 
@@ -195,7 +195,7 @@ const paragraphForGeneralPages1 = async (url: string): Promise<ArticleParagraph 
     console.debug('could not find valid external links. yet include it in the result.', url);
   }
 
-  const rephrased = await paraphraser(extractorResponse.summary);
+  const rephrased = await paraphraser(extractorResponse.summary || extractorResponse.text);
   if (!rephrased) return null;
 
   return {
@@ -203,7 +203,7 @@ const paragraphForGeneralPages1 = async (url: string): Promise<ArticleParagraph 
     source: {
       title: extractorResponse.title,
       description: extractorResponse.description,
-      summary: extractorResponse.summary,
+      summary: extractorResponse.summary || extractorResponse.text,
       tags: extractorResponse.tags || [],
     },
     generated: {
@@ -242,12 +242,12 @@ const paragraphForGeneralPages2 = async (url: string): Promise<ArticleParagraph 
   let extractorResponse = null;
   try {
     extractorResponse = await extractorClient.extractArticleData(url);
-    if (!extractorResponse.summary) {
-      console.debug('Summary extraction API returned invalid response, skip further processing.', url);
+    if (!extractorResponse.summary && !extractorResponse.text) {
+      console.debug('Summary Extraction API returned invalid response, skip further processing.', url);
       return null;
     }
   } catch (e) {
-    console.error('Summary extraction failed due to API failure, skip further processing.', e);
+    console.error('RapidAPI - Summary Extraction API failure, skip further processing.', e);
     return null;
   }
 
@@ -272,7 +272,7 @@ const paragraphForGeneralPages2 = async (url: string): Promise<ArticleParagraph 
 
   let extractedText = '';
   try {
-    const keySentencesResponse = await keySentenceExtractorClient.textSummarizerUrl(url);
+    const keySentencesResponse = await keySentenceExtractorClient.textSummarizerText(extractorResponse.text);
     if (!keySentencesResponse.sentences || keySentencesResponse.sentences.length == 0) {
       console.debug('Key sentence extraction API returned invalid response, skip further processing.', url);
       return null;
@@ -281,8 +281,8 @@ const paragraphForGeneralPages2 = async (url: string): Promise<ArticleParagraph 
   } catch (e) {
     // The Text summarizer API's availability doesn't look good.
     // Let's use article extractor/summarizer as a fallback
-    console.error('Key sentence extraction failed due to API failure, skip further processing.', e);
-    extractedText = extractorResponse.summary;
+    console.error('RapidAPI - Key sentence extraction API failure, skip further processing.', e);
+    extractedText = extractorResponse.summary || extractorResponse.text;
   }
 
   const rephrased = await paraphraser(extractedText);
