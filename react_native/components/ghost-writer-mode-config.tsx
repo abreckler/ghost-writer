@@ -8,6 +8,18 @@ import { CompletionParamsTemplate, GhostWriterConfig } from './lib/writer-config
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TagsInput } from './tags-input';
 
+enum GhostWriterModes {
+  AUTOCOMPLETE = 'autocomplete',
+  REWRITE = 'rewrite',
+  QA = 'qa',
+  SUMMARY = 'summary',
+  EXTRACT = 'extract',
+  TOPIC_TAGGING = 'topic-tagging',
+  REWRITE_TEXT = 'rewrite-article',
+  GENERATE_ARTICLE = 'generate-article',
+  REWRITE_FROM_URL = 'rewrite-from-url',
+}
+
 interface InputValidity {
   value: string;
   error: string;
@@ -34,6 +46,7 @@ interface TextInputWithValidityCheckProps {
   inputStyle?: ViewStyle;
   messageStyle?: TextStyle;
 }
+
 
 class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValidityCheckProps, { text?:string, error: string }> {
   private validityChecker = this.dummyValidityChecker;
@@ -506,6 +519,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
   private rewriteSmodinConfig: ArticleRewriterRequest = { language: 'en', strength: 3, text: '' };
   private extractConfig: TextAnalysisTextSummarizationTextRequest = {};
   private articleGeneratorConfig : ArticleGeneratorRequest = {};
+  private rewriteFromUrlConfig: ArticleRewriterRequest = { language: 'en', strength: 3, text: '' };
 
   private ghostWriterConfigPreset = new GhostWriterConfig();
 
@@ -514,7 +528,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
 
     this.state = {
       settingsVisible: false,
-      writingMode: props.mode || 'autocomplete',
+      writingMode: props.mode || GhostWriterModes.AUTOCOMPLETE,
     };
     this.readFromData();
   }
@@ -545,6 +559,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         ['@gw__mode_config__rewrite_smodin', JSON.stringify(this.rewriteSmodinConfig)],
         ['@gw__mode_config__extract', JSON.stringify(this.extractConfig)],
         ['@gw__mode_config__article_generator', JSON.stringify(this.articleGeneratorConfig)],
+        ['@gw__mode_config__rewrite_from_url', JSON.stringify(this.rewriteFromUrlConfig)],
       ]
       await AsyncStorage.multiSet(multiSet);
     } catch (e) {
@@ -562,6 +577,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         '@gw__mode_config__rewrite_smodin',
         '@gw__mode_config__extract',
         '@gw__mode_config__article_generator',
+        '@gw__mode_config__rewrite_from_url',
       ]);
       this.autocompleteConfig = (multiGet[0][1] ? JSON.parse(multiGet[0][1]) : { prompt: '{USER_INPUT}', n: 1 }) as CompletionParams;
       this.qaConfig = (multiGet[1][1] ? JSON.parse(multiGet[1][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.QA_TEMPLATES[0]))) as CompletionParams;
@@ -570,6 +586,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
       this.rewriteSmodinConfig = (multiGet[4][1] ? JSON.parse(multiGet[4][1]) : {}) as ArticleRewriterRequest;
       this.extractConfig = (multiGet[5][1] ? JSON.parse(multiGet[5][1]) : {}) as TextAnalysisTextSummarizationTextRequest;
       this.articleGeneratorConfig = (multiGet[6][1] ? JSON.parse(multiGet[6][1]) : { num_serp_results: 3, num_outbound_links_per_serp_result: 3 }) as ArticleGeneratorRequest;
+      this.rewriteFromUrlConfig = (multiGet[7][1] ? JSON.parse(multiGet[7][1]) : {}) as ArticleRewriterRequest;
     } catch (e) {
       // reading error
       console.log('GW mode configurator - Reading Error', e);
@@ -581,22 +598,24 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
   onModePickerChange(updateStore=true, writingMode = ''){
     writingMode = writingMode || this.state.writingMode;
     if (this.props.onModeChange) {
-      if (writingMode === 'autocomplete')
-        this.props.onModeChange('autocomplete', this.autocompleteConfig);
-      else if (writingMode === 'rewrite')
-        this.props.onModeChange('rewrite', this.rewriteConfig);
-      else if (writingMode === 'qa')
-        this.props.onModeChange('qa', this.qaConfig);
-      else if (writingMode === 'summary')
-        this.props.onModeChange('summary', this.summaryConfig);
-      else if (writingMode === 'extract')
-        this.props.onModeChange('extract', this.extractConfig);
-      else if (writingMode === 'topic-tagging')
-        this.props.onModeChange('topic-tagging', null);
-      else if (writingMode === 'rewrite-article')
-        this.props.onModeChange('rewrite-article', this.rewriteSmodinConfig);
-      else if (writingMode === 'generate-article')
-        this.props.onModeChange('generate-article', this.articleGeneratorConfig);
+      if (writingMode === GhostWriterModes.AUTOCOMPLETE)
+        this.props.onModeChange(GhostWriterModes.AUTOCOMPLETE, this.autocompleteConfig);
+      else if (writingMode === GhostWriterModes.REWRITE)
+        this.props.onModeChange(GhostWriterModes.REWRITE, this.rewriteConfig);
+      else if (writingMode === GhostWriterModes.QA)
+        this.props.onModeChange(GhostWriterModes.QA, this.qaConfig);
+      else if (writingMode === GhostWriterModes.SUMMARY)
+        this.props.onModeChange(GhostWriterModes.SUMMARY, this.summaryConfig);
+      else if (writingMode === GhostWriterModes.EXTRACT)
+        this.props.onModeChange(GhostWriterModes.EXTRACT, this.extractConfig);
+      else if (writingMode === GhostWriterModes.TOPIC_TAGGING)
+        this.props.onModeChange(GhostWriterModes.TOPIC_TAGGING, null);
+      else if (writingMode === GhostWriterModes.REWRITE_TEXT)
+        this.props.onModeChange(GhostWriterModes.REWRITE_TEXT, this.rewriteSmodinConfig);
+      else if (writingMode === GhostWriterModes.GENERATE_ARTICLE)
+        this.props.onModeChange(GhostWriterModes.GENERATE_ARTICLE, this.articleGeneratorConfig);
+      else if (writingMode === GhostWriterModes.REWRITE_FROM_URL)
+        this.props.onModeChange(GhostWriterModes.REWRITE_FROM_URL, this.rewriteFromUrlConfig);
     }
 
     if (updateStore)
@@ -625,7 +644,8 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
               <Picker.Item label="Key Sentences" value="extract" />
               <Picker.Item label="Topic Tagging" value='topic-tagging' />
               <Picker.Item label="Re-write" value="rewrite-article" />
-              <Picker.Item label="Generate Article" value="generate-article" />
+              <Picker.Item label="Generate Article (URL)" value="rewrite-from-url" />
+              <Picker.Item label="Generate Article (Keywords)" value="generate-article" />
             </Picker>
           </View>
           <TouchableOpacity style={[styles.button, styles.buttonSm, { marginVertical: 0, marginHorizontal: 10 }]} onPress={() => this.toggleSettingsView() } >
@@ -634,36 +654,39 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         </View>
 
         <View style={[styles.settingsOverlay, { display: this.state.settingsVisible ? 'flex':'none' }]}>
-          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === 'autocomplete' ? 'flex' : 'none'}}
+          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === GhostWriterModes.AUTOCOMPLETE ? 'flex' : 'none'}}
               value={this.autocompleteConfig}
               onValueChange={v => { this.autocompleteConfig = v; this.onModePickerChange(); }} />
-          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === 'rewrite' ? 'flex' : 'none'}}
+          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === GhostWriterModes.REWRITE ? 'flex' : 'none'}}
               templates = {this.ghostWriterConfigPreset.REWRITE_TEMPLATES}
               value={this.rewriteConfig}
               onValueChange={v => {this.rewriteConfig = v; this.onModePickerChange(); }} />
-          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === 'qa' ? 'flex' : 'none'}}
+          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === GhostWriterModes.QA ? 'flex' : 'none'}}
               templates = {this.ghostWriterConfigPreset.QA_TEMPLATES}
               value={this.qaConfig}
               onValueChange={v => {this.qaConfig = v; this.onModePickerChange(); }}  />
-          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === 'summary' ? 'flex' : 'none'}}
+          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === GhostWriterModes.SUMMARY ? 'flex' : 'none'}}
               templates = {this.ghostWriterConfigPreset.SUMMARY_TEMPLATES}
               value={this.summaryConfig}
               onValueChange={v => {this.summaryConfig = v; this.onModePickerChange(); }} />
-          <TextAnalysisTextSummarizationConfig style={{ display: this.state.writingMode === 'extract' ? 'flex' : 'none'}}
+          <TextAnalysisTextSummarizationConfig style={{ display: this.state.writingMode === GhostWriterModes.EXTRACT ? 'flex' : 'none'}}
               value={this.extractConfig}
               onValueChange={v => {this.extractConfig = v; this.onModePickerChange(); }} />
-          <ArticleRewriterConfig style={{ display: this.state.writingMode === 'rewrite-article' ? 'flex' : 'none'}}
+          <ArticleRewriterConfig style={{ display: this.state.writingMode === GhostWriterModes.REWRITE_TEXT ? 'flex' : 'none'}}
               value={this.rewriteSmodinConfig}
               onValueChange={v => {this.rewriteSmodinConfig = v; this.onModePickerChange(); }} />
-          <View style={{ display: this.state.writingMode === 'topic-tagging' ? 'flex' : 'none'}}>
+          <View style={{ display: this.state.writingMode === GhostWriterModes.TOPIC_TAGGING ? 'flex' : 'none'}}>
             <Text>No additional settings are available</Text>  
           </View>
-          <ArticleGeneratorConfig style={{ display: this.state.writingMode === 'generate-article' ? 'flex' : 'none'}}
+          <ArticleGeneratorConfig style={{ display: this.state.writingMode === GhostWriterModes.GENERATE_ARTICLE ? 'flex' : 'none'}}
               onValueChange={v => {this.articleGeneratorConfig = v; this.onModePickerChange(); }} />
+          <ArticleRewriterConfig style={{ display: this.state.writingMode === GhostWriterModes.REWRITE_FROM_URL ? 'flex' : 'none'}}
+              value={this.rewriteFromUrlConfig}
+              onValueChange={v => {this.rewriteFromUrlConfig = v; this.onModePickerChange(); }} />
         </View>
       </View>
     );
   }
 }
 
-export { GhostWriterModeConfigProps, GhostWriterModeConfig };
+export { GhostWriterModeConfigProps, GhostWriterModeConfig, GhostWriterModes };

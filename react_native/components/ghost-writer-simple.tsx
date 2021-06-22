@@ -13,7 +13,7 @@ import {
 } from './lib/types';
 import { GhostWriterConfig } from './lib/writer-config';
 import { MyApiClient } from './lib/api-client';
-import { GhostWriterModeConfig } from './ghost-writer-mode-config';
+import { GhostWriterModeConfig, GhostWriterModes } from './ghost-writer-mode-config';
 import { AnswerList } from './answer-list';
 
 interface GhostWriterSimpleProps {
@@ -34,6 +34,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   const [rewriteSmodinConfig, setRewriteSmodinConfig] = useState(undefined as ArticleRewriterRequest | undefined);
   const [extractConfig, setExtractConfig] = useState(undefined as TextAnalysisTextSummarizationTextRequest | undefined);
   const [generateArticleConfig, setGenerateArticleConfig] = useState(undefined as ArticleGeneratorRequest | undefined);
+  const [rewriteFromUrlConfig, setRewriteFromUrlConfig] = useState(undefined as ArticleRewriterRequest | undefined);
 
   const { width, height } = Dimensions.get('window');
 
@@ -64,20 +65,22 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
 
   const onModeConfigChange = (mode: string, config: any) => {
     console.log('onModeConfigChange', mode, config);
-    if (mode === 'topic-tagging')
+    if (mode === GhostWriterModes.TOPIC_TAGGING)
     {}
-    else if (mode === 'extract') {
+    else if (mode === GhostWriterModes.EXTRACT) {
       setExtractConfig(config as TextAnalysisTextSummarizationTextRequest);
-    } else if (mode === 'rewrite-article') {
+    } else if (mode === GhostWriterModes.REWRITE_TEXT) {
       setRewriteSmodinConfig(config as ArticleRewriterRequest);
-    } else if(mode === 'generate-article') {
+    } else if (mode === GhostWriterModes.REWRITE_FROM_URL) {
+      setRewriteFromUrlConfig(config as ArticleRewriterRequest);
+    } else if(mode === GhostWriterModes.GENERATE_ARTICLE) {
       setGenerateArticleConfig(config as ArticleGeneratorRequest);
     } else {
-      if (mode === 'rewrite') {
+      if (mode === GhostWriterModes.REWRITE) {
         setRewriteConfig(config as CompletionParams);
-      } else if (mode === 'qa') {
+      } else if (mode === GhostWriterModes.QA) {
         setQaConfig(config as CompletionParams);
-      } else if (mode === 'summary') {
+      } else if (mode === GhostWriterModes.SUMMARY) {
         setSummaryConfig(config as CompletionParams);
       } else {
         setAutocompleteConfig(config as CompletionParams);
@@ -97,7 +100,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     setButtonDisabled(true);
 
     try {
-      if (writingMode === 'topic-tagging')
+      if (writingMode === GhostWriterModes.TOPIC_TAGGING)
       {
         let json = await apiClient.generateTagging(text.trim());
     
@@ -110,7 +113,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
           setAnswersAlert('Ghost Writer could not suggest an answer!');
         }
       }
-      else if (writingMode === 'extract')
+      else if (writingMode === GhostWriterModes.EXTRACT)
       {
         let json = await apiClient.textSummarizerText(text.trim(), extractConfig && extractConfig.sentnum);
     
@@ -123,31 +126,43 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
           setAnswersAlert('Ghost Writer could not suggest an answer!');
         }
       }
-      else if (writingMode === 'rewrite-article')
+      else if (writingMode === GhostWriterModes.REWRITE_TEXT || writingMode === GhostWriterModes.REWRITE_FROM_URL)
       {
         let params = {} as ArticleRewriterRequest;
         let text1 = text.trim();
-        if (/^(ftp|http|https):\/\/[^ "]+$/.test(text1))
-          params.url = text1;
-        else
-          params.text = text1;
         if (rewriteSmodinConfig) {
           params.language = rewriteSmodinConfig.language;
           params.strength = rewriteSmodinConfig.strength;
         }
 
-        let json = await apiClient.rewriteArticle(params);
-        if (json.rewrite) {
-          setAnswers([
-            { text: json.rewrite } as CompletionChoice,
-          ]);
-          setAnswersAlert('');
-        } else {
-          setAnswers([]);
-          setAnswersAlert('Ghost Writer could not suggest an answer!');
+        if (writingMode === GhostWriterModes.REWRITE_TEXT) {
+          params.text = text1;
+        } else if (writingMode === GhostWriterModes.REWRITE_FROM_URL) {
+          if (/^(ftp|http|https):\/\/[^ "]+$/.test(text1)) {
+            params.url = text1;
+          } else {
+            setAnswers([
+              { text: 'Invalid URL!' } as CompletionChoice,
+            ]);
+          }
+        }
+
+        if (params.url || params.text) {
+          let json = await apiClient.rewriteArticle(params);
+          if (json.rewrite) {
+            setAnswers([
+              { text: json.rewrite } as CompletionChoice,
+            ]);
+            setAnswersAlert('');
+          } else {
+            setAnswers([
+              { text: 'Ghost Writer could not suggest an answer!' } as CompletionChoice,
+            ]);
+            setAnswersAlert('');
+          }
         }
       }
-      else if (writingMode === 'generate-article')
+      else if (writingMode === GhostWriterModes.GENERATE_ARTICLE)
       {
         let params = {} as ArticleGeneratorRequest;
         params.seed_text = text.trim();
@@ -171,12 +186,12 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         let writer = new GhostWriterConfig;
         let params : CompletionParams;
 
-        if (writingMode === 'rewrite')
-          params = writer.generateCompleteParams(text.trim(), rewriteConfig ? '' : 'rewrite', rewriteConfig);
-        else if (writingMode === 'qa')
-          params = writer.generateCompleteParams(text.trim(), qaConfig ? '' : 'qa', qaConfig);
-        else if (writingMode === 'summary')
-          params = writer.generateCompleteParams(text.trim(), summaryConfig ? '' : 'summary', summaryConfig);
+        if (writingMode === GhostWriterModes.REWRITE)
+          params = writer.generateCompleteParams(text.trim(), rewriteConfig ? '' : GhostWriterModes.REWRITE, rewriteConfig);
+        else if (writingMode === GhostWriterModes.QA)
+          params = writer.generateCompleteParams(text.trim(), qaConfig ? '' : GhostWriterModes.QA, qaConfig);
+        else if (writingMode === GhostWriterModes.SUMMARY)
+          params = writer.generateCompleteParams(text.trim(), summaryConfig ? '' : GhostWriterModes.SUMMARY, summaryConfig);
         else
           params = writer.generateCompleteParams(text.trim(), autocompleteConfig ? '' : 'autocomplete', autocompleteConfig);
 
@@ -185,9 +200,9 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         if (json.choices) {
           setAnswers(json.choices.filter(c => (c.text || '').trim().length > 0));
     
-          if (writingMode === 'rewrite')
+          if (writingMode === GhostWriterModes.REWRITE)
             setAnswersAlert('Ghost Writer has' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + ' to rewrite above text!');
-          else if (writingMode === 'qa')
+          else if (writingMode === GhostWriterModes.QA)
             setAnswersAlert('Ghost Writer suggests ' + json.choices.length + (json.choices.length > 1 ? ' answers' : ' answer') + '!');
           else
             setAnswersAlert('Ghost Writer has ' + json.choices.length + (json.choices.length > 1 ? ' suggestions' : ' suggestion') + '!');
