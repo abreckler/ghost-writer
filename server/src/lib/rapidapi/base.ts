@@ -1,13 +1,12 @@
-import Axios, { AxiosInstance } from "axios";
+import Axios, { AxiosInstance } from 'axios';
 
 class RapidApiClient {
-
-  API_KEY = "";
-  API_HOST = "";
-  API_BASEURL = "";
+  API_KEY = '';
+  API_HOST = '';
+  API_BASEURL = '';
   DEBUG = !1;
 
-  private axios_instance : AxiosInstance;
+  private axios_instance: AxiosInstance;
 
   public constructor(API_KEY: string, API_HOST: string, API_BASEURL: string) {
     this.API_KEY = API_KEY;
@@ -18,30 +17,28 @@ class RapidApiClient {
       baseURL: this.API_BASEURL,
       withCredentials: true,
       headers: {
-        "content-type": "application/json",
+        'content-type': 'application/json',
         'X-RapidAPI-Key': this.API_KEY,
         'X-RapidAPI-Host': this.API_HOST,
-        'useQueryString': 'true',
+        useQueryString: 'true',
       },
-    })
+    });
   }
 
   /**
    * internal function to do POST request to RapidAPI
    */
-   public async _doPostJson<ParamType, ResponseType>(url: string, params: ParamType) : Promise<ResponseType> {
-    if (this.DEBUG)
-      console.log(url, params);
+  public async _doPostJson<ParamType, ResponseType>(url: string, params: ParamType): Promise<ResponseType> {
+    if (this.DEBUG) console.log(url, params);
 
-    let response = await this.axios_instance.post(url, params, {
+    const response = await this.axios_instance.post(url, params, {
       headers: {
-        "content-type": "application/json",
+        'content-type': 'application/json',
       },
     });
 
-    let json : ResponseType = await response.data;
-    if (this.DEBUG)
-      console.log(json);
+    const json: ResponseType = await response.data;
+    if (this.DEBUG) console.log(json);
 
     return json;
   }
@@ -49,24 +46,22 @@ class RapidApiClient {
   /**
    * internal function to do POST request to RapidAPI
    */
-  public async _doPostForm<ParamType, ResponseType>(url: string, params: ParamType) : Promise<ResponseType> {
-    if (this.DEBUG)
-      console.log(url, params);
+  public async _doPostForm<ParamType, ResponseType>(url: string, params: ParamType): Promise<ResponseType> {
+    if (this.DEBUG) console.log(url, params);
 
-    let body = new URLSearchParams();
+    const body = new URLSearchParams();
     for (const [k, v] of Object.entries(params)) {
       body.set(k, v);
     }
 
-    let response = await this.axios_instance.post(url, body, {
+    const response = await this.axios_instance.post(url, body, {
       headers: {
-        "content-type": "application/x-www-form-urlencoded",
+        'content-type': 'application/x-www-form-urlencoded',
       },
     });
 
-    let json : ResponseType = await response.data;
-    if (this.DEBUG)
-      console.log(json);
+    const json: ResponseType = await response.data;
+    if (this.DEBUG) console.log(json);
 
     return json;
   }
@@ -74,19 +69,17 @@ class RapidApiClient {
   /**
    * internal function to do GET request to OpenAI API
    */
-  public async _doGet<ResponseType>(url: string) : Promise<ResponseType> {
-    if (this.DEBUG)
-      console.log(url);
+  public async _doGet<ResponseType>(url: string): Promise<ResponseType> {
+    if (this.DEBUG) console.log(url);
 
-    let response = await this.axios_instance.get(url, {
+    const response = await this.axios_instance.get(url, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
 
-    let json : ResponseType = await response.data;
-    if (this.DEBUG)
-      console.log(json);
+    const json: ResponseType = await response.data;
+    if (this.DEBUG) console.log(json);
 
     return json;
   }

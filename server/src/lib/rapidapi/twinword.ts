@@ -2,6 +2,7 @@ import RapidApiClient from './base';
 
 //
 // Topic Tagging API of Twinword
+// https://rapidapi.com/twinword/api/topic-tagging
 //
 
 interface TwinwordTopicTaggingGenerateRequest {
