@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { PipfeedArticleDataExtractorApiClient, SmodinRewriterApiClient } from '../../lib/rapidapi';
-import { splitText } from '../../lib/utils';
+import { isAmazonDomain, splitText } from '../../lib/utils';
 import { htmlToText, HtmlToTextOptions } from 'html-to-text';
+import { paragraphForAmazonProduct } from '../article-generator/article-generator.service';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 
@@ -18,7 +19,18 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction) =
   try {
     const params = req.body as RewriteArticleRequest;
     let text = '';
-    if (params.url) {
+    if (params.url && isAmazonDomain(params.url)) {
+      // Amazon Product URL
+      const para = await paragraphForAmazonProduct(params.url, { includeTitle: true });
+      res.status(200).json({
+        language: 'en',
+        rewrite: para?.generated?.text,
+        url: params.url,
+        text: (para?.source?.title ? para?.source?.title + '\n\n\n' : '') + para?.source?.description,
+      });
+      return;
+    } else if (params.url) {
+      // Rewrite an article from a URL
       const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
       const extractorResponse = await extractorClient.extractArticleData(params.url);
       if (extractorResponse.html) {
@@ -39,6 +51,7 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction) =
         text = extractorResponse.title + '\n\n\n' + text;
       }
     } else if (params.text) {
+      // Rewrite a text
       text = params.text;
     }
 
@@ -54,6 +67,7 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction) =
         language: 'en',
         rewrite: para.join('\n'),
         text: text,
+        url: params.url,
       });
     } else {
       throw new Error('Invalid argument');

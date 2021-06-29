@@ -97,13 +97,20 @@ const paraphraser = async (text: string, apiName: 'smodin' | 'healthytech' = 'sm
   }
 };
 
+interface AmazonProductArticleOptions {
+  includeTitle?: boolean;
+}
+
 /**
  * Generate paragraph from a Amazon Product Page as a source
  *
  * @param url - Amazon Product Page URL
  * @returns
  */
-const paragraphForAmazonProduct = async (url: string): Promise<ArticleParagraph | null> => {
+const paragraphForAmazonProduct = async (
+  url: string,
+  options?: AmazonProductArticleOptions,
+): Promise<ArticleParagraph | null> => {
   const amazonProductClient = new ZombieBestAmazonProductsApiClient(RAPIDAPI_API_KEY);
 
   let amazonProductResponse = null;
@@ -122,7 +129,11 @@ const paragraphForAmazonProduct = async (url: string): Promise<ArticleParagraph 
         console.debug('Amazon Product API returned invalid response, skip further processing.', url);
         return null;
       } else {
-        const rephrased = await paraphraser(amazonProductResponse.description);
+        let text = amazonProductResponse.description;
+        if (options?.includeTitle) {
+          text = amazonProductResponse.title + '\n\n\n' + text;
+        }
+        const rephrased = await paraphraser(text);
         if (!rephrased) return null;
 
         return {

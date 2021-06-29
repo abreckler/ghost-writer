@@ -96,4 +96,10 @@ const splitText = (text: string, maxlen: number): Array<string> => {
   return res;
 };
 
-export { extractUrls, fetchHtmlFromUrl, parseTextFromUrl, splitText };
+const isAmazonDomain = (url: string): boolean => {
+  const amazonDomains = ['amzn.to', 'www.amazon.com'];
+  const internalHostname = new URL(url).hostname;
+  return amazonDomains.indexOf(internalHostname) >= 0;
+};
+
+export { extractUrls, fetchHtmlFromUrl, parseTextFromUrl, splitText, isAmazonDomain };
