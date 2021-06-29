@@ -102,4 +102,12 @@ const isAmazonDomain = (url: string): boolean => {
   return amazonDomains.indexOf(internalHostname) >= 0;
 };
 
-export { extractUrls, fetchHtmlFromUrl, parseTextFromUrl, splitText, isAmazonDomain };
+const extractAmazonAsin = (url: string): string | null => {
+  const matches = /\/dp\/(\w+)/i.exec(url);
+  if (matches) {
+    return matches[1];
+  }
+  return null;
+};
+
+export { extractUrls, fetchHtmlFromUrl, parseTextFromUrl, splitText, isAmazonDomain, extractAmazonAsin };

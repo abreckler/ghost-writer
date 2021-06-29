@@ -6,7 +6,7 @@ import {
   ZackproserUrlIntelligenceApiClient,
   ZombieBestAmazonProductsApiClient,
 } from '../../lib/rapidapi';
-import { extractUrls } from '../../lib/utils';
+import { extractAmazonAsin, extractUrls } from '../../lib/utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 
@@ -115,16 +115,23 @@ const paragraphForAmazonProduct = async (
 
   let amazonProductResponse = null;
   try {
-    const asinResponse = await amazonProductClient.getASIN(url);
-    if (asinResponse.error) {
-      console.debug(
-        'Amazon Product Get ASIN API returned invalid response, skip further processing.',
-        url,
-        asinResponse.error,
-      );
-      return null;
-    } else {
-      amazonProductResponse = await amazonProductClient.getProductDetails(asinResponse.asin);
+    let asin = extractAmazonAsin(url);
+    if (!asin) {
+      const asinResponse = await amazonProductClient.getASIN(url);
+      if (asinResponse.error) {
+        console.debug(
+          'Amazon Product Get ASIN API returned invalid response, skip further processing.',
+          url,
+          asinResponse.error,
+        );
+        return null;
+      } else {
+        asin = asinResponse.asin;
+      }
+    }
+
+    if (asin) {
+      amazonProductResponse = await amazonProductClient.getProductDetails(asin);
       if (!amazonProductResponse.description) {
         console.debug('Amazon Product API returned invalid response, skip further processing.', url);
         return null;
@@ -151,6 +158,8 @@ const paragraphForAmazonProduct = async (
           external_links: [],
         } as ArticleParagraph;
       }
+    } else {
+      return null;
     }
   } catch (e) {
     console.error('Amazon Product API failed with error, skip further processing.', e);
