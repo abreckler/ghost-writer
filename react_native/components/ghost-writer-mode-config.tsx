@@ -1,12 +1,15 @@
-import React, { FC, useState, useEffect } from 'react';
-import { Alert, Dimensions, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
+import React from 'react';
+import { Dimensions, Text, TextInput, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import CheckBox from '@react-native-community/checkbox';
+import { CheckBox as CheckBoxLegacy } from 'react-native';
 
 import { styles, mdScreenWidth } from './styles';
 import { ArticleGeneratorRequest, CompletionParams, ArticleRewriterRequest, TextAnalysisTextSummarizationTextRequest } from './lib/types';
 import { CompletionParamsTemplate, GhostWriterConfig } from './lib/writer-config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { TagsInput } from './tags-input';
+
 
 enum GhostWriterModes {
   AUTOCOMPLETE = 'autocomplete',
@@ -354,10 +357,11 @@ interface ArticleRewriterConfigProps {
   initValue?: ArticleRewriterRequest,
   value?: ArticleRewriterRequest,
   onValueChange(value: ArticleRewriterRequest) : void;
+  showRewriteOption ?: boolean;
   style: ViewStyle;
 }
 
-class ArticleRewriterConfig extends React.Component<ArticleRewriterConfigProps, { language: string, strength: number }> {
+class ArticleRewriterConfig extends React.Component<ArticleRewriterConfigProps, { language: string, strength: number, rewrite: boolean }> {
 
   constructor (props: ArticleRewriterConfigProps) {
     super(props);
@@ -365,6 +369,7 @@ class ArticleRewriterConfig extends React.Component<ArticleRewriterConfigProps, 
     this.state = {
       language : props.initValue?.language || props.value?.language || 'en',
       strength : props.initValue?.strength || props.value?.strength || 3,
+      rewrite : props.initValue?.rewrite === false ? false : true,
     }
   }
 
@@ -374,6 +379,7 @@ class ArticleRewriterConfig extends React.Component<ArticleRewriterConfigProps, 
       this.setState({
         language : this.props.value?.language || 'en',
         strength : this.props.value?.strength || 3,
+        rewrite : this.props.value?.rewrite === false ? false : true,
       });
     }
   }
@@ -384,6 +390,7 @@ class ArticleRewriterConfig extends React.Component<ArticleRewriterConfigProps, 
       this.props.onValueChange({
         language: changedStateNames.indexOf('language') < 0 ? this.state.language : newState.language,
         strength: changedStateNames.indexOf('strength') < 0 ? this.state.strength : newState.strength,
+        rewrite: changedStateNames.indexOf('rewrite') < 0 ? this.state.rewrite : newState.rewrite,
       });
   }
 
@@ -417,6 +424,26 @@ class ArticleRewriterConfig extends React.Component<ArticleRewriterConfigProps, 
             <Picker.Item label="Basic" value="1" />
           </Picker>
         </View>
+        <View style={[styles.inputGroupContainer, { display: this.props.showRewriteOption ? 'flex' : 'none'}]}>
+        {
+          CheckBox ?
+          (
+            <>
+              <Text style={[styles.label, styles.md_1_3rd]}>Re-write</Text>
+              <CheckBox value={this.state.rewrite}
+                  onValueChange={(newValue) => this.setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
+            </>
+          )
+          :
+          (
+            <>
+              <Text style={[styles.label, styles.md_1_3rd]}>Re-write</Text>
+              <CheckBoxLegacy value={this.state.rewrite}
+                  onValueChange={(newValue) => this.setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
+            </>
+          )
+        }
+        </View>
       </View>
     );
   }
@@ -436,6 +463,7 @@ interface ArticleGeneratorConfigStates {
   num_serp_results?: number;
   num_outbound_links_per_serp_result?: number;
   output_format: string;
+  rewrite: boolean;
 }
 
 class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps, ArticleGeneratorConfigStates> {
@@ -447,7 +475,9 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
       num_serp_results : props.initValue?.num_serp_results || props.value?.num_serp_results || 3,
       num_outbound_links_per_serp_result : props.initValue?.num_outbound_links_per_serp_result || props.value?.num_outbound_links_per_serp_result || 3,
       output_format: props.initValue?.output_format || props.value?.output_format || 'text',
+      rewrite: true,
     }
+    console.log(CheckBox, CheckBoxLegacy);
   }
 
   componentDidUpdate(prevProps: any) {
@@ -457,6 +487,7 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
         num_serp_results : this.props.value?.num_serp_results || 3,
         num_outbound_links_per_serp_result : this.props.value?.num_outbound_links_per_serp_result || 3,
         output_format: this.props.value?.output_format || 'text',
+        rewrite: (this.props.value?.rewrite === false) ? false : true,
       });
     }
   }
@@ -468,6 +499,7 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
         num_serp_results: changedStateNames.indexOf('num_serp_results') < 0 ? this.state.num_serp_results : newState.num_serp_results,
         num_outbound_links_per_serp_result: changedStateNames.indexOf('num_outbound_links_per_serp_result') < 0 ? this.state.num_outbound_links_per_serp_result : newState.num_outbound_links_per_serp_result,
         output_format: changedStateNames.indexOf('output_format') < 0 ? this.state.output_format : newState.output_format,
+        rewrite: changedStateNames.indexOf('rewrite') < 0 ? this.state.rewrite : newState.rewrite,
       });
   }
 
@@ -481,7 +513,7 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of outbound links per a SERP API Result', intVal: true, min: 1, max: 10 }}
             onValueChange={ v => { this.setStateWithValueChange({num_outbound_links_per_serp_result: (v && Number.parseInt(v)) || undefined}, ['num_outbound_links_per_serp_result']); } } />
         <View style={[styles.inputGroupContainer]}>
-          <Text style={[styles.label, styles.md_1_3rd]}>{'Output Format'}</Text>
+          <Text style={[styles.label, styles.md_1_3rd]}>Output Format</Text>
           <Picker style={[styles.picker, styles.md_2_3rds]}
               selectedValue={this.state.output_format.toString()}
               itemStyle={styles.pickerItemStyle}
@@ -491,6 +523,26 @@ class ArticleGeneratorConfig extends React.Component<ArticleGeneratorConfigProps
             <Picker.Item label="Markdown" value="markdown" />
             <Picker.Item label="HTML" value="html" />
           </Picker>
+        </View>
+        <View style={[styles.inputGroupContainer]}>
+        {
+          CheckBox ?
+          (
+            <>
+              <Text style={[styles.label, styles.md_1_3rd]}>Re-write</Text>
+              <CheckBox value={this.state.rewrite}
+                  onValueChange={(newValue) => this.setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
+            </>
+          )
+          :
+          (
+            <>
+              <Text style={[styles.label, styles.md_1_3rd]}>Re-write</Text>
+              <CheckBoxLegacy value={this.state.rewrite}
+                  onValueChange={(newValue) => this.setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
+            </>
+          )
+        }
         </View>
       </View>
     );
@@ -682,7 +734,8 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
               onValueChange={v => {this.articleGeneratorConfig = v; this.onModePickerChange(); }} />
           <ArticleRewriterConfig style={{ display: this.state.writingMode === GhostWriterModes.REWRITE_FROM_URL ? 'flex' : 'none'}}
               value={this.rewriteFromUrlConfig}
-              onValueChange={v => {this.rewriteFromUrlConfig = v; this.onModePickerChange(); }} />
+              onValueChange={v => {this.rewriteFromUrlConfig = v; this.onModePickerChange(); }}
+              showRewriteOption={true} />
         </View>
       </View>
     );

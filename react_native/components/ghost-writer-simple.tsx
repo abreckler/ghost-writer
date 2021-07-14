@@ -130,9 +130,14 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       {
         let params = {} as ArticleRewriterRequest;
         let text1 = text.trim();
-        if (rewriteSmodinConfig) {
+        if (writingMode === GhostWriterModes.REWRITE_TEXT && rewriteSmodinConfig) {
           params.language = rewriteSmodinConfig.language;
           params.strength = rewriteSmodinConfig.strength;
+          params.rewrite = rewriteSmodinConfig.rewrite;
+        } else if (writingMode === GhostWriterModes.REWRITE_FROM_URL && rewriteFromUrlConfig) {
+          params.language = rewriteFromUrlConfig.language;
+          params.strength = rewriteFromUrlConfig.strength;
+          params.rewrite = rewriteFromUrlConfig.rewrite;
         }
 
         if (writingMode === GhostWriterModes.REWRITE_TEXT) {
@@ -169,6 +174,7 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
         params.output_format = generateArticleConfig?.output_format || 'text';
         params.num_serp_results = generateArticleConfig?.num_serp_results;
         params.num_outbound_links_per_serp_result = generateArticleConfig?.num_outbound_links_per_serp_result;
+        params.rewrite = generateArticleConfig?.rewrite == false ? false : true;
 
         let json = await apiClient.generateArticle(params);
         if (json.generated_article) {

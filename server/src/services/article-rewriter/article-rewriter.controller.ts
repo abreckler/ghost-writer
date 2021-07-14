@@ -9,6 +9,7 @@ const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 interface RewriteArticleRequest {
   text?: string;
   url?: string;
+  rewrite?: boolean;
 }
 
 /**
@@ -18,10 +19,12 @@ interface RewriteArticleRequest {
 const rewriteArticle = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const params = req.body as RewriteArticleRequest;
+    params.rewrite = params.rewrite === false ? false : true; // rewrite param's default value is true
+
     let text = '';
     if (params.url && isAmazonDomain(params.url)) {
       // Amazon Product URL
-      const para = await paragraphForAmazonProduct(params.url, { includeTitle: true });
+      const para = await paragraphForAmazonProduct(params.url, { includeTitle: true, rewrite: params.rewrite });
       res.status(200).json({
         language: 'en',
         rewrite: para?.generated?.text,
@@ -60,8 +63,13 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction) =
       const texts = splitText(text, 9999); // Smodin API restricts input length to 10000
       const para = [];
       for (let i = 0; i < texts.length; i++) {
-        const response = await client.rewrite(texts[i], 'en', 3);
-        para.push(response.rewrite);
+        if (params.rewrite === false) {
+          para.push(texts[i]);
+        } else {
+          // if "rewrite" param is set, rewrite the paragraph
+          const response = await client.rewrite(texts[i], 'en', 3);
+          para.push(response.rewrite);
+        }
       }
       res.status(200).json({
         language: 'en',

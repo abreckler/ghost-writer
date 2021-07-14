@@ -89,6 +89,7 @@ interface ArticleRewriterRequest {
   strength?: number,
   text?: string,
   url?: string,
+  rewrite ?: boolean;
 }
 interface ArticleRewriterResponse {
   language: string,
@@ -104,6 +105,7 @@ interface ArticleGeneratorRequest {
   output_format ?: string; // text,markdown,html
   num_serp_results ?: number;
   num_outbound_links_per_serp_result ?: number;
+  rewrite ?: boolean;
 }
 interface ArticleGeneratorResponse {
   generated_article: string;

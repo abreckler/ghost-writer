@@ -14,6 +14,7 @@ interface ArticleGeneratorConfigs {
   numSerpResults: number;
   numOutboundLinksPerSerpResult: number;
   outputFormat: string;
+  rewrite?: boolean;
 }
 
 interface ArticleParagraph {
@@ -97,8 +98,9 @@ const paraphraser = async (text: string, apiName: 'smodin' | 'healthytech' = 'sm
   }
 };
 
-interface AmazonProductArticleOptions {
+interface ArticleParagraphOptions {
   includeTitle?: boolean;
+  rewrite?: boolean;
 }
 
 /**
@@ -109,7 +111,7 @@ interface AmazonProductArticleOptions {
  */
 const paragraphForAmazonProduct = async (
   url: string,
-  options?: AmazonProductArticleOptions,
+  options?: ArticleParagraphOptions,
 ): Promise<ArticleParagraph | null> => {
   const amazonProductClient = new ZombieBestAmazonProductsApiClient(RAPIDAPI_API_KEY);
 
@@ -140,8 +142,14 @@ const paragraphForAmazonProduct = async (
         if (options?.includeTitle) {
           text = amazonProductResponse.title + '\n\n\n' + text;
         }
-        const rephrased = await paraphraser(text);
-        if (!rephrased) return null;
+
+        let rephrased;
+        if (options?.rewrite === false) {
+          rephrased = text;
+        } else {
+          rephrased = await paraphraser(text);
+          if (!rephrased) return null;
+        }
 
         return {
           source_url: url,
@@ -179,7 +187,10 @@ const paragraphForAmazonProduct = async (
  * @param url {string}
  * @returns
  */
-const paragraphForGeneralPages1 = async (url: string): Promise<ArticleParagraph | null> => {
+const paragraphForGeneralPages1 = async (
+  url: string,
+  options?: ArticleParagraphOptions,
+): Promise<ArticleParagraph | null> => {
   const internalHostname = new URL(url).hostname;
   const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
   const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
@@ -215,8 +226,13 @@ const paragraphForGeneralPages1 = async (url: string): Promise<ArticleParagraph 
     console.debug('could not find valid external links. yet include it in the result.', url);
   }
 
-  const rephrased = await paraphraser(extractorResponse.summary || extractorResponse.text);
-  if (!rephrased) return null;
+  let rephrased;
+  if (options?.rewrite === false) {
+    rephrased = extractorResponse.summary || extractorResponse.text;
+  } else {
+    rephrased = await paraphraser(extractorResponse.summary || extractorResponse.text);
+    if (!rephrased) return null;
+  }
 
   return {
     source_url: url,
@@ -253,7 +269,10 @@ const paragraphForGeneralPages1 = async (url: string): Promise<ArticleParagraph 
  * @param url {string}
  * @returns
  */
-const paragraphForGeneralPages2 = async (url: string): Promise<ArticleParagraph | null> => {
+const paragraphForGeneralPages2 = async (
+  url: string,
+  options?: ArticleParagraphOptions,
+): Promise<ArticleParagraph | null> => {
   const internalHostname = new URL(url).hostname;
   const keySentenceExtractorClient = new TextAnalysisTextSummarizationApiClient(RAPIDAPI_API_KEY);
   const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
@@ -305,8 +324,13 @@ const paragraphForGeneralPages2 = async (url: string): Promise<ArticleParagraph 
     extractedText = extractorResponse.summary || extractorResponse.text;
   }
 
-  const rephrased = await paraphraser(extractedText);
-  if (!rephrased) return null;
+  let rephrased;
+  if (options?.rewrite === false) {
+    rephrased = extractedText;
+  } else {
+    rephrased = await paraphraser(extractedText);
+    if (!rephrased) return null;
+  }
 
   return {
     source_url: url,

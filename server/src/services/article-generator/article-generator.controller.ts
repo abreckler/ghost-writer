@@ -18,6 +18,7 @@ const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
  * @param req.body.output_format {'text'|'markdown'|'html'}
  * @param req.body.num_serp_results {number?} - DEFAULT 3.
  * @param req.body.num_outbound_links_per_serp_result {number?} - DEFAULT 3.
+ * @param req.body.rewrite {boolean?} - DEFAULT true.
  */
 const writeProductsReviewArticle = async (req: Request, res: Response, next: NextFunction) => {
   const seedText = req.body.seed_text || '';
@@ -25,6 +26,7 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
     numSerpResults: req.body.num_serp_results || 3,
     numOutboundLinksPerSerpResult: req.body.num_outbound_links_per_serp_result || 3,
     outputFormat: req.body.output_format || 'text',
+    rewrite: req.body.rewrite === false ? false : true, // rewrite param's default value is true
   } as ArticleGeneratorConfigs;
   const otherShoppingDomains = ['www.etsy.com', 'www.target.com', 'www.walmart.com', 'www.ebay.com'];
 
@@ -77,13 +79,13 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
       if (url) {
         const internalHostname = new URL(url).hostname;
         if (isAmazonDomain(url)) {
-          const p = await paragraphForAmazonProduct(url);
+          const p = await paragraphForAmazonProduct(url, { rewrite: configs.rewrite });
           p && paragraphs.push(p);
         } else if (otherShoppingDomains.indexOf(internalHostname) >= 0) {
-          const p = await paragraphForGeneralPages2(url);
+          const p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
           p && paragraphs.push(p);
         } else {
-          const p = await paragraphForGeneralPages2(url);
+          const p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
           p && paragraphs.push(p);
         }
       } else {
@@ -99,7 +101,12 @@ const writeProductsReviewArticle = async (req: Request, res: Response, next: Nex
     });
 
     // Title generation from seed text
-    const generatedTitle = await paraphraser(seedText.replace(/(site:[^\s]+)/g, '').trim());
+    let generatedTitle;
+    if (configs.rewrite === false) {
+      generatedTitle = seedText;
+    } else {
+      generatedTitle = await paraphraser(seedText.replace(/(site:[^\s]+)/g, '').trim());
+    }
 
     // Merge paragraphs to generate full article
     let text = '';
