@@ -64,6 +64,7 @@ class GhostWriterConfig {
         // template.prompt && (params.prompt = template.prompt.replaceAll('{USER_INPUT}', seedText.trim()));
         template.n && (params.n = template.n);
       }
+      params.prompt = seedText;
       params.stop = [ '.\n' ];
       params.max_tokens = 1024;
     }
