@@ -1,12 +1,11 @@
 import {
   HealthyTechParaphraserApiClient,
-  PipfeedArticleDataExtractorApiClient,
   SmodinRewriterApiClient,
   TextAnalysisTextSummarizationApiClient,
   ZackproserUrlIntelligenceApiClient,
   ZombieBestAmazonProductsApiClient,
 } from '../../lib/rapidapi';
-import { extractAmazonAsin, extractUrls } from '../../lib/utils';
+import { extractAmazonAsin, extractUrls, parseTextFromUrl } from '../../lib/utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 
@@ -62,7 +61,11 @@ const externalLinksFilterFactory = (internalHostname: string) => {
   };
 };
 
-const paraphraser = async (text: string, apiName: 'smodin' | 'healthytech' = 'smodin'): Promise<string | null> => {
+const paraphraser = async (
+  text: string,
+  options: { lang?: string; strength?: number } | null = null,
+  apiName: 'smodin' | 'healthytech' = 'healthytech',
+): Promise<string | null> => {
   switch (apiName) {
     case 'healthytech':
       try {
@@ -81,7 +84,11 @@ const paraphraser = async (text: string, apiName: 'smodin' | 'healthytech' = 'sm
     case 'smodin':
       try {
         const rephraserClient = new SmodinRewriterApiClient(RAPIDAPI_API_KEY);
-        const rephraserRespone = await rephraserClient.rewrite(text, 'en', 3);
+        const rephraserRespone = await rephraserClient.rewrite(
+          text,
+          (options && options.lang) || 'en',
+          (options && options.strength) || 3,
+        );
         if (rephraserRespone.rewrite) {
           return rephraserRespone.rewrite;
         } else {
@@ -192,20 +199,25 @@ const paragraphForGeneralPages1 = async (
   options?: ArticleParagraphOptions,
 ): Promise<ArticleParagraph | null> => {
   const internalHostname = new URL(url).hostname;
-  const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
-  const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
 
-  let extractorResponse = null;
-  try {
-    extractorResponse = await extractorClient.extractArticleData(url);
-    if (!extractorResponse.summary && !extractorResponse.text) {
-      console.debug('Article Data Extraction API returned invalid response, skip further processing.', url);
-      return null;
-    }
-  } catch (e) {
-    console.error('RapidAPI - Article Data Extraction API Failure, skip further processing.', e);
-    return null;
-  }
+  // NOTE: Pipefeed Article Data Extractor API is not active any more
+
+  // const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
+  // let extractorResponse = null;
+  // try {
+  //   extractorResponse = await extractorClient.extractArticleData(url);
+  //   if (!extractorResponse.summary && !extractorResponse.text) {
+  //     console.debug('Article Data Extraction API returned invalid response, skip further processing.', url);
+  //     return null;
+  //   }
+  // } catch (e) {
+  //   console.error('RapidAPI - Article Data Extraction API Failure, skip further processing.', e);
+  //   return null;
+  // }
+  // var html = extractorResponse.html;
+  //
+
+  const extractorResponse = await parseTextFromUrl(url);
 
   const extractedUrls = extractUrls(extractorResponse.html);
   const externalLinksFilter = externalLinksFilterFactory(internalHostname);
@@ -213,6 +225,7 @@ const paragraphForGeneralPages1 = async (
   if (externalLinks.length > 0) {
     console.debug('URL Extraction Result for ' + url, extractedUrls);
   } else {
+    const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
     // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
     try {
       const urlIntellResponse = await urlExtractorClient.rip(url);
@@ -228,9 +241,9 @@ const paragraphForGeneralPages1 = async (
 
   let rephrased;
   if (options?.rewrite === false) {
-    rephrased = extractorResponse.summary || extractorResponse.text;
+    rephrased = extractorResponse.text;
   } else {
-    rephrased = await paraphraser(extractorResponse.summary || extractorResponse.text);
+    rephrased = await paraphraser(extractorResponse.text);
     if (!rephrased) return null;
   }
 
@@ -239,8 +252,8 @@ const paragraphForGeneralPages1 = async (
     source: {
       title: extractorResponse.title,
       description: extractorResponse.description,
-      summary: extractorResponse.summary || extractorResponse.text,
-      tags: extractorResponse.tags || [],
+      summary: extractorResponse.text,
+      tags: [],
     },
     generated: {
       title: extractorResponse.title,
@@ -274,21 +287,23 @@ const paragraphForGeneralPages2 = async (
   options?: ArticleParagraphOptions,
 ): Promise<ArticleParagraph | null> => {
   const internalHostname = new URL(url).hostname;
-  const keySentenceExtractorClient = new TextAnalysisTextSummarizationApiClient(RAPIDAPI_API_KEY);
-  const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
-  const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
 
-  let extractorResponse = null;
-  try {
-    extractorResponse = await extractorClient.extractArticleData(url);
-    if (!extractorResponse.summary && !extractorResponse.text) {
-      console.debug('Summary Extraction API returned invalid response, skip further processing.', url);
-      return null;
-    }
-  } catch (e) {
-    console.error('RapidAPI - Summary Extraction API failure, skip further processing.', e);
-    return null;
-  }
+  // NOTE: Pipefeed Article Data Extractor API is not active any more
+
+  // const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
+  // let extractorResponse = null;
+  // try {
+  //   extractorResponse = await extractorClient.extractArticleData(url);
+  //   if (!extractorResponse.summary && !extractorResponse.text) {
+  //     console.debug('Summary Extraction API returned invalid response, skip further processing.', url);
+  //     return null;
+  //   }
+  // } catch (e) {
+  //   console.error('RapidAPI - Summary Extraction API failure, skip further processing.', e);
+  //   return null;
+  // }
+
+  const extractorResponse = await parseTextFromUrl(url);
 
   const extractedUrls = extractUrls(extractorResponse.html);
   const externalLinksFilter = externalLinksFilterFactory(internalHostname);
@@ -297,6 +312,7 @@ const paragraphForGeneralPages2 = async (
     console.debug('URL Extraction Result for ' + url, extractedUrls);
   } else {
     // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
+    const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
     try {
       const urlIntellResponse = await urlExtractorClient.rip(url);
       console.debug('URL Intelligence API Result for ' + url, urlIntellResponse);
@@ -310,6 +326,7 @@ const paragraphForGeneralPages2 = async (
   }
 
   let extractedText = '';
+  const keySentenceExtractorClient = new TextAnalysisTextSummarizationApiClient(RAPIDAPI_API_KEY);
   try {
     const keySentencesResponse = await keySentenceExtractorClient.textSummarizerText(extractorResponse.text);
     if (!keySentencesResponse.sentences || keySentencesResponse.sentences.length == 0) {
@@ -321,7 +338,7 @@ const paragraphForGeneralPages2 = async (
     // The Text summarizer API's availability doesn't look good.
     // Let's use article extractor/summarizer as a fallback
     console.error('RapidAPI - Key sentence extraction API failure, skip further processing.', e);
-    extractedText = extractorResponse.summary || extractorResponse.text;
+    extractedText = extractorResponse.text;
   }
 
   let rephrased;
@@ -338,7 +355,7 @@ const paragraphForGeneralPages2 = async (
       title: extractorResponse.title,
       description: extractorResponse.description,
       summary: extractedText,
-      tags: extractorResponse.tags || [],
+      tags: [],
     },
     generated: {
       title: '',

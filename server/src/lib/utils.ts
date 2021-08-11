@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { htmlToText } from 'html-to-text';
+import { htmlToText, HtmlToTextOptions } from 'html-to-text';
 
 /**
  * Extracts URL links and hostnames from a string
@@ -53,11 +53,48 @@ const fetchHtmlFromUrl = async (url: string): Promise<string> => {
 /**
  * Parse the string from the HTML returned for the given URL
  */
-const parseTextFromUrl = async (url: string): Promise<string> => {
+const parseTextFromUrl = async (
+  url: string,
+): Promise<{ title: string; description: string; text: string; html: string }> => {
   const html = await fetchHtmlFromUrl(url);
-  const options = { tables: ['#invoice', '.address'] };
-  const text = htmlToText(html, options);
-  return text;
+
+  let text = '';
+  [['article'], ['main'], ['body']].forEach((sel) => {
+    if (text) {
+      return;
+    }
+
+    text = htmlToText(html, {
+      selector: sel,
+      wordwrap: 80, // null for no-wrap
+      ignoreHref: false,
+      ignoreImage: false,
+      singleNewLineParagraphs: false,
+    } as HtmlToTextOptions);
+  });
+
+  const title = htmlToText(html, {
+    baseElements: {
+      selector: ['h1'],
+    },
+    wordwrap: 80, // null for no-wrap
+    ignoreHref: false,
+    ignoreImage: false,
+    singleNewLineParagraphs: false,
+  } as HtmlToTextOptions);
+
+  const description = htmlToText(html, {
+    baseElements: {
+      selector: ['meta[name=description]'],
+    },
+  } as HtmlToTextOptions);
+
+  return {
+    title: title,
+    description: description,
+    html: html,
+    text: text,
+  };
 };
 
 /**

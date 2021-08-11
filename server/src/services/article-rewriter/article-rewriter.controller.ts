@@ -1,8 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { PipfeedArticleDataExtractorApiClient, SmodinRewriterApiClient } from '../../lib/rapidapi';
-import { isAmazonDomain, splitText } from '../../lib/utils';
-import { htmlToText, HtmlToTextOptions } from 'html-to-text';
-import { paragraphForAmazonProduct } from '../article-generator/article-generator.service';
+import { isAmazonDomain, parseTextFromUrl, splitText } from '../../lib/utils';
+import { paragraphForAmazonProduct, paraphraser } from '../article-generator/article-generator.service';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 
@@ -33,33 +31,36 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction) =
       });
       return;
     } else if (params.url) {
+      // NOTE: Pipefeed Article Data Extractor API is not active any more
+
       // Rewrite an article from a URL
-      const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
-      const extractorResponse = await extractorClient.extractArticleData(params.url);
-      if (extractorResponse.html) {
-        // use html-to-text to extract text with paragraphs
-        const htmlToTextOptions = {
-          wordwrap: 80, // null for no-wrap
-          ignoreHref: false,
-          ignoreImage: false,
-          singleNewLineParagraphs: false,
-        } as HtmlToTextOptions;
-        text = htmlToText(extractorResponse.html, htmlToTextOptions);
-      }
-      if (!text) {
-        // if we can't use html-to-text, fallback to the raw text or the summary (NOTE: this text does not have paragraphs)
-        text = extractorResponse.text || extractorResponse.summary;
-      }
-      if (extractorResponse.title) {
-        text = extractorResponse.title + '\n\n\n' + text;
-      }
+      // const extractorClient = new PipfeedArticleDataExtractorApiClient(RAPIDAPI_API_KEY);
+      // const extractorResponse = await extractorClient.extractArticleData(params.url);
+      // if (extractorResponse.html) {
+      //   // use html-to-text to extract text with paragraphs
+      //   const htmlToTextOptions = {
+      //     wordwrap: 80, // null for no-wrap
+      //     ignoreHref: false,
+      //     ignoreImage: false,
+      //     singleNewLineParagraphs: false,
+      //   } as HtmlToTextOptions;
+      //   text = htmlToText(extractorResponse.html, htmlToTextOptions);
+      // }
+      // if (!text) {
+      //   // if we can't use html-to-text, fallback to the raw text or the summary (NOTE: this text does not have paragraphs)
+      //   text = extractorResponse.text || extractorResponse.summary;
+      // }
+      // if (extractorResponse.title) {
+      //   text = extractorResponse.title + '\n\n\n' + text;
+      // }
+      const extractorResponse = await parseTextFromUrl(params.url);
+      text = extractorResponse.text;
     } else if (params.text) {
       // Rewrite a text
       text = params.text;
     }
 
     if (text) {
-      const client = new SmodinRewriterApiClient(RAPIDAPI_API_KEY);
       const texts = splitText(text, 9999); // Smodin API restricts input length to 10000
       const para = [];
       for (let i = 0; i < texts.length; i++) {
@@ -67,8 +68,7 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction) =
           para.push(texts[i]);
         } else {
           // if "rewrite" param is set, rewrite the paragraph
-          const response = await client.rewrite(texts[i], 'en', 3);
-          para.push(response.rewrite);
+          para.push(await paraphraser(texts[i]));
         }
       }
       res.status(200).json({
