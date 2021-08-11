@@ -59,7 +59,16 @@ const parseTextFromUrl = async (
   const html = await fetchHtmlFromUrl(url);
 
   let text = '';
-  [['article'], ['main'], ['body']].forEach((sel) => {
+  [
+    ['article'],
+    [
+      {
+        selector: 'main',
+        format: 'block',
+      },
+    ],
+    ['body'],
+  ].forEach((sel) => {
     if (text) {
       return;
     }
