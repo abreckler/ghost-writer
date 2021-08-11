@@ -10,6 +10,7 @@ import {
   TextAnalysisTextSummarizationTextRequest,
   ArticleGeneratorRequest,
   ArticleRewriterRequest,
+  CompletionResponse,
 } from './lib/types';
 import { GhostWriterConfig } from './lib/writer-config';
 import { MyApiClient } from './lib/api-client';
@@ -191,17 +192,22 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       {
         let writer = new GhostWriterConfig;
         let params : CompletionParams;
+        let json : CompletionResponse;
 
-        if (writingMode === GhostWriterModes.REWRITE)
-          params = writer.generateCompleteParams(text.trim(), rewriteConfig ? '' : GhostWriterModes.REWRITE, rewriteConfig);
-        else if (writingMode === GhostWriterModes.QA)
-          params = writer.generateCompleteParams(text.trim(), qaConfig ? '' : GhostWriterModes.QA, qaConfig);
-        else if (writingMode === GhostWriterModes.SUMMARY)
-          params = writer.generateCompleteParams(text.trim(), summaryConfig ? '' : GhostWriterModes.SUMMARY, summaryConfig);
-        else
-          params = writer.generateCompleteParams(text.trim(), autocompleteConfig ? '' : 'autocomplete', autocompleteConfig);
+        if (writingMode === GhostWriterModes.QA) {
+          params = writer.generateCompleteParams(text.trim(), GhostWriterModes.QA, qaConfig);
+          json = await apiClient.runQA(params);
+        }
+        else {
+          if (writingMode === GhostWriterModes.REWRITE)
+            params = writer.generateCompleteParams(text.trim(), rewriteConfig ? '' : GhostWriterModes.REWRITE, rewriteConfig);
+          else if (writingMode === GhostWriterModes.SUMMARY)
+            params = writer.generateCompleteParams(text.trim(), summaryConfig ? '' : GhostWriterModes.SUMMARY, summaryConfig);
+          else
+            params = writer.generateCompleteParams(text.trim(), autocompleteConfig ? '' : 'autocomplete', autocompleteConfig);
 
-        let json = await apiClient.completion(params);
+          json = await apiClient.completion(params);
+        }
     
         if (json.choices) {
           setAnswers(json.choices.filter(c => (c.text || '').trim().length > 0));

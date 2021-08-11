@@ -1,6 +1,6 @@
 import express from 'express';
 import middleware from '../../middleware';
-import { listEngines, completion, search, classification, createAnswer, listFiles } from './openai.controller';
+import { listEngines, completion, search, classification, createAnswer, listFiles, runQA } from './openai.controller';
 
 export const openaiRouter = express.Router();
 
@@ -30,3 +30,6 @@ openaiRouter.post(
   createAnswer,
 );
 openaiRouter.get('/files', middleware.authentication, middleware.authorization('a role GET / HEAD'), listFiles);
+
+// Custom modes
+openaiRouter.post('/run/qa', middleware.authentication, middleware.authorization('a role GET / HEAD'), runQA);

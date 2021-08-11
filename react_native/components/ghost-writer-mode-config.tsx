@@ -297,6 +297,46 @@ class OpenAiAutocompleteConfig extends React.Component<OpenAiAutocompleteConfigP
 }
 
 
+class OpenAiQaConfig extends React.Component<OpenAiAutocompleteConfigProps, OpenAiAutocompleteConfigState> {
+
+  constructor(props: OpenAiAutocompleteConfigProps) {
+    super(props);
+
+    this.state = {
+      n: props.initValue?.n || props.value?.n || 1,
+    };
+  }
+
+  componentDidUpdate(prevProps: any) {
+    if (this.props !== prevProps && typeof this.props.value !== 'undefined')
+    {
+      this.setState({
+        n: this.props.value?.n || 1,
+      });
+    }
+  }
+
+  setStateWithValueChange(newState: any, changedStateNames: Array<String>=[]) {
+    this.setState(newState);
+
+    this.props.onValueChange &&
+      this.props.onValueChange({
+        n: changedStateNames.indexOf('n') < 0 ? this.state.n : newState.n,
+      } as CompletionParams);
+  }
+
+  render() {
+    return (
+      <View style={[this.props.style]}>
+        <TextInputGroupWithValidityCheck label={'Number of answers to generate'} value={this.state.n?.toString()} required={true}
+            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of answers to generate', intVal: true, min: 1, max: 10 }}
+            onValueChange={ v => { this.setStateWithValueChange({ n: Number.parseInt(v) }, ['n']); } } />
+      </View>
+    );
+  }
+}
+
+
 //-----------------------------------------
 // Text Summarization API of TextAnalysis
 //-----------------------------------------
@@ -632,7 +672,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
         '@gw__mode_config__rewrite_from_url',
       ]);
       this.autocompleteConfig = (multiGet[0][1] ? JSON.parse(multiGet[0][1]) : { prompt: '{USER_INPUT}', n: 1 }) as CompletionParams;
-      this.qaConfig = (multiGet[1][1] ? JSON.parse(multiGet[1][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.QA_TEMPLATES[0]))) as CompletionParams;
+      this.qaConfig = (multiGet[1][1] ? JSON.parse(multiGet[1][1]) : { n: 1 }) as CompletionParams;
       this.summaryConfig = (multiGet[2][1] ? JSON.parse(multiGet[2][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.SUMMARY_TEMPLATES[0]))) as CompletionParams;
       this.rewriteConfig = (multiGet[3][1] ? JSON.parse(multiGet[3][1]) : JSON.parse(JSON.stringify(this.ghostWriterConfigPreset.REWRITE_TEMPLATES[0]))) as CompletionParams;
       this.rewriteSmodinConfig = (multiGet[4][1] ? JSON.parse(multiGet[4][1]) : {}) as ArticleRewriterRequest;
@@ -713,8 +753,7 @@ class GhostWriterModeConfig extends React.Component<GhostWriterModeConfigProps, 
               templates = {this.ghostWriterConfigPreset.REWRITE_TEMPLATES}
               value={this.rewriteConfig}
               onValueChange={v => {this.rewriteConfig = v; this.onModePickerChange(); }} />
-          <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === GhostWriterModes.QA ? 'flex' : 'none'}}
-              templates = {this.ghostWriterConfigPreset.QA_TEMPLATES}
+          <OpenAiQaConfig style={{ display: this.state.writingMode === GhostWriterModes.QA ? 'flex' : 'none'}}
               value={this.qaConfig}
               onValueChange={v => {this.qaConfig = v; this.onModePickerChange(); }}  />
           <OpenAiAutocompleteConfig style={{ display: this.state.writingMode === GhostWriterModes.SUMMARY ? 'flex' : 'none'}}

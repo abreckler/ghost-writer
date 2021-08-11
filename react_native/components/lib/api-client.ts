@@ -15,8 +15,8 @@ import {
 
 class MyApiClient {
 
-  MY_API_BASE_URL = "https://api.ghost-writer.io";
-  // MY_API_BASE_URL = "http://localhost:3000";
+  // MY_API_BASE_URL = "https://api.ghost-writer.io";
+  MY_API_BASE_URL = "http://localhost:3000";
   API_KEY = "";
   DEFAULT_ENGINE : EngineID = EngineID.Curie;
   FILTER_EMPTY_COMPLETION_ANSWER = true;
@@ -58,6 +58,26 @@ class MyApiClient {
     
     if (this.BEAUTIFY_COMPLETION_ANSWER)
       json.choices.forEach((c, i) => {
+        c.finish_reason === 'length' && (c.text = c.text + '...');
+      });
+    
+    return json;
+  }
+
+
+  /**
+   * Run QA mode
+   */
+  public async runQA(params: CompletionParams) : Promise<CompletionResponse> {
+    const completionUrl = '/openai/run/qa';
+    const json = await this._doPost<CompletionParams, CompletionResponse>(completionUrl, params);  
+
+    if (this.FILTER_EMPTY_COMPLETION_ANSWER)
+      json.choices = (json.choices || []).filter((c) => { return !!((c.text || '').trim())});
+    
+    if (this.BEAUTIFY_COMPLETION_ANSWER)
+      json.choices.forEach((c, i) => {
+        c.text = (c.text || '').trim();
         c.finish_reason === 'length' && (c.text = c.text + '...');
       });
     

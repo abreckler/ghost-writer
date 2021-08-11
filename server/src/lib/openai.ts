@@ -5,6 +5,8 @@ enum EngineID {
   Curie = 'curie',
   Babbage = 'babbage',
   Ada = 'ada',
+  DavinciInstruct = 'davinci-instruct-beta',
+  CurieInstruct = 'curie-instruct-beta',
 }
 
 interface CompletionParams {

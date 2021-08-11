@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { htmlToText, HtmlToTextOptions } from 'html-to-text';
+import cheerio from 'cheerio';
 
 /**
  * Extracts URL links and hostnames from a string
@@ -58,49 +59,72 @@ const parseTextFromUrl = async (
 ): Promise<{ title: string; description: string; text: string; html: string }> => {
   const html = await fetchHtmlFromUrl(url);
 
-  let text = '';
-  [
-    ['article'],
-    ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'],
-    [
-      {
-        selector: 'main',
-        format: 'block',
-      },
-    ],
-    ['body'],
-  ].forEach((sel) => {
-    if (text) {
-      return;
-    }
+  // Extract title and description
+  // NOTE: Some texts are more correct when extracted directly from html,
+  // particularly when the text is contained within single element or attribute.
+  const $ = cheerio.load(html);
 
-    text = htmlToText(html, {
-      baseElements: {
-        selector: sel,
-        orderBy: 'occurrence',
-      },
-      wordwrap: 80, // null for no-wrap
-      ignoreHref: false,
-      ignoreImage: false,
-      singleNewLineParagraphs: false,
-    } as HtmlToTextOptions);
-  });
+  const _findFirstValidText2 = (selectors: (string | { selector: string; attribute: string })[]): string => {
+    let text = '';
+    selectors.forEach((sel) => {
+      if (text) {
+        return;
+      }
+      text = typeof sel == 'string' ? $(sel).text() : $(sel.selector).attr(sel.attribute) || '';
+      // if (text != '') {
+      //   console.log('_findFirstValidText2: text found with selector:', sel);
+      // }
+    });
+    return text;
+  };
 
-  const title = htmlToText(html, {
-    baseElements: {
-      selector: ['h1'],
-    },
-    wordwrap: 80, // null for no-wrap
-    ignoreHref: false,
-    ignoreImage: false,
-    singleNewLineParagraphs: false,
-  } as HtmlToTextOptions);
+  const title = _findFirstValidText2(['head>meta[name="twitter:title"]', 'head>title:first-of-type']);
+  const description = _findFirstValidText2([
+    { selector: 'head>meta[name="description"]', attribute: 'content' },
+    { selector: 'head>meta[name="twitter:description"]', attribute: 'content' },
+    { selector: 'head>meta[property="og:description"]', attribute: 'content' },
+  ]);
 
-  const description = htmlToText(html, {
-    baseElements: {
-      selector: ['meta[name=description]'],
-    },
-  } as HtmlToTextOptions);
+  // console.log('title: ', title);
+  // console.log('description: ', description);
+
+  const _findFirstValidText = (selectors: Array<string[]>): string => {
+    let text = '';
+    selectors.forEach((sel) => {
+      if (text) {
+        return;
+      }
+
+      text = htmlToText(html, {
+        baseElements: {
+          selectors: sel,
+          orderBy: 'occurrence',
+          returnDomByDefault: false,
+        },
+        selectors: [
+          {
+            selector: 'section',
+            format: 'block',
+          },
+          {
+            selector: 'main',
+            format: 'block',
+          },
+        ],
+        wordwrap: 80, // null for no-wrap
+        ignoreHref: false,
+        ignoreImage: false,
+        singleNewLineParagraphs: false,
+      } as HtmlToTextOptions);
+
+      if (text != '') {
+        console.log('_findFirstValidText: text found with selector:', sel);
+      }
+    });
+    return text;
+  };
+
+  const text = _findFirstValidText([['article', 'section'], ['main'], ['body']]);
 
   return {
     title: title,

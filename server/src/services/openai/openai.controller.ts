@@ -10,6 +10,10 @@ import {
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
+//
+// Simple proxy mode
+//
+
 const listEngines = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const client = new OpenAiApiClient(OPENAI_API_KEY);
@@ -104,4 +108,24 @@ const listFiles = async (_req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { listEngines, completion, search, classification, createAnswer, listFiles };
+//
+// custom modes
+//
+
+/**
+ * Q&A mode
+ * Uses instruct engines
+ */
+const runQA = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const params = req.body as CompletionParams;
+    const client = new OpenAiApiClient(OPENAI_API_KEY, EngineID.CurieInstruct);
+    const response = await client.completion(params);
+    res.status(200).json(response);
+  } catch (err) {
+    console.error('OpenAI(a.k.a. GPT-3) - Text Completion API failed with error', err);
+    next(err);
+  }
+};
+
+export { listEngines, completion, search, classification, createAnswer, listFiles, runQA };
