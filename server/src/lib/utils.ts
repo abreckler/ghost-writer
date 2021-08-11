@@ -61,6 +61,7 @@ const parseTextFromUrl = async (
   let text = '';
   [
     ['article'],
+    ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p'],
     [
       {
         selector: 'main',
@@ -74,7 +75,10 @@ const parseTextFromUrl = async (
     }
 
     text = htmlToText(html, {
-      selector: sel,
+      baseElements: {
+        selector: sel,
+        orderBy: 'occurrence',
+      },
       wordwrap: 80, // null for no-wrap
       ignoreHref: false,
       ignoreImage: false,
