@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { htmlToText, HtmlToTextOptions } from 'html-to-text';
+import { DomNode, FormatOptions, htmlToText, HtmlToTextOptions, RecursiveCallback } from 'html-to-text';
 import cheerio from 'cheerio';
+import { BlockTextBuilder } from 'html-to-text/lib/block-text-builder';
 
 /**
  * Extracts URL links and hostnames from a string
@@ -56,6 +57,7 @@ const fetchHtmlFromUrl = async (url: string): Promise<string> => {
  */
 const parseTextFromUrl = async (
   url: string,
+  outputFormat: 'text'|'markdown' = 'text'
 ): Promise<{ title: string; description: string; text: string; html: string }> => {
   const html = await fetchHtmlFromUrl(url);
 
@@ -85,6 +87,27 @@ const parseTextFromUrl = async (
     { selector: 'head>meta[property="og:description"]', attribute: 'content' },
   ]);
 
+  // clear up HTML to extract main article
+  $('head').remove();
+  $('body>header').remove();
+  $('body>footer').remove();
+  $('nav').remove();
+  $('aside').remove();
+  $('[role=banner]').remove();
+  $('[role=button]').remove();
+  $('[role=navigation]').remove();
+  $('[aria-hidden=true]').remove();
+  $('iframe').remove();
+  $('script').remove();
+  $('style').remove();
+  $('noscript').remove();
+  $('[style*="display:none"i]').remove();
+  $('form').remove();
+  $('figure').remove();
+  $(':empty').remove();
+
+  const cleaned_html = $.html();
+
   // console.log('title: ', title);
   // console.log('description: ', description);
 
@@ -95,27 +118,111 @@ const parseTextFromUrl = async (
         return;
       }
 
-      text = htmlToText(html, {
+      text = htmlToText(cleaned_html, {
         baseElements: {
           selectors: sel,
           orderBy: 'occurrence',
           returnDomByDefault: false,
         },
+        formatters: {
+          formatHeadingMarkdown: function (
+            elem: DomNode,
+            walk: RecursiveCallback,
+            builder: BlockTextBuilder,
+            formatOptions: FormatOptions,
+          ) {
+            builder.openBlock({ leadingLineBreaks: formatOptions.leadingLineBreaks || 2 });
+            if (formatOptions.uppercase !== false) {
+              builder.pushWordTransform((str: string) => str.toUpperCase());
+              walk(elem.children, builder);
+              builder.popWordTransform();
+            } else {
+              walk(elem.children, builder);
+            }
+            builder.closeBlock({
+              trailingLineBreaks: formatOptions.trailingLineBreaks || 2,
+              blockTransform: (str: string) => {
+                switch (elem.name?.toLowerCase()) {
+                  case 'h1':
+                    return '# ' + str.replace(/\n/g, ' ') + ' #';
+                  case 'h2':
+                    return '## ' + str.replace(/\n/g, ' ') + ' ##';
+                  case 'h3':
+                    return '### ' + str.replace(/\n/g, ' ') + ' ###';
+                  case 'h4':
+                    return '#### ' + str.replace(/\n/g, ' ') + ' ####';
+                  case 'h5':
+                    return '##### ' + str.replace(/\n/g, ' ') + ' #####';
+                  case 'h6':
+                    return '###### ' + str.replace(/\n/g, ' ') + ' ######';
+                }
+                return str;
+              },
+            });
+          },
+          formatHorizontalLineMarkdown: function (
+            elem: DomNode,
+            walk: RecursiveCallback,
+            builder: BlockTextBuilder,
+            formatOptions: FormatOptions,
+          ) {
+            builder.openBlock({ leadingLineBreaks: formatOptions.leadingLineBreaks || 2 });
+            builder.addInline('_'.repeat(formatOptions.length || 40));
+            builder.closeBlock({ trailingLineBreaks: formatOptions.trailingLineBreaks || 2 });
+          },
+        },
         selectors: [
+          {
+            selector: 'h1',
+            format: 'formatHeadingMarkdown',
+          },
+          {
+            selector: 'h2',
+            format: 'formatHeadingMarkdown',
+          },
+          {
+            selector: 'h3',
+            format: 'formatHeadingMarkdown',
+          },
+          {
+            selector: 'h4',
+            format: 'formatHeadingMarkdown',
+          },
+          {
+            selector: 'h5',
+            format: 'formatHeadingMarkdown',
+          },
+          {
+            selector: 'h6',
+            format: 'formatHeadingMarkdown',
+          },
+          {
+            selector: 'hr',
+            format: 'formatHorizontalLineMarkdown',
+          },
           {
             selector: 'section',
             format: 'block',
           },
           {
-            selector: 'main',
-            format: 'block',
+            selector: 'dl',
+            format: 'unorderedList',
+          },
+          {
+            selector: 'dd',
+            format: 'paragraph',
           },
         ],
-        wordwrap: 80, // null for no-wrap
         ignoreHref: false,
         ignoreImage: false,
         singleNewLineParagraphs: false,
       } as HtmlToTextOptions);
+
+      text = text
+        .split('\n')
+        .map((str) => (str.trim() == '' ? '' : str))
+        .join('\n')
+        .replace(/\n\n\n+/g, '\n\n');
 
       if (text != '') {
         console.log('_findFirstValidText: text found with selector:', sel);
@@ -124,7 +231,14 @@ const parseTextFromUrl = async (
     return text;
   };
 
-  const text = _findFirstValidText([['article', 'section'], ['main'], ['body']]);
+  const text = _findFirstValidText([
+    ['main>article'],
+    ['article'],
+    ['[role=article]'],
+    ['main'],
+    ['[role=main]'],
+    ['body'],
+  ]);
 
   return {
     title: title,
