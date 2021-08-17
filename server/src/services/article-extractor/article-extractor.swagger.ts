@@ -1,8 +1,8 @@
 export const infoBlock = {
-  tags: ['Article Summarizer'],
+  tags: ['Article Extractor'],
   description: '',
   produces: ['application/json', 'charset=utf-8'],
-  summary: 'Article Summarizer API',
+  summary: 'Article Extractor API',
   security: [
     {
       bearerAuth: [],
@@ -10,7 +10,7 @@ export const infoBlock = {
   ],
 };
 
-export const ArticleSummarizerResponseSchema = {
+export const ArticleExtractorResponseSchema = {
   properties: {
     text: {
       type: 'string',
@@ -19,11 +19,11 @@ export const ArticleSummarizerResponseSchema = {
   },
 };
 
-export const articleSummarizer = {
-  '/api/article-summarizer/write': {
+export const articleExtractor = {
+  '/api/article-extractor/write': {
     post: {
       ...infoBlock,
-      description: 'Summarize an article',
+      description: 'Extract key sentences from an article',
       parameters: [
         {
           name: 'text',
@@ -48,12 +48,12 @@ export const articleSummarizer = {
       ],
       responses: {
         '200': {
-          description: 'Summary of an article',
+          description: 'Key sentences extracted from the article',
           content: {
             'application/json; charset=utf-8': {
               schema: {
                 type: 'object',
-                $ref: '#/components/schemas/ArticleSummarizerResponse',
+                $ref: '#/components/schemas/ArticleExtractorResponse',
               },
             },
           },

@@ -20,33 +20,6 @@ export const Pingz = {
   },
 };
 
-export const Note = {
-  properties: {
-    _id: {
-      type: 'integer',
-    },
-    createdOn: {
-      type: 'string',
-    },
-    updatedOn: {
-      type: 'string',
-    },
-    content: {
-      type: 'string',
-    },
-    locked: {
-      type: 'boolean',
-    },
-    deleted: {
-      required: false,
-      $ref: '#/components/schemas/Deleted',
-    },
-    user: {
-      $ref: '#/components/schemas/User',
-    },
-  },
-};
-
 export const UnknownYet = {
   properties: {},
 };

@@ -1,27 +1,24 @@
 import { Request, Response, NextFunction } from 'express';
 import { summarizerText, summarizerUrl } from '../../lib/composites';
 
-interface SummarizeArticleRequest {
-  // basic params
-  // either one of text and url must be provided
-  text?: string;
+interface ExtractArticleRequest {
+  text?: string; // either one of text and url must be provided
   url?: string;
+  num_sentences?: number; // Number of key sentences to extract
   api?: 'textanalysis' | 'text-monkey' | 'openai';
 }
 
-interface SummarizeArticleResponse {
-  // basic params
-  // either one of text and url must be provided
-  summary?: string;
+interface ExtractArticleResponse {
+  sentences?: Array<string>;
 }
 
 /**
  *
- * @param req.body {SummarizeArticleRequest}
+ * @param req.body {ExtractArticleRequest}
  */
-const summarizeArticle = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
+const extractArticle = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
-    const params = req.body as SummarizeArticleRequest;
+    const params = req.body as ExtractArticleRequest;
 
     if (params.url) {
       if (params.api === 'openai') {
@@ -29,8 +26,8 @@ const summarizeArticle = async (req: Request, res: Response, next: NextFunction)
       } else {
         const summarizerResponse = await summarizerUrl(params.url, null, params.api);
         res.status(200).json({
-          summary: summarizerResponse?.summary,
-        } as SummarizeArticleResponse);
+          sentences: summarizerResponse?.snippets,
+        } as ExtractArticleResponse);
       }
     } else if (params.text) {
       if (params.api === 'openai') {
@@ -38,8 +35,8 @@ const summarizeArticle = async (req: Request, res: Response, next: NextFunction)
       } else {
         const summarizerResponse = await summarizerText(params.text, null, params.api);
         res.status(200).json({
-          summary: summarizerResponse?.summary,
-        } as SummarizeArticleResponse);
+          sentences: summarizerResponse?.snippets,
+        } as ExtractArticleResponse);
       }
     }
   } catch (err) {
@@ -48,4 +45,4 @@ const summarizeArticle = async (req: Request, res: Response, next: NextFunction)
   }
 };
 
-export { summarizeArticle };
+export { extractArticle };

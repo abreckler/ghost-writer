@@ -13,7 +13,7 @@ interface RewriteArticleRequest {
  *
  * @param req.body {RewriteArticleRequest}
  */
-const rewriteArticle = async (req: Request, res: Response, next: NextFunction) => {
+const rewriteArticle = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const params = req.body as RewriteArticleRequest;
     params.rewrite = params.rewrite === false ? false : true; // rewrite param's default value is true

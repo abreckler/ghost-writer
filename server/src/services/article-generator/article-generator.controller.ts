@@ -20,7 +20,11 @@ const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
  * @param req.body.num_outbound_links_per_serp_result {number?} - DEFAULT 3.
  * @param req.body.rewrite {boolean?} - DEFAULT true.
  */
-const writeProductsReviewArticle = async (req: Request, res: Response, next: NextFunction) => {
+const writeProductsReviewArticle = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<Response | void> => {
   const seedText = req.body.seed_text || '';
   const configs = {
     numSerpResults: req.body.num_serp_results || 3,
