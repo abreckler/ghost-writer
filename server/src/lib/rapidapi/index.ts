@@ -13,6 +13,13 @@ import {
   TextAnalysisTextSummarizationResponse,
 } from './textanalysis';
 
+import {
+  TextMonkeySummarizerApiClient,
+  TextMonkeySummarizeTextRequest,
+  TextMonkeySummarizeUrlRequest,
+  TextMonkeySummarizeResponse,
+} from './text-monkey';
+
 import { SmodinRewriterApiClient, SmodinRewriteRequest, SmodinRewriteResponse } from './smodin';
 
 import {
@@ -55,6 +62,11 @@ export {
   TextAnalysisTextSummarizationTextRequest,
   TextAnalysisTextSummarizationUrlRequest,
   TextAnalysisTextSummarizationResponse,
+  // Text Monkey - Text summarization
+  TextMonkeySummarizerApiClient,
+  TextMonkeySummarizeTextRequest,
+  TextMonkeySummarizeUrlRequest,
+  TextMonkeySummarizeResponse,
   // Smodin - Rewriter
   SmodinRewriterApiClient,
   SmodinRewriteRequest,

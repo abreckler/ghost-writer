@@ -1,10 +1,5 @@
-import {
-  HealthyTechParaphraserApiClient,
-  SmodinRewriterApiClient,
-  TextAnalysisTextSummarizationApiClient,
-  ZackproserUrlIntelligenceApiClient,
-  ZombieBestAmazonProductsApiClient,
-} from '../../lib/rapidapi';
+import { paraphraser, summarizerText } from '../../lib/composites';
+import { ZackproserUrlIntelligenceApiClient, ZombieBestAmazonProductsApiClient } from '../../lib/rapidapi';
 import { extractAmazonAsin, extractUrls, parseTextFromUrl } from '../../lib/utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
@@ -59,50 +54,6 @@ const externalLinksFilterFactory = (internalHostname: string) => {
       return false;
     }
   };
-};
-
-const paraphraser = async (
-  text: string,
-  options: { lang?: string; strength?: number } | null = null,
-  apiName: 'smodin' | 'healthytech' = 'healthytech',
-): Promise<string | null> => {
-  switch (apiName) {
-    case 'healthytech':
-      try {
-        const rephraserClient = new HealthyTechParaphraserApiClient(RAPIDAPI_API_KEY);
-        const rephraserRespone = await rephraserClient.rewrite(text);
-        if (rephraserRespone.newText) {
-          return rephraserRespone.newText;
-        } else {
-          console.debug('Rephrasing API returned invalid response, skip further processing.', text);
-          return null;
-        }
-      } catch (e) {
-        console.error('RapidAPI - Rephraser API Failure: ', e);
-        return null;
-      }
-    case 'smodin':
-      try {
-        const rephraserClient = new SmodinRewriterApiClient(RAPIDAPI_API_KEY);
-        const rephraserRespone = await rephraserClient.rewrite(
-          text,
-          (options && options.lang) || 'en',
-          (options && options.strength) || 3,
-        );
-        if (rephraserRespone.rewrite) {
-          return rephraserRespone.rewrite;
-        } else {
-          console.debug(
-            'Rewriter/Paraphraser/Text Changer API returned invalid response, skip further processing.',
-            text,
-          );
-          return null;
-        }
-      } catch (e) {
-        console.error('RapidAPI - Rephraser API Failure: ', e);
-        return null;
-      }
-  }
 };
 
 interface ArticleParagraphOptions {
@@ -326,18 +277,17 @@ const paragraphForGeneralPages2 = async (
   }
 
   let extractedText = '';
-  const keySentenceExtractorClient = new TextAnalysisTextSummarizationApiClient(RAPIDAPI_API_KEY);
   try {
-    const keySentencesResponse = await keySentenceExtractorClient.textSummarizerText(extractorResponse.text);
-    if (!keySentencesResponse.sentences || keySentencesResponse.sentences.length == 0) {
-      console.debug('Key sentence extraction API returned invalid response, skip further processing.', url);
+    const keySentencesResponse = await summarizerText(extractorResponse.text);
+    if (!keySentencesResponse?.snippets || keySentencesResponse.snippets.length == 0) {
+      console.debug('Text Summarizer API returned invalid response, skip further processing.', url);
       return null;
     }
-    extractedText = keySentencesResponse.sentences.join(' ');
+    extractedText = keySentencesResponse?.snippets.join(' ');
   } catch (e) {
     // The Text summarizer API's availability doesn't look good.
     // Let's use article extractor/summarizer as a fallback
-    console.error('RapidAPI - Key sentence extraction API failure, skip further processing.', e);
+    console.error('Text Summarizer failure, skip further processing.', e);
     extractedText = extractorResponse.text;
   }
 
@@ -368,7 +318,6 @@ const paragraphForGeneralPages2 = async (
 export {
   ArticleGeneratorConfigs,
   ArticleParagraph,
-  paraphraser,
   paragraphForAmazonProduct,
   paragraphForGeneralPages1,
   paragraphForGeneralPages2,

@@ -1,12 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+import { paraphraser, summarizerText } from '../../lib/composites';
 import {
   TwinwordTopicTaggingGenerateRequest,
   TwinwordTopicTaggingApiClient,
   SmodinRewriteRequest,
   TextAnalysisTextSummarizationTextRequest,
-  TextAnalysisTextSummarizationApiClient,
 } from '../../lib/rapidapi';
-import { paraphraser } from '../article-generator/article-generator.service';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 
@@ -33,8 +32,7 @@ const generateTagging = async (req: Request, res: Response, next: NextFunction) 
 const summarizeText = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const params = req.body as TextAnalysisTextSummarizationTextRequest;
-    const client = new TextAnalysisTextSummarizationApiClient(RAPIDAPI_API_KEY);
-    const response = await client.textSummarizerText(params.text || '');
+    const response = await summarizerText(params.text || '', { sentnum: params.sentnum });
     res.status(200).json(response);
   } catch (err) {
     console.error('RapidAPI - Text Summarization API by TextAnalysis failed with error', err);
