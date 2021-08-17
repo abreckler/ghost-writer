@@ -20,20 +20,17 @@ class GhostWriterConfig {
   readonly SUMMARY_TEMPLATES = [
     { // basic summary
       'name': 'TL;DR;',
-      'prompt': '{USER_INPUT}' +
-            '\ntl;dr:',
+      'prompt': '{USER_INPUT}\n\ntl;dr:',
       'stop': ['\n'],
     },
     { // one-sentence summary
       'name': 'One-sentence summary',
-      'prompt': '{USER_INPUT}' +
-            '\nOne-sentence summary:',
+      'prompt': '{USER_INPUT}\n\nOne-sentence summary:',
       'stop': ['\n', '.'],
     },
     { // grader summary
-      'name': 'Grader summary',
-      'prompt': '{USER_INPUT}' +
-            '\nI rephrased this for my daughter, in plain language a second grader can understand:',
+      'name': '2nd Grader summary',
+      'prompt': '{USER_INPUT}\n\nI rephrased this for my daughter, in plain language a second grader can understand:',
       'stop': ['\n'],
     },
   ] as CompletionParamsTemplate[];
@@ -84,12 +81,11 @@ class GhostWriterConfig {
         params.prompt = (template.prompt || '').replaceAll('{USER_INPUT}', seedText.trim());
         params.stop = template.stop;
         params.n = template.n;
+        params.max_tokens = template.max_tokens || Math.min(Math.ceil(seedText.length / 4), 1024);
         params.temperature = template.temperature;
         params.top_p = template.top_p;
         params.frequency_penalty = template.frequency_penalty;
         params.presence_penalty = template.presence_penalty;
-        // summary/extracted text should not be longer than the original text
-        params.max_tokens = Math.min(Math.ceil(seedText.length / 4), 1024);
       } else {
         params.prompt = seedText.trim();
         params.n = 1;

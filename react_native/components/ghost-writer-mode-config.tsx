@@ -193,11 +193,11 @@ class OpenAiAutocompleteConfig extends React.Component<OpenAiAutocompleteConfigP
       this.setState({
         prompt: this.props.value?.prompt || '',
         n: this.props.value?.n || 1,
-        max_tokens: this.props.value?.max_tokens,
-        temperature: this.props.value?.temperature,
-        top_p: this.props.value?.top_p,
+        max_tokens: this.props.value?.max_tokens || 16,
+        temperature: this.props.value?.temperature || 1,
+        top_p: this.props.value?.top_p || 1,
         logprobs: this.props.value?.logprobs,
-        echo: this.props.value?.echo,
+        echo: this.props.value?.echo || false,
         stop: (this.props.value?.stop || []).map(s => s.replaceAll('\n', '\\n').replaceAll('\t', '\\t')),
         presence_penalty: this.props.value?.presence_penalty || 0,
         frequency_penalty: this.props.value?.frequency_penalty || 0,
@@ -269,6 +269,10 @@ class OpenAiAutocompleteConfig extends React.Component<OpenAiAutocompleteConfigP
         <TextInputGroupWithValidityCheck label={'Number of answers to generate'} value={this.state.n?.toString()} required={true}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of answers to generate', intVal: true, min: 1, max: 10 }}
             onValueChange={ v => { this.setStateWithValueChange({ n: Number.parseInt(v) }, ['n']); } } />
+
+        <TextInputGroupWithValidityCheck label={'Max Number of Tokens (Length of Response)'} value={this.state.max_tokens?.toString()} required={true}
+            validatorPreset='number' validatorPresetOptions={{ fieldName: 'Max Number of Tokens (Length of Response)', intVal: true, min: 1, max: 2048 }}
+            onValueChange={ v => { this.setStateWithValueChange({ max_tokens: Number.parseInt(v) }, ['max_tokens']); } } />
 
         <TextInputGroupWithValidityCheck label={'Sampling Temperature'} value={this.state.temperature?.toString()}
             validatorPreset='number' validatorPresetOptions={{ fieldName: 'Sampling Temperature', intVal: false, min: 0.0, max: 1.0 }}
