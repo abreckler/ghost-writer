@@ -44,7 +44,9 @@ const enforceHttpsUrl = (url: string) => url.replace(/^(https?:)?\/\//, 'https:/
  */
 const fetchHtmlFromUrl = async (url: string): Promise<string> => {
   return await axios
-    .get(enforceHttpsUrl(url))
+    .get(enforceHttpsUrl(url), {
+      timeout: 10000, // milliseconds
+    })
     .then((response) => response.data)
     .catch((error) => {
       error.status = (error.response && error.response.status) || 500;
@@ -57,7 +59,7 @@ const fetchHtmlFromUrl = async (url: string): Promise<string> => {
  */
 const parseTextFromUrl = async (
   url: string,
-  outputFormat: 'text'|'markdown' = 'text'
+  _outputFormat: 'text'|'markdown' = 'text'
 ): Promise<{ title: string; description: string; text: string; html: string }> => {
   const html = await fetchHtmlFromUrl(url);
 
@@ -87,29 +89,51 @@ const parseTextFromUrl = async (
     { selector: 'head>meta[property="og:description"]', attribute: 'content' },
   ]);
 
+  console.log('title: ', title);
+  console.log('description: ', description);
+
   // clear up HTML to extract main article
-  $('head').remove();
-  $('body>header').remove();
-  $('body>footer').remove();
-  $('nav').remove();
-  $('aside').remove();
-  $('[role=banner]').remove();
-  $('[role=button]').remove();
-  $('[role=navigation]').remove();
-  $('[aria-hidden=true]').remove();
-  $('iframe').remove();
-  $('script').remove();
-  $('style').remove();
-  $('noscript').remove();
+  // remove elements that are highly likely not related to main article
+  $('head,body>header,body>footer,nav,aside,form,iframe').remove();
+  $('[role=banner|button|dialog|navigation]').remove();
+  $('[aria-hidden=true],[aria-modal=true]').remove();
+  $('.hidden,.sr-only,.screen-reader-only').remove(); // some common style classes that are hidden from UI
+  $('script,style,noscript').remove(); // remove non-visible elements
+  $('svg,video,audio,picture,figure,img').remove();
   $('[style*="display:none"i]').remove();
-  $('form').remove();
-  $('figure').remove();
-  $(':empty').remove();
+
+  while ($(':empty').length > 0) {
+    console.log('Removing empty elements');
+    $(':empty').remove();
+  }
+
+  // Sometimes a visible parent consists of only non-visible children. If so remove them.
+  const removeEmptyChildren = ($el: cheerio.Cheerio) => {
+    if ($el.children().length > 0) {
+      $el.children().each((_idx: number, element: cheerio.Element) => {
+        removeEmptyChildren($(element));
+      });
+    }
+
+    if ($el.children().length == 0) {
+      const txt = $el.text().trim();
+      if (
+        txt == '' ||
+        ( // simple social share links
+          txt.indexOf('.') < 0 &&
+          (
+            /Share (on|via) (Twitter|Facebook|Email|LinkedIn|WhatsApp|Messenger|Reddit|Tumblr|Pinterest|Pocket)/gi.test(txt) ||
+            /^Read more/gi.test(txt)
+          )
+        )
+      ) {
+        $el.remove();
+      }
+    }
+  };
+  $('body').each((_idx: number, element: cheerio.Element) => removeEmptyChildren($(element)));
 
   const cleaned_html = $.html();
-
-  // console.log('title: ', title);
-  // console.log('description: ', description);
 
   const _findFirstValidText = (selectors: Array<string[]>): string => {
     let text = '';
@@ -161,8 +185,8 @@ const parseTextFromUrl = async (
             });
           },
           formatHorizontalLineMarkdown: function (
-            elem: DomNode,
-            walk: RecursiveCallback,
+            _elem: DomNode,
+            _walk: RecursiveCallback,
             builder: BlockTextBuilder,
             formatOptions: FormatOptions,
           ) {
@@ -235,6 +259,7 @@ const parseTextFromUrl = async (
     ['main>article'],
     ['article'],
     ['[role=article]'],
+    ['.article-body'],
     ['main'],
     ['[role=main]'],
     ['body'],
