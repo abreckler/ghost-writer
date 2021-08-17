@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
+import { paraphraser } from '../../lib/composites';
 import { isAmazonDomain, parseTextFromUrl, splitText } from '../../lib/utils';
-import { paragraphForAmazonProduct, paraphraser } from '../article-generator/article-generator.service';
-
-const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
+import { paragraphForAmazonProduct } from '../article-generator/article-generator.service';
 
 interface RewriteArticleRequest {
   text?: string;

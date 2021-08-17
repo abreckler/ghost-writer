@@ -6,9 +6,9 @@ import {
   ArticleParagraph,
   paragraphForAmazonProduct,
   paragraphForGeneralPages2,
-  paraphraser,
 } from './article-generator.service';
 import { isAmazonDomain } from '../../lib/utils';
+import { paraphraser } from '../../lib/composites';
 
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
 
