@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Dimensions, GestureResponderEvent, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import * as Linking from 'expo-linking';
 
-import GhostWriterSimple from '../components/ghost-writer-simple';
+import GhostWriterSimple from '../components/GhostWriterSimple';
 import { styles }from '../components/styles';
 
 

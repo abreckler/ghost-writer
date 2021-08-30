@@ -5,7 +5,7 @@ import { Picker } from '@react-native-picker/picker';
 import { styles } from './styles';
 import { CompletionParams } from '../lib/types';
 import { CompletionParamsTemplate } from '../lib/writer-config';
-import { TagsInput } from './tags-input';
+import { TagsInput } from './TagsInput';
 import { InputValidity, TextInputGroupWithValidityCheck } from './TextInputGroupWithValidityCheck';
 
 

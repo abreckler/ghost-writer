@@ -3,8 +3,8 @@ import { Text, TouchableOpacity, View, Alert } from 'react-native';
 import ShareExtension from 'react-native-share-extension';
 
 import { styles } from './components/styles';
-import { ShareExtWrapper } from './components/share-ext-wrapper';
-import GhostWriterSimple from './components/ghost-writer-simple';
+import { ShareExtWrapper } from './components/ShareExtWrapper';
+import GhostWriterSimple from './components/GhostWriterSimple';
 
 
 export default function ShareExt() {
