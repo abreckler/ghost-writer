@@ -3,8 +3,8 @@ import { Alert, TextStyle, Text, TouchableOpacity, View, Image, Platform } from 
 import { WebView } from 'react-native-webview';
 import Clipboard from 'expo-clipboard';
 
-import { CompletionChoice } from './lib/types';
 import { styles } from './styles';
+import { CompletionChoice } from '../lib/types';
 
 interface IAnswerChoiceProps {
   choice?: CompletionChoice;
@@ -49,7 +49,7 @@ const AnswerChoice: FC<IAnswerChoiceProps> = (props) => {
           <WebView style={styles.answerChoiceText} javascriptEnabled={false} source={{html: props.choice?.text || ''}}></WebView>
           <View style={[styles.answerChoiceActions, { display: props.disabled ? 'none' : 'flex' }]}>
             <TouchableOpacity onPress={answerclicked}>
-              <Image source={require('../assets/copy-solid.png')} style={{height: 20, width: 20}} resizeMode="center" />
+              <Image source={require('../../assets/copy-solid.png')} style={{height: 20, width: 20}} resizeMode="center" />
             </TouchableOpacity>
           </View>
         </View>
@@ -60,7 +60,7 @@ const AnswerChoice: FC<IAnswerChoiceProps> = (props) => {
           <Text style={styles.answerChoiceText}>{props.choice?.text || ''}</Text>
           <View style={[styles.answerChoiceActions, { display: props.disabled ? 'none' : 'flex', justifyContent: 'flex-end', alignItems: 'flex-end' }]}>
             <TouchableOpacity onPress={answerclicked}>
-              <Image source={require('../assets/copy-solid.png')} style={{height: 20, width: 20}} resizeMode="center" />
+              <Image source={require('../../assets/copy-solid.png')} style={{height: 20, width: 20}} resizeMode="center" />
             </TouchableOpacity>
           </View>
         </View>

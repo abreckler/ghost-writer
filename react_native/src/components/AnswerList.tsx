@@ -1,8 +1,8 @@
 import React, { FC } from 'react';
 import { FlatList, ListRenderItem, StyleProp, Text, View, ViewStyle } from 'react-native';
 
-import { AnswerChoice } from './answer-choice';
-import { CompletionChoice } from './lib/types';
+import { AnswerChoice } from './AnswerChoice';
+import { CompletionChoice } from '../lib/types';
 import { styles } from './styles';
 
 interface IAnswerListProps {

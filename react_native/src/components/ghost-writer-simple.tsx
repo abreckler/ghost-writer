@@ -11,11 +11,11 @@ import {
   ArticleGeneratorRequest,
   ArticleRewriterRequest,
   CompletionResponse,
-} from './lib/types';
-import { GhostWriterConfig } from './lib/writer-config';
-import { MyApiClient } from './lib/api-client';
-import { GhostWriterModeConfig, GhostWriterModes } from './ghost-writer-mode-config';
-import { AnswerList } from './answer-list';
+} from '../lib/types';
+import { GhostWriterConfig } from '../lib/writer-config';
+import { MyApiClient } from '../lib/api-client';
+import { AnswerList } from './AnswerList';
+import { GhostWriterModeConfig, GhostWriterModes } from './GhostWriterModeConfig';
 
 interface GhostWriterSimpleProps {
   seedText: string,

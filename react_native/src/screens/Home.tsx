@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Dimensions, GestureResponderEvent, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import * as Linking from 'expo-linking';
 
-import GhostWriterSimple from './components/ghost-writer-simple';
-import { styles }from './components/styles';
+import GhostWriterSimple from '../components/ghost-writer-simple';
+import { styles }from '../components/styles';
 
 
-export default function App() {
+export default function HomeScreen() {
   const [text, setText] = useState('');
 
   const touchOutsideInput = (evt: GestureResponderEvent) => {
