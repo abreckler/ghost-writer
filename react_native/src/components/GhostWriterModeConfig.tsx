@@ -126,8 +126,8 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
             <Picker.Item label="Generate Article (Keywords)" value={GhostWriterModes.GENERATE_ARTICLE} />
             <Picker.Item label="Summarize Article" value={GhostWriterModes.SUMMARIZE_ARTICLE} />
             <Picker.Item label="Summarize URL" value={GhostWriterModes.SUMMARIZE_URL} />
-            <Picker.Item label="Extract From Article" value={GhostWriterModes.EXTRACT_KEY_SENTENCES} />
-            <Picker.Item label="Extract From URL" value={GhostWriterModes.EXTRACT_FROM_URL} />
+            <Picker.Item label="Key Sentences From Article" value={GhostWriterModes.EXTRACT_KEY_SENTENCES} />
+            <Picker.Item label="Key Sentences From URL" value={GhostWriterModes.EXTRACT_FROM_URL} />
           </Picker>
         </View>
         <TouchableOpacity style={layoutStyle.btnToggleDetails} onPress={() => toggleSettingsView() } >

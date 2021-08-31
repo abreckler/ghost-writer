@@ -75,3 +75,16 @@ Uses [OpenAI](https://openai.com/) API to suggest auto-completes of selected sen
 #### Xcode, Pods ProjectName.debug.xcconfig unable to open file. Wrong directory
 
 See [this Stackoverflow question](https://stackoverflow.com/questions/55558984/xcode-pods-projectname-debug-xcconfig-unable-to-open-file-wrong-directory).
+
+
+## For Web
+
+```sh
+expo build:web
+```
+
+Add `_redirects` file into `web-build` directory.
+
+```
+/* /index.html 200
+```
