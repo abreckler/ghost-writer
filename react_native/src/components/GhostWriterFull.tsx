@@ -7,35 +7,37 @@ import {
   EngineID,
   CompletionChoice,
   CompletionParams,
-  TextAnalysisTextSummarizationTextRequest,
   ArticleGeneratorRequest,
   ArticleRewriterRequest,
   CompletionResponse,
+  GhostWriterFullLayouts,
 } from '../lib/types';
 import { GhostWriterConfig } from '../lib/writer-config';
 import { MyApiClient } from '../lib/api-client';
 import { AnswerList } from './AnswerList';
 import { GhostWriterModeConfig, GhostWriterModes } from './GhostWriterModeConfig';
+import { useAppSelector } from '../redux/hooks';
 
-interface GhostWriterSimpleProps {
+interface GhostWriterFullProps {
   seedText: string,
+  layout: GhostWriterFullLayouts,
 }
 
-const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleProps) => {
-  const [writingMode, setWritingMode] = useState('autocomplete');
+const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) => {
   const [text, setText] = useState(props.seedText || '');
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [noAnswerAlert, setAnswersAlert] = useState('');
   const [answers, setAnswers] = useState([] as CompletionChoice[]);
 
-  const [autocompleteConfig, setAutocompleteConfig] = useState(undefined as CompletionParams | undefined);
-  const [qaConfig, setQaConfig] = useState(undefined as CompletionParams | undefined);
-  const [summaryConfig, setSummaryConfig] = useState(undefined as CompletionParams | undefined);
-  const [rewriteConfig, setRewriteConfig] = useState(undefined as CompletionParams | undefined);
-  const [rewriteSmodinConfig, setRewriteSmodinConfig] = useState(undefined as ArticleRewriterRequest | undefined);
-  const [extractConfig, setExtractConfig] = useState(undefined as TextAnalysisTextSummarizationTextRequest | undefined);
-  const [generateArticleConfig, setGenerateArticleConfig] = useState(undefined as ArticleGeneratorRequest | undefined);
-  const [rewriteFromUrlConfig, setRewriteFromUrlConfig] = useState(undefined as ArticleRewriterRequest | undefined);
+  const writingMode = useAppSelector( state => state.writerModeConfigs.writingMode );
+  const autocompleteConfig = useAppSelector( state => state.writerModeConfigs.autocompleteConfig );
+  const qaConfig = useAppSelector( state => state.writerModeConfigs.qaConfig );
+  const summaryConfig = useAppSelector( state => state.writerModeConfigs.summaryConfig );
+  const rewriteConfig = useAppSelector( state => state.writerModeConfigs.rewriteConfig );
+  const rewriteSmodinConfig = useAppSelector( state => state.writerModeConfigs.rewriteSmodinConfig );
+  const extractConfig = useAppSelector( state => state.writerModeConfigs.extractConfig );
+  const articleGeneratorConfig  = useAppSelector( state => state.writerModeConfigs.articleGeneratorConfig );
+  const rewriteFromUrlConfig = useAppSelector( state => state.writerModeConfigs.rewriteFromUrlConfig );
 
   const { width, height } = Dimensions.get('window');
 
@@ -62,34 +64,6 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
   useEffect(() => {
     checkInitialURL();
   });
-
-
-  const onModeConfigChange = (mode: string, config: any) => {
-    console.log('onModeConfigChange', mode, config);
-    if (mode === GhostWriterModes.TOPIC_TAGGING)
-    {}
-    else if (mode === GhostWriterModes.EXTRACT) {
-      setExtractConfig(config as TextAnalysisTextSummarizationTextRequest);
-    } else if (mode === GhostWriterModes.REWRITE_TEXT) {
-      setRewriteSmodinConfig(config as ArticleRewriterRequest);
-    } else if (mode === GhostWriterModes.REWRITE_FROM_URL) {
-      setRewriteFromUrlConfig(config as ArticleRewriterRequest);
-    } else if(mode === GhostWriterModes.GENERATE_ARTICLE) {
-      setGenerateArticleConfig(config as ArticleGeneratorRequest);
-    } else {
-      if (mode === GhostWriterModes.REWRITE) {
-        setRewriteConfig(config as CompletionParams);
-      } else if (mode === GhostWriterModes.QA) {
-        setQaConfig(config as CompletionParams);
-      } else if (mode === GhostWriterModes.SUMMARY) {
-        setSummaryConfig(config as CompletionParams);
-      } else {
-        setAutocompleteConfig(config as CompletionParams);
-      }
-    }
-
-    setWritingMode(mode);
-  };
 
   const createCompletion = async () => {
     if (text.trim().length < 10) {
@@ -172,10 +146,10 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
       {
         let params = {} as ArticleGeneratorRequest;
         params.seed_text = text.trim();
-        params.output_format = generateArticleConfig?.output_format || 'text';
-        params.num_serp_results = generateArticleConfig?.num_serp_results;
-        params.num_outbound_links_per_serp_result = generateArticleConfig?.num_outbound_links_per_serp_result;
-        params.rewrite = generateArticleConfig?.rewrite == false ? false : true;
+        params.output_format = articleGeneratorConfig?.output_format || 'text';
+        params.num_serp_results = articleGeneratorConfig?.num_serp_results;
+        params.num_outbound_links_per_serp_result = articleGeneratorConfig?.num_outbound_links_per_serp_result;
+        params.rewrite = articleGeneratorConfig?.rewrite == false ? false : true;
 
         let json = await apiClient.generateArticle(params);
         if (json.generated_article) {
@@ -230,59 +204,90 @@ const GhostWriterSimple: FC<GhostWriterSimpleProps> = (props: GhostWriterSimpleP
     setButtonDisabled(false);
   };
 
-  if (width > mdScreenWidth)
+  if (props.layout == GhostWriterFullLayouts.simple)
   {
-    // wider screen layout
-    return (
-      <>
-        <GhostWriterModeConfig onModeChange={onModeConfigChange}></GhostWriterModeConfig>
+    if (width > mdScreenWidth)
+    {
+      // wider screen layout
+      return (
+        <>
+          <GhostWriterModeConfig layout={props.layout}></GhostWriterModeConfig>
 
-        <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
-          <View style={[styles.gwInputContainer, { flex: 0.49 }]}>
+          <View style={{ flexDirection: 'row', flex: 1, justifyContent: 'space-between' }}>
+            <View style={[styles.gwInputContainer, { flex: 0.49 }]}>
+              <TextInput style={styles.gwInput}
+                  multiline = {true}
+                  placeholder="Type here!"
+                  onChangeText={text => setText(text)}></TextInput>
+            </View>
+            <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.49 }} placeholder={''}></AnswerList>
+          </View>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={styles.button}
+                disabled={buttonDisabled}
+                onPress={createCompletion} >
+              <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+              <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+            </TouchableOpacity>
+          </View>
+        </>
+      );
+    }
+    else
+    {
+      // smaller screen layout
+      return (
+        <>
+          <GhostWriterModeConfig layout={props.layout}></GhostWriterModeConfig>
+
+          <View style={[styles.gwInputContainer, { flex: 0.45 }]}>
             <TextInput style={styles.gwInput}
                 multiline = {true}
                 placeholder="Type here!"
                 onChangeText={text => setText(text)}></TextInput>
           </View>
-          <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.49 }} placeholder={''}></AnswerList>
-        </View>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button}
-              disabled={buttonDisabled}
-              onPress={createCompletion} >
-            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-            <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
-          </TouchableOpacity>
-        </View>
-      </>
-    );
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={styles.button}
+                disabled={buttonDisabled}
+                onPress={createCompletion} >
+              <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+              <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+            </TouchableOpacity>
+          </View>
+          <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.5 }}></AnswerList>
+        </>
+      );
+    }
   }
   else
   {
-    // smaller screen layout
     return (
-      <>
-        <GhostWriterModeConfig onModeChange={onModeConfigChange}></GhostWriterModeConfig>
+      <View style={{ flexDirection: 'row', flex: 1 }}>
+        <View style={{ flexDirection: 'column', flex: 0.75, alignItems: 'stretch', justifyContent: 'flex-start' }}>
+          <View style={[styles.gwInputContainer, { flex: 0.5 }]}>
+            <TextInput style={styles.gwInput}
+                multiline = {true}
+                placeholder="Type here!"
+                onChangeText={text => setText(text)}></TextInput>
+          </View>
+          <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.5 }}></AnswerList>
+        </View>
 
-        <View style={[styles.gwInputContainer, { flex: 0.45 }]}>
-          <TextInput style={styles.gwInput}
-              multiline = {true}
-              placeholder="Type here!"
-              onChangeText={text => setText(text)}></TextInput>
+        <View style={{ flexDirection: 'column', flex:0.25 }}>
+          <GhostWriterModeConfig layout={props.layout}></GhostWriterModeConfig>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={styles.button}
+                disabled={buttonDisabled}
+                onPress={createCompletion} >
+              <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
+              <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity style={styles.button}
-              disabled={buttonDisabled}
-              onPress={createCompletion} >
-            <Text style={styles.buttonText}>Summon Ghost Writer!</Text>
-            <ActivityIndicator size="small" hidesWhenStopped={true} animating={buttonDisabled} />
-          </TouchableOpacity>
-        </View>
-        <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.5 }}></AnswerList>
-      </>
-    );
+      </View>
+    )
   }
 
 }
 
-export default GhostWriterSimple;
+export default GhostWriterFull;

@@ -4,6 +4,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import HomeScreen from './screens/Home';
 import PlaygroundScreen from './screens/Playground';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
 
 
 export default function App() {
@@ -22,11 +24,13 @@ export default function App() {
   const Stack = createStackNavigator();
 
   return (
-    <NavigationContainer linking={linking}>
-      <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Playground" component={PlaygroundScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer linking={linking}>
+        <Stack.Navigator initialRouteName="Home" screenOptions={{headerShown: false}}>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="Playground" component={PlaygroundScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }

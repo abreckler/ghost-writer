@@ -111,6 +111,13 @@ interface ArticleGeneratorResponse {
   generated_article: string;
 }
 
+//
+
+enum GhostWriterFullLayouts {
+  simple,
+  playground,
+}
+
 
 export {
   //
@@ -136,5 +143,8 @@ export {
 
   //
   ArticleGeneratorRequest,
-  ArticleGeneratorResponse
+  ArticleGeneratorResponse,
+
+  //
+  GhostWriterFullLayouts,
 };

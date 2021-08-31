@@ -2,12 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Dimensions, GestureResponderEvent, Keyboard, Platform, Text, TouchableWithoutFeedback, View } from 'react-native';
 import * as Linking from 'expo-linking';
 
-import GhostWriterSimple from '../components/GhostWriterSimple';
 import { styles }from '../components/styles';
+import GhostWriterFull from '../components/GhostWriterFull';
+import { GhostWriterFullLayouts } from '../lib/types';
+import { useAppDispatch } from '../redux/hooks';
+import { updateLayout } from '../redux/slices/stylesSlice';
 
 
 export default function PlaygroundScreen() {
   const [text, setText] = useState('');
+  const dispatch = useAppDispatch();
 
   const touchOutsideInput = (evt: GestureResponderEvent) => {
     if (Platform.OS === 'web') {
@@ -33,6 +37,7 @@ export default function PlaygroundScreen() {
   });
 
   useEffect(() => {
+    dispatch(updateLayout(GhostWriterFullLayouts.playground));
     checkInitialURL();
   });
 
@@ -43,7 +48,7 @@ export default function PlaygroundScreen() {
       <View style={[styles.container, { maxHeight: height + 'px' }]}>
         <Text style={styles.titleText}>Playground</Text>
 
-        <GhostWriterSimple seedText={text}></GhostWriterSimple>
+        <GhostWriterFull seedText={text} layout={GhostWriterFullLayouts.playground}></GhostWriterFull>
       </View>
     </TouchableWithoutFeedback>
   );

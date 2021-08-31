@@ -1,16 +1,16 @@
 import { Platform, StyleSheet, Dimensions } from 'react-native';
 
-const mainFontSize = 16;
-const bgColor = '#f8f8ff';
-const textColor = '#444';
-const errorColor = '#f00';
-const darkTextcolor = '#333';
-const borderColor = '#ccc';
-const primaryColor = 'rgb(70, 48, 235)';
-const { width, height } = Dimensions.get('window');
-const mdScreenWidth = 600;
+export const mainFontSize = 16;
+export const bgColor = '#f8f8ff';
+export const textColor = '#444';
+export const errorColor = '#f00';
+export const darkTextcolor = '#333';
+export const borderColor = '#ccc';
+export const primaryColor = 'rgb(70, 48, 235)';
+export const { width, height } = Dimensions.get('window');
+export const mdScreenWidth = 600;
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     backgroundColor: bgColor,
     padding: 20,
@@ -85,16 +85,6 @@ const styles = StyleSheet.create({
     fontSize: width > 600 ? mainFontSize * 1 : mainFontSize * 0.85,
   },
 
-  // input group
-  inputGroupContainer: {
-    flexDirection: width > mdScreenWidth ? 'row' : 'column',
-    alignItems: 'flex-start',
-    marginBottom: 4,
-  },
-  inputGroupLabel: {
-    paddingTop: 4,
-  },
-
   // 
   titleText: {
     fontSize: mainFontSize * 1.8,
@@ -142,26 +132,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 
-  settingsOverlay: {
-    width: '100%',
-    paddingHorizontal: width > mdScreenWidth ? 40 : 20,
-    paddingVertical: width > mdScreenWidth ? 40 : 20,
-    position: 'absolute',
-    backgroundColor: '#fff',
-    opacity: 1,
-    shadowColor: '#000',
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
-    zIndex: 100,
-    top: mainFontSize * 4.2,
-  },
-
-  settingsLabel: {
-    fontSize: mainFontSize,
-    marginTop: mainFontSize * 1.5,
-    color: darkTextcolor,
-  },
-
   // mode picker
   modePicker: {
     fontSize: width > 600 ? mainFontSize * 1.25 : mainFontSize,
@@ -187,8 +157,3 @@ const styles = StyleSheet.create({
     display: Platform.OS === 'macos' ? 'none' : 'flex',
   },
 });
-
-export {
-  styles,
-  mdScreenWidth
-};

@@ -4,7 +4,10 @@ import ShareExtension from 'react-native-share-extension';
 
 import { styles } from './components/styles';
 import { ShareExtWrapper } from './components/ShareExtWrapper';
-import GhostWriterSimple from './components/GhostWriterSimple';
+import GhostWriterFull from './components/GhostWriterFull';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+import { GhostWriterFullLayouts } from './lib/types';
 
 
 export default function ShareExt() {
@@ -35,18 +38,20 @@ export default function ShareExt() {
   };
 
   return (
-    <ShareExtWrapper style={styles.extModal} transparent={true} animationType="slide" visible={isOpen} onRequestClose={closing}>
-      <View style={styles.container}>
-        <View style={{flexDirection: "row", justifyContent: "space-between"}}>
-          <Text style={styles.titleText}>Ghost Writer</Text>
+    <Provider store={store}>
+      <ShareExtWrapper style={styles.extModal} transparent={true} animationType="slide" visible={isOpen} onRequestClose={closing}>
+        <View style={styles.container}>
+          <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+            <Text style={styles.titleText}>Ghost Writer</Text>
 
-          <TouchableOpacity onPress={closing} style={{paddingHorizontal: 10}}>
-            <Text style={{fontSize: 42}}>&times;</Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={closing} style={{paddingHorizontal: 10}}>
+              <Text style={{fontSize: 42}}>&times;</Text>
+            </TouchableOpacity>
+          </View>
+
+          <GhostWriterFull seedText={sharedValue} layout={GhostWriterFullLayouts.simple}></GhostWriterFull>
         </View>
-
-        <GhostWriterSimple seedText={sharedValue}></GhostWriterSimple>
-      </View>
-    </ShareExtWrapper>
+      </ShareExtWrapper>
+    </Provider>
   );
 }

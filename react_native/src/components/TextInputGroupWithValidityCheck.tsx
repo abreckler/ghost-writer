@@ -1,5 +1,6 @@
-import React from 'react';
-import { Dimensions, Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
+import React, { FC, useEffect, useState } from 'react';
+import { Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
+import { useAppSelector } from '../redux/hooks';
 import { styles } from './styles';
 
 
@@ -26,54 +27,22 @@ interface TextInputWithValidityCheckProps {
   onValueChange? (value: string) : void;
   validatorPreset? : 'number';
   validatorPresetOptions? : ValidatorPresetOptions;
-  style?: ViewStyle;
-  labelStyle?: TextStyle;
-  inputStyle?: ViewStyle;
-  messageStyle?: TextStyle;
 }
 
-class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValidityCheckProps, { text?:string, error: string }> {
-  private validityChecker = this.dummyValidityChecker;
+const TextInputGroupWithValidityCheck: FC<TextInputWithValidityCheckProps> = (props) => {
 
-  constructor(props: TextInputWithValidityCheckProps)
-  {
-    super(props);
-
-    this.state = {
-      text: props.initValue || props.value || '',
-      error: ''
-    };
-
-    // set validity checker
-    if (props.checkValidity) {
-      this.validityChecker = props.checkValidity;
-    } else if (props.validatorPreset === 'number') {
-      this.validityChecker = this.numberValidityChecker.bind(this);
-    } else {
-      this.validityChecker = this.dummyValidityChecker;
-    }
-  }
-
-  componentDidUpdate(prevProps: any) {
-    if (prevProps !== this.props && typeof this.props.value !== 'undefined' && this.state.text != this.props.value) {
-      this.setState({
-        text: this.props.value || ''
-      });
-    }
-  }
-
-  dummyValidityChecker(value: string) {
+  const dummyValidityChecker = (value: string) => {
     return {
       value: value,
       error: ''
     } as InputValidity;
-  }
+  };
 
-  numberValidityChecker(value : string) {
-    let fieldName = (this.props.validatorPresetOptions && (this.props.validatorPresetOptions.fieldName || 'This')) || 'This';
-    let intVal = (this.props.validatorPresetOptions && (this.props.validatorPresetOptions.intVal || false)) || false;
-    let min = (this.props.validatorPresetOptions && this.props.validatorPresetOptions.min) || undefined;
-    let max = (this.props.validatorPresetOptions && this.props.validatorPresetOptions.max) || undefined;
+  const numberValidityChecker = (value : string) => {
+    let fieldName = (props.validatorPresetOptions && (props.validatorPresetOptions.fieldName || 'This')) || 'This';
+    let intVal = (props.validatorPresetOptions && (props.validatorPresetOptions.intVal || false)) || false;
+    let min = (props.validatorPresetOptions && props.validatorPresetOptions.min) || undefined;
+    let max = (props.validatorPresetOptions && props.validatorPresetOptions.max) || undefined;
 
     let v = intVal ? Number.parseInt(value) : Number.parseFloat(value);
     let error = '';
@@ -89,7 +58,7 @@ class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValid
           error = `${fieldName} must be less than or equal to ${max}.`;
         }
       }
-    } else if(this.props.required) {
+    } else if(props.required) {
       error = `${fieldName} is required`;
     }
 
@@ -99,40 +68,49 @@ class TextInputGroupWithValidityCheck extends React.Component<TextInputWithValid
     } as InputValidity
   };
 
-  setText = (value: string) => {
+  const layoutStyles = useAppSelector(state => state.styles.layoutStyles);
+
+  const [text, _setText] = useState(props.initValue || props.value || '');
+  const [error, setError] = useState('');
+
+    // set validity checker
+  let validityChecker = dummyValidityChecker;
+  if (props.checkValidity) {
+    validityChecker = props.checkValidity;
+  } else if (props.validatorPreset === 'number') {
+    validityChecker = numberValidityChecker.bind(this);
+  } else {
+    validityChecker = dummyValidityChecker;
+  }
+
+  const setText = (value: string) => {
     let error = '';
-    let valid = this.validityChecker(value);
+    let valid = validityChecker(value);
     if (valid && !valid.error) {
-      this.props.onValueChange && this.props.onValueChange(value);
+      props.onValueChange && props.onValueChange(value);
     } else {
       error = (valid && valid.error) || 'Your input is invalid'
     }
 
-    this.setState({
-      text: value,
-      error: error,
-    });
+    _setText(value);
+    setError(error);
   }
 
-  render() {
-    const { width, height } = Dimensions.get('window');
-
-    return (
-      <View style={[styles.inputGroupContainer, this.props.style]}>
-        <Text style={[styles.label, styles.inputGroupLabel, styles.md_1_3rd, this.props.labelStyle]}>{this.props.label}</Text>
-        <View style={[styles.md_2_3rds]}>
-          <TextInput
-              multiline={this.props.multiline || false} numberOfLines={this.props.numberOfLines || 1}
-              style={[styles.input, this.props.inputStyle]}
-              value={this.state.text}
-              onChange={ e => this.setText(e.nativeEvent.text) } >
-          </TextInput>
-          <Text style={[styles.textSmall, styles.textError, this.props.messageStyle, { display: this.state.error ? 'flex' : 'none' }]}>{this.state.error}</Text>
-        </View>
+  return (
+    <View style={layoutStyles.inputGroupContainer}>
+      <Text style={layoutStyles.inputGroupLabel}>{props.label}</Text>
+      <View style={layoutStyles.inputGroupInputContainer}>
+        <TextInput
+            multiline={props.multiline || false} numberOfLines={props.numberOfLines || 1}
+            style={layoutStyles.inputGroupInput}
+            value={text}
+            onChange={ e => setText(e.nativeEvent.text) } >
+        </TextInput>
+        <Text style={[styles.textSmall, styles.textError, { display: error ? 'flex' : 'none' }]}>{error}</Text>
       </View>
-    );
-  }
-  
+    </View>
+  );
+
 }
 
 export { TextInputGroupWithValidityCheck, InputValidity }

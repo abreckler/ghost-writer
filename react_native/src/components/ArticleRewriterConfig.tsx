@@ -1,10 +1,11 @@
-import React from "react";
-import { Text, View, ViewStyle, CheckBox as CheckBoxLegacy } from "react-native";
+import React, { FC, useEffect, useState } from "react";
+import { Text, View, ViewStyle, CheckBox as CheckBoxLegacy, StyleSheet } from "react-native";
 import CheckBox from '@react-native-community/checkbox';
 import { Picker } from "@react-native-picker/picker";
 
 import { ArticleRewriterRequest } from "../lib/types";
 import { styles } from "./styles";
+import { useAppSelector } from "../redux/hooks";
 
 interface ArticleRewriterConfigProps {
   initValue?: ArticleRewriterRequest,
@@ -14,92 +15,74 @@ interface ArticleRewriterConfigProps {
   style: ViewStyle;
 }
 
-class ArticleRewriterConfig extends React.Component<ArticleRewriterConfigProps, { language: string, strength: number, rewrite: boolean }> {
+const ArticleRewriterConfig: FC<ArticleRewriterConfigProps> = (props) => {
 
-  constructor (props: ArticleRewriterConfigProps) {
-    super(props);
+  const [language, setLanguage] = useState(props.initValue?.language || props.value?.language || 'en');
+  const [strength, setStrength] = useState(props.initValue?.strength || props.value?.strength || 3);
+  const [rewrite, setRewrite] = useState(props.initValue?.rewrite === false ? false : true);
 
-    this.state = {
-      language : props.initValue?.language || props.value?.language || 'en',
-      strength : props.initValue?.strength || props.value?.strength || 3,
-      rewrite : props.initValue?.rewrite === false ? false : true,
-    }
-  }
 
-  componentDidUpdate(prevProps: any) {
-    if (this.props !== prevProps && typeof this.props.value !== 'undefined')
-    {
-      this.setState({
-        language : this.props.value?.language || 'en',
-        strength : this.props.value?.strength || 3,
-        rewrite : this.props.value?.rewrite === false ? false : true,
-      });
-    }
-  }
+  const setStateWithValueChange = (newState: any, changedStateNames: Array<String>=[]) => {
+    changedStateNames.includes('language') && setLanguage(newState.language);
+    changedStateNames.includes('strength') && setLanguage(newState.strength);
+    changedStateNames.includes('rewrite') && setLanguage(newState.rewrite);
 
-  setStateWithValueChange(newState: any, changedStateNames: Array<String>=[]) {
-    this.setState(newState);
-    this.props.onValueChange &&
-      this.props.onValueChange({
-        language: changedStateNames.indexOf('language') < 0 ? this.state.language : newState.language,
-        strength: changedStateNames.indexOf('strength') < 0 ? this.state.strength : newState.strength,
-        rewrite: changedStateNames.indexOf('rewrite') < 0 ? this.state.rewrite : newState.rewrite,
+    props.onValueChange &&
+      props.onValueChange({
+        language: changedStateNames.indexOf('language') < 0 ? language : newState.language,
+        strength: changedStateNames.indexOf('strength') < 0 ? strength : newState.strength,
+        rewrite: changedStateNames.indexOf('rewrite') < 0 ? rewrite : newState.rewrite,
       });
   }
 
-  render() {
-    return (
-      <View style={this.props.style}>
-        <View style={[styles.inputGroupContainer]}>
-          <Text style={[styles.label, styles.md_1_3rd]}>Language</Text>
-          <Picker style={[styles.picker, styles.md_2_3rds]}
-              selectedValue={this.state.language}
-              itemStyle={styles.pickerItemStyle}
-              mode='dropdown'
-              onValueChange={v => { this.setStateWithValueChange({ language : v }, ['language']); } }>
-            <Picker.Item label="English" value="en" />
-            <Picker.Item label="German" value="de" />
-            <Picker.Item label="Spanish" value="es" />
-            <Picker.Item label="French" value="fr" />
-            <Picker.Item label="Arabic" value="ar" />
-            <Picker.Item label="Chinese" value="zh" />
-          </Picker>
-        </View>
-        <View style={[styles.inputGroupContainer]}>
-          <Text style={[styles.label, styles.md_1_3rd]}>Strength</Text>
-          <Picker style={[styles.picker, styles.md_2_3rds]}
-              selectedValue={this.state.strength.toString()}
-              itemStyle={styles.pickerItemStyle}
-              mode='dropdown'
-              onValueChange={ v => { this.setStateWithValueChange({ strength: Number.parseInt(v) }, ['strength']); }}>
-            <Picker.Item label="Strong" value="3" />
-            <Picker.Item label="Medium" value="2" />
-            <Picker.Item label="Basic" value="1" />
-          </Picker>
-        </View>
-        <View style={[styles.inputGroupContainer, { display: this.props.showRewriteOption ? 'flex' : 'none'}]}>
+  const layoutStyles = useAppSelector(state => state.styles.layoutStyles);
+
+  return (
+    <View style={props.style}>
+      <View style={layoutStyles.inputGroupContainer}>
+        <Text style={layoutStyles.inputGroupLabel}>Language</Text>
+        <Picker style={[styles.picker, layoutStyles.inputGroupInputContainer]}
+            selectedValue={language}
+            itemStyle={styles.pickerItemStyle}
+            mode='dropdown'
+            onValueChange={v => { setStateWithValueChange({ language : v }, ['language']); } }>
+          <Picker.Item label="English" value="en" />
+          <Picker.Item label="German" value="de" />
+          <Picker.Item label="Spanish" value="es" />
+          <Picker.Item label="French" value="fr" />
+          <Picker.Item label="Arabic" value="ar" />
+          <Picker.Item label="Chinese" value="zh" />
+        </Picker>
+      </View>
+      <View style={layoutStyles.inputGroupContainer}>
+        <Text style={layoutStyles.inputGroupLabel}>Strength</Text>
+        <Picker style={[styles.picker, layoutStyles.inputGroupInputContainer]}
+            selectedValue={strength.toString()}
+            itemStyle={styles.pickerItemStyle}
+            mode='dropdown'
+            onValueChange={ v => { setStateWithValueChange({ strength: Number.parseInt(v) }, ['strength']); }}>
+          <Picker.Item label="Strong" value="3" />
+          <Picker.Item label="Medium" value="2" />
+          <Picker.Item label="Basic" value="1" />
+        </Picker>
+      </View>
+      <View style={[layoutStyles.inputGroupContainer, { display: props.showRewriteOption ? 'flex' : 'none'}]}>
+        <Text style={layoutStyles.inputGroupLabel}>Re-write</Text>
         {
           CheckBox ?
           (
-            <>
-              <Text style={[styles.label, styles.md_1_3rd]}>Re-write</Text>
-              <CheckBox value={this.state.rewrite}
-                  onValueChange={(newValue) => this.setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
-            </>
+            <CheckBox value={rewrite}
+                onValueChange={(newValue) => setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
           )
           :
           (
-            <>
-              <Text style={[styles.label, styles.md_1_3rd]}>Re-write</Text>
-              <CheckBoxLegacy value={this.state.rewrite}
-                  onValueChange={(newValue) => this.setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
-            </>
+            <CheckBoxLegacy value={rewrite}
+                onValueChange={(newValue) => setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
           )
         }
-        </View>
       </View>
-    );
-  }
+    </View>
+  );
 }
 
 export { ArticleRewriterConfigProps, ArticleRewriterConfig }
