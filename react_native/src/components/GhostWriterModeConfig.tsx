@@ -110,7 +110,7 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
   return (
     <View style={[{ position: 'relative', backgroundColor: 'rgb(248, 248, 255)', zIndex: 100 }, props.style]}>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginVertical: 10, paddingHorizontal: 10 }}>
-        <Text style={[styles.label, { display: width > mdScreenWidth ? 'flex' : 'none' }]}>Mode: </Text>
+        <Text style={[styles.label, { display: props.layout == GhostWriterFullLayouts.simple && width > mdScreenWidth ? 'flex' : 'none' }]}>Mode: </Text>
         <View>
           <Picker style={[styles.modePicker]} itemStyle={styles.modePickerItemStyle}
               selectedValue={writingMode}
@@ -122,12 +122,12 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
             <Picker.Item label="Summarize (OpenAI)" value={GhostWriterModes.SUMMARY} />
             <Picker.Item label="Topic Tagging" value={GhostWriterModes.TOPIC_TAGGING} />
             <Picker.Item label="Re-write" value={GhostWriterModes.REWRITE_TEXT} />
-            <Picker.Item label="Generate Article (URL)" value={GhostWriterModes.REWRITE_FROM_URL} />
-            <Picker.Item label="Generate Article (Keywords)" value={GhostWriterModes.GENERATE_ARTICLE} />
-            <Picker.Item label="Summarize Article" value={GhostWriterModes.SUMMARIZE_ARTICLE} />
-            <Picker.Item label="Summarize URL" value={GhostWriterModes.SUMMARIZE_URL} />
-            <Picker.Item label="Key Sentences From Article" value={GhostWriterModes.EXTRACT_KEY_SENTENCES} />
-            <Picker.Item label="Key Sentences From URL" value={GhostWriterModes.EXTRACT_FROM_URL} />
+            <Picker.Item label="Create Article Outline (URL)" value={GhostWriterModes.REWRITE_FROM_URL} />
+            <Picker.Item label="Create Article Outline (Keywords)" value={GhostWriterModes.GENERATE_ARTICLE} />
+            <Picker.Item label="Summarize (Text)" value={GhostWriterModes.SUMMARIZE_ARTICLE} />
+            <Picker.Item label="Summarize (URL)" value={GhostWriterModes.SUMMARIZE_URL} />
+            <Picker.Item label="Key Sentences (Text)" value={GhostWriterModes.EXTRACT_KEY_SENTENCES} />
+            <Picker.Item label="Key Sentences (URL)" value={GhostWriterModes.EXTRACT_FROM_URL} />
           </Picker>
         </View>
         <TouchableOpacity style={layoutStyle.btnToggleDetails} onPress={() => toggleSettingsView() } >

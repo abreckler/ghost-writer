@@ -95,7 +95,7 @@ const parseTextFromUrl = async (
   // clear up HTML to extract main article
   // remove elements that are highly likely not related to main article
   $('head,body>header,body>footer,nav,aside,form,iframe').remove();
-  $('[role=banner|button|dialog|navigation]').remove();
+  $('[role=banner],[role=button],[role=dialog],[role=navigation]').remove();
   $('[aria-hidden=true],[aria-modal=true]').remove();
   $('.hidden,.sr-only,.screen-reader-only').remove(); // some common style classes that are hidden from UI
   $('script,style,noscript').remove(); // remove non-visible elements
