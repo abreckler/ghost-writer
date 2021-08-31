@@ -105,7 +105,9 @@ const summarizerUrl = async (
         const summarizerClient = new TextAnalysisTextSummarizationApiClient(RAPIDAPI_API_KEY);
         const summarizerResponse = await summarizerClient.textSummarizerUrl(url, options?.sentnum);
         if (summarizerResponse.sentences) {
-          return { snippets: summarizerResponse.sentences };
+          return {
+            snippets: summarizerResponse.sentences,
+          };
         } else {
           console.debug(
             'Text Analysis - URL Summarization API returned invalid response, skip further processing.',
@@ -124,7 +126,10 @@ const summarizerUrl = async (
         if (summarizerResponse.summary || summarizerResponse.snippets) {
           return {
             snippets: summarizerResponse.snippets,
-            summary: summarizerResponse.summary,
+            summary:
+              summarizerResponse.summary && typeof summarizerResponse.summary == 'string'
+                ? summarizerResponse.summary
+                : undefined,
           };
         } else {
           console.debug('Text Monkey - URL Summarizer API returned invalid response, skip further processing.', url);

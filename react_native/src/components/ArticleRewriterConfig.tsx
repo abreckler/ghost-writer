@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import { Text, View, ViewStyle, CheckBox as CheckBoxLegacy, StyleSheet } from "react-native";
 import CheckBox from '@react-native-community/checkbox';
 import { Picker } from "@react-native-picker/picker";
@@ -19,13 +19,13 @@ const ArticleRewriterConfig: FC<ArticleRewriterConfigProps> = (props) => {
 
   const [language, setLanguage] = useState(props.initValue?.language || props.value?.language || 'en');
   const [strength, setStrength] = useState(props.initValue?.strength || props.value?.strength || 3);
-  const [rewrite, setRewrite] = useState(props.initValue?.rewrite === false ? false : true);
+  const [rewrite, setRewrite] = useState(props.initValue?.rewrite === true ? true : false);
 
 
   const setStateWithValueChange = (newState: any, changedStateNames: Array<String>=[]) => {
     changedStateNames.includes('language') && setLanguage(newState.language);
-    changedStateNames.includes('strength') && setLanguage(newState.strength);
-    changedStateNames.includes('rewrite') && setLanguage(newState.rewrite);
+    changedStateNames.includes('strength') && setStrength(newState.strength);
+    changedStateNames.includes('rewrite') && setRewrite(newState.rewrite);
 
     props.onValueChange &&
       props.onValueChange({

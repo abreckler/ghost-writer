@@ -21,6 +21,12 @@ export interface CompletionParams {
   logit_bias?: any; // Defaults to null
 }
 
+export interface CompletionRequest extends CompletionParams {
+  engine?: EngineID;
+  prompt_prefix?: string;
+  prompt_suffix?: string;
+}
+
 export interface CompletionChoice {
   text?: string;
   index?: number;
@@ -56,7 +62,7 @@ export interface ListEnginesResponse {
 export interface TwinwordTopicTaggingGenerateRequest {
   text: string,
 }
-interface TwinwordTopicTaggingGenerateResponse {
+export interface TwinwordTopicTaggingGenerateResponse {
   author: string,
   email: string,
   keyword: any, // map of "word": number of words

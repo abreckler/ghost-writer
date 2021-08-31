@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Text, StyleSheet } from "react-native";
+import { Text, StyleSheet, ViewStyle } from "react-native";
 
 import { GhostWriterConfig } from "../lib/writer-config";
 import { Dimensions, TouchableOpacity, View } from "react-native";
@@ -41,6 +41,7 @@ enum GhostWriterModes {
 
 interface GhostWriterModeConfigProps {
   mode?: string;
+  style?: ViewStyle;
   layout: GhostWriterFullLayouts;
 }
 
@@ -107,7 +108,7 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
   };
 
   return (
-    <View style={{ position: 'relative', backgroundColor: 'rgb(248, 248, 255)', zIndex: 100 }}>
+    <View style={[{ position: 'relative', backgroundColor: 'rgb(248, 248, 255)', zIndex: 100 }, props.style]}>
       <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginVertical: 10, paddingHorizontal: 10 }}>
         <Text style={[styles.label, { display: width > mdScreenWidth ? 'flex' : 'none' }]}>Mode: </Text>
         <View>
@@ -134,7 +135,7 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
         </TouchableOpacity>
       </View>
 
-      <View style={[layoutStyle.containerDetails, { display: settingsVisible ? 'flex':'none' }]}>
+      <View style={[layoutStyle.containerDetails, { display: settingsVisible ? 'flex':'none', flex: 1, overflow: 'scroll' }]}>
         <OpenAiAutocompleteConfig style={{ display: writingMode === GhostWriterModes.AUTOCOMPLETE ? 'flex' : 'none'}}
             value={autocompleteConfig}
             onValueChange={v => dispatch(updateAutocompleteConfig(v))} />

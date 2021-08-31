@@ -21,7 +21,7 @@ const ArticleGeneratorConfig: FC<ArticleGeneratorConfigProps> = (props) => {
   const [num_serp_results, setNumSerpResults] = useState(props.initValue?.num_serp_results || props.value?.num_serp_results || 3);
   const [num_outbound_links_per_serp_result, setNumOutboundLinksPerSerpResult]  = useState(props.initValue?.num_outbound_links_per_serp_result || props.value?.num_outbound_links_per_serp_result || 3);
   const [output_format, setOutputFormat]  = useState(props.initValue?.output_format || props.value?.output_format || 'text');
-  const [rewrite, setRewrite] = useState(true);
+  const [rewrite, setRewrite] = useState(props.initValue?.rewrite === true ? true : false);
 
   const setStateWithValueChange = (newState: any, changedStateNames: Array<String>=[]) => {
     changedStateNames.includes('num_serp_results') && setNumSerpResults(newState.num_serp_results);

@@ -1,7 +1,7 @@
 import {
   EngineID,
   ListEnginesResponse,
-  CompletionParams,
+  CompletionRequest,
   CompletionResponse,
   TwinwordTopicTaggingGenerateResponse,
   TwinwordTopicTaggingGenerateRequest,
@@ -53,9 +53,9 @@ class MyApiClient {
    * Create completion
    * @see https://beta.openai.com/docs/api-reference/create-completion
    */
-  public async completion(params: CompletionParams) : Promise<CompletionResponse> {
+  public async completion(params: CompletionRequest) : Promise<CompletionResponse> {
     const completionUrl = '/openai/engines/'+ this.DEFAULT_ENGINE +'/completions';
-    const json = await this._doPost<CompletionParams, CompletionResponse>(completionUrl, params);  
+    const json = await this._doPost<CompletionRequest, CompletionResponse>(completionUrl, params);  
 
     if (this.FILTER_EMPTY_COMPLETION_ANSWER)
       json.choices = (json.choices || []).filter((c) => { return !!((c.text || '').trim())});
@@ -72,9 +72,9 @@ class MyApiClient {
   /**
    * Run QA mode
    */
-  public async runQA(params: CompletionParams) : Promise<CompletionResponse> {
+  public async runQA(params: CompletionRequest) : Promise<CompletionResponse> {
     const completionUrl = '/openai/run/qa';
-    const json = await this._doPost<CompletionParams, CompletionResponse>(completionUrl, params);  
+    const json = await this._doPost<CompletionRequest, CompletionResponse>(completionUrl, params);  
 
     if (this.FILTER_EMPTY_COMPLETION_ANSWER)
       json.choices = (json.choices || []).filter((c) => { return !!((c.text || '').trim())});

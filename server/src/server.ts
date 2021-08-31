@@ -5,6 +5,8 @@ import { openaiRouter } from './services/openai/openai.router';
 import { rapidapiRouter } from './services/rapidapi/rapidapi.router';
 import { articleGeneratorRouter } from './services/article-generator/article-generator.router';
 import { articleRewriterRouter } from './services/article-rewriter/article-rewriter.router';
+import { articleExtractorRouter } from './services/article-extractor/article-extractor.router';
+import { articleSummarizerRouter } from './services/article-summarizer/article-summarizer.router';
 import { Request, Response, NextFunction } from 'express';
 import middleware from './middleware';
 import errors from './lib/errors';
@@ -16,6 +18,8 @@ app
   .use('/rapidapi', rapidapiRouter)
   .use('/api', articleGeneratorRouter)
   .use('/api', articleRewriterRouter)
+  .use('/api', articleExtractorRouter)
+  .use('/api', articleSummarizerRouter)
   .use('/api-docs', apiDocsRouter);
 
 // Catch all and error handling

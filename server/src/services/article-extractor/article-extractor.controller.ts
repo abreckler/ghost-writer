@@ -26,7 +26,7 @@ const extractArticle = async (req: Request, res: Response, next: NextFunction): 
       } else {
         const summarizerResponse = await summarizerUrl(params.url, null, params.api);
         res.status(200).json({
-          sentences: summarizerResponse?.snippets,
+          sentences: summarizerResponse?.snippets || [],
         } as ExtractArticleResponse);
       }
     } else if (params.text) {
@@ -35,7 +35,7 @@ const extractArticle = async (req: Request, res: Response, next: NextFunction): 
       } else {
         const summarizerResponse = await summarizerText(params.text, null, params.api);
         res.status(200).json({
-          sentences: summarizerResponse?.snippets,
+          sentences: summarizerResponse?.snippets || [],
         } as ExtractArticleResponse);
       }
     }

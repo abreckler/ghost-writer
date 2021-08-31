@@ -16,6 +16,9 @@ interface TextMonkeySummarizeUrlRequest {
 interface TextMonkeySummarizeResponse {
   snippets: Array<string>;
   summary: string;
+  datePublished?: string;
+  authors?: Array<string>;
+  title?: string;
 }
 
 class TextMonkeySummarizerApiClient extends RapidApiClient {
@@ -28,7 +31,7 @@ class TextMonkeySummarizerApiClient extends RapidApiClient {
       text: text,
     } as TextMonkeySummarizeTextRequest;
 
-    return await this._doPostForm<TextMonkeySummarizeTextRequest, TextMonkeySummarizeResponse>('/summarize', params);
+    return await this._doPostJson<TextMonkeySummarizeTextRequest, TextMonkeySummarizeResponse>('/summarize', params);
   }
 
   public async textSummarizerUrl(url: string): Promise<TextMonkeySummarizeResponse> {
@@ -36,7 +39,7 @@ class TextMonkeySummarizerApiClient extends RapidApiClient {
       url: url,
     } as TextMonkeySummarizeUrlRequest;
 
-    return await this._doPostForm<TextMonkeySummarizeUrlRequest, TextMonkeySummarizeResponse>('/summarize', params);
+    return await this._doPostJson<TextMonkeySummarizeUrlRequest, TextMonkeySummarizeResponse>('/summarize', params);
   }
 }
 

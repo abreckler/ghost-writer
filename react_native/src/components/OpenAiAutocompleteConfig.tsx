@@ -3,7 +3,7 @@ import { Text, View, ViewStyle } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 import { styles } from './styles';
-import { CompletionParams } from '../lib/types';
+import { CompletionRequest } from '../lib/types';
 import { CompletionParamsTemplate } from '../lib/writer-config';
 import { TagsInput } from './TagsInput';
 import { InputValidity, TextInputGroupWithValidityCheck } from './TextInputGroupWithValidityCheck';
@@ -11,29 +11,33 @@ import { useAppSelector } from '../redux/hooks';
 
 
 interface OpenAiAutocompleteConfigProps {
-  initValue?: CompletionParams;
-  value?: CompletionParams;
+  initValue?: CompletionRequest;
+  value?: CompletionRequest;
   templates? : CompletionParamsTemplate[];
-  onValueChange(value: CompletionParams) : void;
+  onValueChange(value: CompletionRequest) : void;
   style: ViewStyle;
 }
 
 const OpenAiAutocompleteConfig: FC<OpenAiAutocompleteConfigProps> = (props) => {
 
-  const [prompt, setPrompt] = useState(props.initValue?.prompt || props.value?.prompt || '');
+  const [prompt_prefix, setPromptPrefix] = useState(props.initValue?.prompt_prefix || props.value?.prompt_prefix || '');
+  const [prompt_suffix, setPromptSuffix] = useState(props.initValue?.prompt_suffix || props.value?.prompt_suffix || '');
+  // const [prompt, setPrompt] = useState(props.initValue?.prompt || props.value?.prompt || '');
   const [n, setN] = useState(props.initValue?.n || props.value?.n || 1);
   const [max_tokens, setMaxTokens] = useState(props.initValue?.max_tokens || props.value?.max_tokens);
-  const [temperature, setTemperature] = useState(props.initValue?.temperature || props.value?.temperature);
-  const [top_p, setTopP] = useState(props.initValue?.top_p || props.value?.top_p);
+  const [temperature, setTemperature] = useState(props.initValue?.temperature || props.value?.temperature || 1);
+  const [top_p, setTopP] = useState(props.initValue?.top_p || props.value?.top_p || 1);
   const [logprobs, setLogprobs] = useState(props.initValue?.logprobs || props.value?.logprobs);
-  const [echo, setEcho] = useState(props.initValue?.echo || props.value?.echo);
+  const [echo, setEcho] = useState(props.initValue?.echo || props.value?.echo || false);
   const [stop, setStop] = useState((props.initValue?.stop || props.value?.stop || []).map(s => s.replace('\n', '\\n').replace('\t', '\\t')));
   const [presence_penalty, setPresencePenalty] = useState(props.initValue?.presence_penalty || props.value?.presence_penalty || 0);
   const [frequency_penalty, setFrequencyPenalty] = useState(props.initValue?.frequency_penalty || props.value?.frequency_penalty || 0);
   const [best_of, setBestOf] = useState(props.initValue?.best_of || props.value?.best_of || 1);
 
   const setStateWithValueChange = (newState: any, changedStateNames: Array<String>=[]) => {
-    changedStateNames.includes('prompt') && setPrompt(newState.prompt);
+    changedStateNames.includes('prompt_prefix') && setPromptPrefix(newState.prompt_prefix);
+    changedStateNames.includes('prompt_suffix') && setPromptSuffix(newState.prompt_suffix);
+    // changedStateNames.includes('prompt') && setPrompt(newState.prompt);
     changedStateNames.includes('n') && setN(newState.n);
     changedStateNames.includes('max_tokens') && setMaxTokens(newState.max_tokens);
     changedStateNames.includes('temperature') && setTemperature(newState.temperature);
@@ -47,7 +51,9 @@ const OpenAiAutocompleteConfig: FC<OpenAiAutocompleteConfigProps> = (props) => {
 
     props.onValueChange &&
       props.onValueChange({
-        prompt: changedStateNames.indexOf('prompt') < 0 ? prompt : newState.prompt,
+        prompt_prefix: changedStateNames.indexOf('prompt_prefix') < 0 ? prompt_prefix : newState.prompt_prefix,
+        prompt_suffix: changedStateNames.indexOf('prompt_suffix') < 0 ? prompt_suffix : newState.prompt_suffix,
+        // prompt: changedStateNames.indexOf('prompt') < 0 ? prompt : newState.prompt,
         n: changedStateNames.indexOf('n') < 0 ? n : newState.n,
         max_tokens: changedStateNames.indexOf('max_tokens') < 0 ? max_tokens : newState.max_tokens,
         temperature: changedStateNames.indexOf('temperature') < 0 ? temperature : newState.temperature,
@@ -58,14 +64,16 @@ const OpenAiAutocompleteConfig: FC<OpenAiAutocompleteConfigProps> = (props) => {
         presence_penalty: changedStateNames.indexOf('presence_penalty') < 0 ? presence_penalty : newState.presence_penalty,
         frequency_penalty: changedStateNames.indexOf('frequency_penalty') < 0 ? frequency_penalty : newState.frequency_penalty,
         best_of: changedStateNames.indexOf('best_of') < 0 ? best_of : newState.best_of,
-      } as CompletionParams);
+      } as CompletionRequest);
   }
 
   const copyFromTemplate = (v: number) => {
     if (v >= 0) {
       let template = props.templates? props.templates[v] : null;
       if (template) {
-        setPrompt(template.prompt);
+        // setPrompt(template.prompt);
+        setPromptPrefix(template.prompt_prefix);
+        setPromptSuffix(template.prompt_suffix);
         setN(template.n);
         setMaxTokens(template.max_tokens);
         setTemperature(template.temperature);
@@ -102,7 +110,13 @@ const OpenAiAutocompleteConfig: FC<OpenAiAutocompleteConfigProps> = (props) => {
         )
       }
 
-      <TextInputGroupWithValidityCheck label={'Prompt'} value={prompt} multiline={true} numberOfLines={5} required={true}
+      <TextInputGroupWithValidityCheck label={'Prompt Prefix'} value={prompt_prefix} multiline={true} numberOfLines={2} required={false}
+          onValueChange={ v => { setStateWithValueChange({prompt_prefix: v}, ['prompt_prefix']); } } />
+
+      <TextInputGroupWithValidityCheck label={'Prompt Suffix'} value={prompt_suffix} multiline={true} numberOfLines={2} required={false}
+          onValueChange={ v => { setStateWithValueChange({prompt_suffix: v}, ['prompt_suffix']); } } />
+
+      {/* <TextInputGroupWithValidityCheck label={'Prompt'} value={prompt} multiline={true} numberOfLines={5} required={true}
           checkValidity={
             (v) => {
               let valid = (v || '').indexOf('{USER_INPUT}') >= 0;
@@ -113,7 +127,7 @@ const OpenAiAutocompleteConfig: FC<OpenAiAutocompleteConfigProps> = (props) => {
               } as InputValidity
             }
           }
-          onValueChange={ v => { setStateWithValueChange({prompt: v}, ['prompt']); } } />
+          onValueChange={ v => { setStateWithValueChange({prompt: v}, ['prompt']); } } /> */}
 
       <TextInputGroupWithValidityCheck label={'Number of answers to generate'} value={n?.toString()} required={true}
           validatorPreset='number' validatorPresetOptions={{ fieldName: 'Number of answers to generate', intVal: true, min: 1, max: 10 }}

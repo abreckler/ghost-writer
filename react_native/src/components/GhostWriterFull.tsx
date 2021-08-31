@@ -6,7 +6,7 @@ import { styles, mdScreenWidth } from './styles';
 import {
   EngineID,
   CompletionChoice,
-  CompletionParams,
+  CompletionRequest,
   ArticleGeneratorRequest,
   ArticleRewriterRequest,
   CompletionResponse,
@@ -206,7 +206,7 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
       else
       {
         let writer = new GhostWriterConfig;
-        let params : CompletionParams;
+        let params : CompletionRequest;
         let json : CompletionResponse;
 
         if (writingMode === GhostWriterModes.QA) {
@@ -219,7 +219,7 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
           else if (writingMode === GhostWriterModes.SUMMARY)
             params = writer.generateCompleteParams(text.trim(), summaryConfig ? '' : GhostWriterModes.SUMMARY, summaryConfig);
           else
-            params = writer.generateCompleteParams(text.trim(), autocompleteConfig ? '' : 'autocomplete', autocompleteConfig);
+            params = writer.generateCompleteParams(text.trim(), autocompleteConfig ? '' : GhostWriterModes.AUTOCOMPLETE, autocompleteConfig);
 
           json = await apiClient.completion(params);
         }
@@ -315,7 +315,7 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
         </View>
 
         <View style={{ flexDirection: 'column', flex:0.25 }}>
-          <GhostWriterModeConfig layout={props.layout}></GhostWriterModeConfig>
+          <GhostWriterModeConfig layout={props.layout} style={{flex: 1, overflow: 'hidden'}}></GhostWriterModeConfig>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.button}
                 disabled={buttonDisabled}

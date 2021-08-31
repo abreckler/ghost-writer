@@ -17,8 +17,7 @@ const TextAnalysisTextSummarizationConfig: FC<TextAnalysisTextSummarizationConfi
   const [sentnum, setSentnum] = useState(props.initValue?.sentnum || props.value?.sentnum || 5);
 
   const setStateWithValueChange = (newState: any, changedStateNames: Array<String>=[]) => {
-    if (changedStateNames.includes('sentnum'))
-      setSentnum(newState.sentNum);
+    changedStateNames.includes('sentnum') && setSentnum(newState.sentNum);
 
     props.onValueChange &&
       props.onValueChange({
