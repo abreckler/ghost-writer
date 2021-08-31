@@ -304,7 +304,7 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
   {
     return (
       <View style={{ flexDirection: 'row', flex: 1 }}>
-        <View style={{ flexDirection: 'column', flex: 0.7, alignItems: 'stretch', justifyContent: 'flex-start' }}>
+        <View style={{ flexDirection: 'column', flex: 0.75, alignItems: 'stretch', justifyContent: 'flex-start' }}>
           <View style={[styles.gwInputContainer, { flex: 0.5 }]}>
             <TextInput style={styles.gwInput}
                 multiline = {true}
@@ -314,7 +314,7 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
           <AnswerList data={answers} noAnswerAlert={noAnswerAlert} style={{ flex: 0.5 }}></AnswerList>
         </View>
 
-        <View style={{ flexDirection: 'column', flex:0.3 }}>
+        <View style={{ flexDirection: 'column', flex:0.25 }}>
           <GhostWriterModeConfig layout={props.layout} style={{flex: 1, overflow: 'hidden'}}></GhostWriterModeConfig>
           <View style={styles.buttonsContainer}>
             <TouchableOpacity style={styles.button}

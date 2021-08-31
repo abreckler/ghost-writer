@@ -72,7 +72,7 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
       display: "none",
     },
     containerDetails: {
-      paddingHorizontal: width > mdScreenWidth ? 40 : 20,
+      paddingHorizontal: width > mdScreenWidth ? 30 : 20,
       paddingVertical: 20,
     }
   });
@@ -109,9 +109,9 @@ const GhostWriterModeConfig: FC<GhostWriterModeConfigProps> = (props: GhostWrite
 
   return (
     <View style={[{ position: 'relative', backgroundColor: 'rgb(248, 248, 255)', zIndex: 100 }, props.style]}>
-      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginVertical: 10, paddingHorizontal: 10 }}>
+      <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginVertical: 10, paddingHorizontal: 20, maxWidth: '100%' }}>
         <Text style={[styles.label, { display: props.layout == GhostWriterFullLayouts.simple && width > mdScreenWidth ? 'flex' : 'none' }]}>Mode: </Text>
-        <View>
+        <View style={{maxWidth: '100%'}}>
           <Picker style={[styles.modePicker]} itemStyle={styles.modePickerItemStyle}
               selectedValue={writingMode}
               onValueChange={ v => dispatch(updateWritingMode(v)) }

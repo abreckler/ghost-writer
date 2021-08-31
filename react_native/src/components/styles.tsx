@@ -136,6 +136,7 @@ export const styles = StyleSheet.create({
   modePicker: {
     fontSize: width > 600 ? mainFontSize * 1.25 : mainFontSize,
     flexBasis: 50,
+    maxWidth: '95%',
   },
   modePickerItemStyle: {
     fontSize: mainFontSize,
