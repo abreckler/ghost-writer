@@ -1,12 +1,12 @@
 // Open AI - GPT 3
-enum EngineID {
+export enum EngineID {
   Davinci = "davinci",
   Curie = "curie",
   Babbage = "babbage",
   Ada = "ada",
 };
 
-interface CompletionParams {
+export interface CompletionParams {
   prompt?: string;
   max_tokens?: number; // Defaults to 16
   temperature?: number; // Defaults to 1
@@ -21,7 +21,7 @@ interface CompletionParams {
   logit_bias?: any; // Defaults to null
 }
 
-interface CompletionChoice {
+export interface CompletionChoice {
   text?: string;
   index?: number;
   logprobs?: any;
@@ -29,7 +29,7 @@ interface CompletionChoice {
   html?: boolean;
 }
 
-interface CompletionResponse {
+export interface CompletionResponse {
   id?: string;
   object?: string;
   created?: number;
@@ -37,14 +37,14 @@ interface CompletionResponse {
   choices: CompletionChoice[];
 }
 
-interface EngineInfo {
+export interface EngineInfo {
   id: string;
   object?: string;
   owner?: string;
   ready?: boolean;
 }
 
-interface ListEnginesResponse {
+export interface ListEnginesResponse {
   data?: EngineInfo[];
   object: string;
 }
@@ -53,7 +53,7 @@ interface ListEnginesResponse {
 // Topic Tagging API of Twinword
 //
 
-interface TwinwordTopicTaggingGenerateRequest {
+export interface TwinwordTopicTaggingGenerateRequest {
   text: string,
 }
 interface TwinwordTopicTaggingGenerateResponse {
@@ -69,29 +69,29 @@ interface TwinwordTopicTaggingGenerateResponse {
 //
 // Text Summarization API of TextAnalysis
 //
-interface TextAnalysisTextSummarizationTextRequest {
+export interface TextAnalysisTextSummarizationTextRequest {
   text?:string,
   sentnum?: number,
 }
-interface TextAnalysisTextSummarizationUrlRequest {
+export interface TextAnalysisTextSummarizationUrlRequest {
   url?:string,
   sentnum?: number,
 }
-interface TextAnalysisTextSummarizationResponse {
+export interface TextAnalysisTextSummarizationResponse {
   sentences: Array<string>;
 }
 
 //
 // Article Rewriter
 //
-interface ArticleRewriterRequest {
+export interface ArticleRewriterRequest {
   language?: string,
   strength?: number,
   text?: string,
   url?: string,
   rewrite ?: boolean;
 }
-interface ArticleRewriterResponse {
+export interface ArticleRewriterResponse {
   language: string,
   rewrite: string,
   text: string,
@@ -100,51 +100,56 @@ interface ArticleRewriterResponse {
 //
 // Article Generator
 //
-interface ArticleGeneratorRequest {
+export interface ArticleGeneratorRequest {
   seed_text ?: string;
   output_format ?: string; // text,markdown,html
   num_serp_results ?: number;
   num_outbound_links_per_serp_result ?: number;
   rewrite ?: boolean;
 }
-interface ArticleGeneratorResponse {
+export interface ArticleGeneratorResponse {
   generated_article: string;
+}
+
+
+//
+// Article Summarizer
+//
+export enum ArticleSummarizerAPIs {
+  TEXT_ANALYSIS = "textanalysis",
+  TEXT_MONKEY = "text-monkey",
+  OPENAI = "openai",
+}
+export interface ArticleSummarizerRequest {
+  text?: string;
+  url?: string;
+  api: ArticleSummarizerAPIs;
+}
+export interface ArticleSummarizerResponse {
+  summary?: string;
+}
+
+//
+// Article Extractor
+//
+export enum ArticleExtractorAPIs {
+  TEXT_ANALYSIS = "textanalysis",
+  TEXT_MONKEY = "text-monkey",
+  OPENAI = "openai",
+}
+export interface ArticleExtractorRequest {
+  text?: string; // either one of text and url must be provided
+  url?: string;
+  num_sentences?: number; // Number of key sentences to extract
+  api: ArticleExtractorAPIs;
+}
+export interface ArticleExtractorResponse {
+  sentences?: Array<string>;
 }
 
 //
 
-enum GhostWriterFullLayouts {
+export enum GhostWriterFullLayouts {
   simple,
   playground,
 }
-
-
-export {
-  //
-  EngineID,
-  CompletionParams,
-  CompletionChoice,
-  CompletionResponse,
-  EngineInfo,
-  ListEnginesResponse,
-
-  //
-  TwinwordTopicTaggingGenerateRequest,
-  TwinwordTopicTaggingGenerateResponse,
-
-  //
-  TextAnalysisTextSummarizationTextRequest,
-  TextAnalysisTextSummarizationUrlRequest,
-  TextAnalysisTextSummarizationResponse,
-
-  //
-  ArticleRewriterRequest,
-  ArticleRewriterResponse,
-
-  //
-  ArticleGeneratorRequest,
-  ArticleGeneratorResponse,
-
-  //
-  GhostWriterFullLayouts,
-};

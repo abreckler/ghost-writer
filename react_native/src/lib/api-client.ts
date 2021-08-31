@@ -11,6 +11,10 @@ import {
   TextAnalysisTextSummarizationTextRequest,
   ArticleGeneratorResponse,
   ArticleGeneratorRequest,
+  ArticleSummarizerResponse,
+  ArticleSummarizerRequest,
+  ArticleExtractorRequest,
+  ArticleExtractorResponse,
 } from "./types";
 
 class MyApiClient {
@@ -121,6 +125,22 @@ class MyApiClient {
 
   public async generateArticle(req: ArticleGeneratorRequest): Promise<ArticleGeneratorResponse> {
     return await this._doPost<ArticleGeneratorRequest, ArticleGeneratorResponse>('/api/article-generator/write', req);
+  }
+
+  //
+  // Custom API - Article Summarizer
+  //
+
+  public async summarizeArticle(req: ArticleSummarizerRequest): Promise<ArticleSummarizerResponse> {
+    return await this._doPost<ArticleSummarizerRequest, ArticleSummarizerResponse>('/api/article-summarizer/write', req);
+  }
+
+  //
+  // Custom API - Article Extractor
+  //
+
+  public async extractArticle(req: ArticleExtractorRequest): Promise<ArticleExtractorResponse> {
+    return await this._doPost<ArticleExtractorRequest, ArticleExtractorResponse>('/api/article-extractor/key-sentences', req);
   }
 
 

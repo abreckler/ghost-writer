@@ -11,6 +11,8 @@ import {
   ArticleRewriterRequest,
   CompletionResponse,
   GhostWriterFullLayouts,
+  ArticleSummarizerRequest,
+  ArticleExtractorRequest,
 } from '../lib/types';
 import { GhostWriterConfig } from '../lib/writer-config';
 import { MyApiClient } from '../lib/api-client';
@@ -35,9 +37,13 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
   const summaryConfig = useAppSelector( state => state.writerModeConfigs.summaryConfig );
   const rewriteConfig = useAppSelector( state => state.writerModeConfigs.rewriteConfig );
   const rewriteSmodinConfig = useAppSelector( state => state.writerModeConfigs.rewriteSmodinConfig );
-  const extractConfig = useAppSelector( state => state.writerModeConfigs.extractConfig );
   const articleGeneratorConfig  = useAppSelector( state => state.writerModeConfigs.articleGeneratorConfig );
   const rewriteFromUrlConfig = useAppSelector( state => state.writerModeConfigs.rewriteFromUrlConfig );
+  const extractConfig = useAppSelector( state => state.writerModeConfigs.extractConfig );
+  const extractUrlConfig = useAppSelector( state => state.writerModeConfigs.extractUrlConfig );
+  const summarizeArticleConfig = useAppSelector( state => state.writerModeConfigs.summarizeArticleConfig );
+  const summarizeUrlConfig = useAppSelector( state => state.writerModeConfigs.summarizeUrlConfig );
+
 
   const { width, height } = Dimensions.get('window');
 
@@ -88,12 +94,47 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
           setAnswersAlert('Ghost Writer could not suggest an answer!');
         }
       }
-      else if (writingMode === GhostWriterModes.EXTRACT)
+      else if (writingMode === GhostWriterModes.EXTRACT_KEY_SENTENCES || writingMode === GhostWriterModes.EXTRACT_FROM_URL)
       {
-        let json = await apiClient.textSummarizerText(text.trim(), extractConfig && extractConfig.sentnum);
+        let params = {} as ArticleExtractorRequest;
+        let text1 = text.trim();
+        if (writingMode === GhostWriterModes.EXTRACT_KEY_SENTENCES && extractConfig) {
+          params.api = extractConfig.api;
+          params.num_sentences = extractConfig.num_sentences;
+          params.text = text1;
+        } else if (writingMode === GhostWriterModes.EXTRACT_FROM_URL && extractUrlConfig) {
+          params.api = extractUrlConfig.api;
+          params.num_sentences = extractUrlConfig.num_sentences;
+          params.url = text1;
+        }
+
+        let json = await apiClient.extractArticle(params);
     
         if (json.sentences) {
           let choices = json.sentences.map(t => { return { text: t } as CompletionChoice; });
+          setAnswers(choices);
+          setAnswersAlert('');
+        } else {
+          setAnswers([]);
+          setAnswersAlert('Ghost Writer could not suggest an answer!');
+        }
+      }
+      else if (writingMode === GhostWriterModes.SUMMARIZE_ARTICLE || writingMode === GhostWriterModes.SUMMARIZE_URL)
+      {
+        let params = {} as ArticleSummarizerRequest;
+        let text1 = text.trim();
+        if (writingMode === GhostWriterModes.SUMMARIZE_ARTICLE && summarizeArticleConfig) {
+          params.api = summarizeArticleConfig.api;
+          params.text = text1;
+        } else if (writingMode === GhostWriterModes.SUMMARIZE_URL && summarizeUrlConfig) {
+          params.api = summarizeUrlConfig.api;
+          params.url = text1;
+        }
+
+        let json = await apiClient.summarizeArticle(params);
+    
+        if (json.summary) {
+          let choices = [ { text: json.summary } as CompletionChoice ];
           setAnswers(choices);
           setAnswersAlert('');
         } else {

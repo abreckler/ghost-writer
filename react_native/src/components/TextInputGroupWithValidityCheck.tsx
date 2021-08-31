@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Text, TextInput, TextStyle, View, ViewStyle } from 'react-native';
 import { useAppSelector } from '../redux/hooks';
 import { styles } from './styles';
@@ -83,6 +83,20 @@ const TextInputGroupWithValidityCheck: FC<TextInputWithValidityCheckProps> = (pr
     validityChecker = dummyValidityChecker;
   }
 
+  const timeoutForPropValueRef = useRef(null);
+
+  const debounceTextChange = (newText: string) => {
+    timeoutForPropValueRef.current && clearTimeout(timeoutForPropValueRef.current);
+
+    timeoutForPropValueRef.current = setTimeout(() => {
+      newText != text && setText(newText);
+    }, 50);
+  };
+
+  useEffect(() => {
+    props.value != text && debounceTextChange(props.value);
+  }, [props.value]);
+
   const setText = (value: string) => {
     let error = '';
     let valid = validityChecker(value);
@@ -104,7 +118,7 @@ const TextInputGroupWithValidityCheck: FC<TextInputWithValidityCheckProps> = (pr
             multiline={props.multiline || false} numberOfLines={props.numberOfLines || 1}
             style={layoutStyles.inputGroupInput}
             value={text}
-            onChange={ e => setText(e.nativeEvent.text) } >
+            onChange={ e => debounceTextChange(e.nativeEvent.text) } >
         </TextInput>
         <Text style={[styles.textSmall, styles.textError, { display: error ? 'flex' : 'none' }]}>{error}</Text>
       </View>

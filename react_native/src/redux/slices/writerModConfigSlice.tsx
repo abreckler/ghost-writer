@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { ArticleGeneratorRequest, ArticleRewriterRequest, CompletionParams, TextAnalysisTextSummarizationTextRequest } from "../../lib/types";
+import { ArticleExtractorRequest, ArticleGeneratorRequest, ArticleRewriterRequest, ArticleSummarizerRequest, CompletionParams } from "../../lib/types";
 
 
 const initialState = {
@@ -10,9 +10,12 @@ const initialState = {
   summaryConfig: {} as CompletionParams,
   rewriteConfig: {} as CompletionParams,
 	rewriteSmodinConfig: { language: 'en', strength: 3, text: '' } as ArticleRewriterRequest,
-  extractConfig: {} as TextAnalysisTextSummarizationTextRequest,
   articleGeneratorConfig : {} as ArticleGeneratorRequest,
   rewriteFromUrlConfig: { language: 'en', strength: 3, text: '' } as ArticleRewriterRequest,
+	summarizeArticleConfig: { api: 'text-monkey' } as ArticleSummarizerRequest,
+	summarizeUrlConfig: { api: 'text-monkey' } as ArticleSummarizerRequest,
+	extractConfig: { api: 'text-monkey', num_sentences: 5 } as ArticleExtractorRequest,
+	extractUrlConfig: { api: 'text-monkey', num_sentences: 5 } as ArticleExtractorRequest,
 };
 
 export const writerModeConfigSlice = createSlice({
@@ -52,12 +55,6 @@ export const writerModeConfigSlice = createSlice({
 				...action.payload,
 			};
 		},
-		updateExtractConfig: (state, action: PayloadAction<TextAnalysisTextSummarizationTextRequest>) => {
-			state.extractConfig = {
-				...state.extractConfig,
-				...action.payload,
-			};
-		},
 		updateArticleGeneratorConfig: (state, action: PayloadAction<ArticleGeneratorRequest>) => {
 			state.articleGeneratorConfig = {
 				...state.articleGeneratorConfig,
@@ -67,6 +64,30 @@ export const writerModeConfigSlice = createSlice({
 		updateRewriteFromUrlConfig: (state, action: PayloadAction<ArticleRewriterRequest>) => {
 			state.rewriteFromUrlConfig = {
 				...state.rewriteFromUrlConfig,
+				...action.payload,
+			};
+		},
+		updateExtractConfig: (state, action: PayloadAction<ArticleExtractorRequest>) => {
+			state.extractConfig = {
+				...state.extractConfig,
+				...action.payload,
+			};
+		},
+		updateExtractUrlConfig: (state, action: PayloadAction<ArticleExtractorRequest>) => {
+			state.extractUrlConfig = {
+				...state.extractUrlConfig,
+				...action.payload,
+			};
+		},
+		updateSummarizeArticleConfig: (state, action: PayloadAction<ArticleSummarizerRequest>) => {
+			state.summarizeArticleConfig = {
+				...state.summarizeArticleConfig,
+				...action.payload,
+			};
+		},
+		updateSummarizeUrlConfig: (state, action: PayloadAction<ArticleSummarizerRequest>) => {
+			state.summarizeUrlConfig = {
+				...state.summarizeUrlConfig,
 				...action.payload,
 			};
 		},
@@ -80,9 +101,12 @@ export const {
 	updateSummaryConfig,
 	updateRewriteConfig,
 	updateRewriteSmodinConfig,
-	updateExtractConfig,
 	updateArticleGeneratorConfig,
-	updateRewriteFromUrlConfig
+	updateRewriteFromUrlConfig,
+	updateExtractConfig,
+	updateExtractUrlConfig,
+	updateSummarizeArticleConfig,
+	updateSummarizeUrlConfig,
 } = writerModeConfigSlice.actions;
 
 export default writerModeConfigSlice.reducer;
