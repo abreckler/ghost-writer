@@ -17,7 +17,7 @@ interface ArticleExtractorConfigProps {
 
 const ArticleExtractorConfig: FC<ArticleExtractorConfigProps> = (props) => {
 
-  const [api, setApi] = useState(props.initValue?.api || props.value?.api || ArticleExtractorAPIs.TEXT_MONKEY);
+  const [api, setApi] = useState(props.initValue?.api || props.value?.api || ArticleExtractorAPIs.TEXT_ANALYSIS);
   const [num_sentences, setNumSentences] = useState(props.initValue?.num_sentences || props.value?.num_sentences || 3);
 
   const setStateWithValueChange = (newState: any, changedStateNames: Array<String>=[]) => {
@@ -42,8 +42,8 @@ const ArticleExtractorConfig: FC<ArticleExtractorConfigProps> = (props) => {
             itemStyle={styles.pickerItemStyle}
             mode='dropdown'
             onValueChange={v => { setStateWithValueChange({ api : v }, ['api']); } }>
-          <Picker.Item label="Text Monkey" value={ArticleExtractorAPIs.TEXT_MONKEY} />
           <Picker.Item label="TextAnalysis" value={ArticleExtractorAPIs.TEXT_ANALYSIS} />
+          <Picker.Item label="Text Monkey" value={ArticleExtractorAPIs.TEXT_MONKEY} />
         </Picker>
       </View>
       <TextInputGroupWithValidityCheck label={'Number of sentences to extract'} value={num_sentences?.toString()}

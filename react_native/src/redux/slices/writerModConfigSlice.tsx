@@ -14,8 +14,8 @@ const initialState = {
   rewriteFromUrlConfig: { language: 'en', strength: 3, text: '' } as ArticleRewriterRequest,
 	summarizeArticleConfig: { api: 'text-monkey' } as ArticleSummarizerRequest,
 	summarizeUrlConfig: { api: 'text-monkey' } as ArticleSummarizerRequest,
-	extractConfig: { api: 'text-monkey', num_sentences: 5 } as ArticleExtractorRequest,
-	extractUrlConfig: { api: 'text-monkey', num_sentences: 5 } as ArticleExtractorRequest,
+	extractConfig: { api: 'textanalysis', num_sentences: 5 } as ArticleExtractorRequest,
+	extractUrlConfig: { api: 'textanalysis', num_sentences: 5 } as ArticleExtractorRequest,
 };
 
 export const writerModeConfigSlice = createSlice({
