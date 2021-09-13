@@ -107,10 +107,16 @@ export interface ArticleRewriterResponse {
 // Article Generator
 //
 export interface ArticleGeneratorRequest {
-  seed_text ?: string;
-  output_format ?: string; // text,markdown,html
+  // SERP API settings
   num_serp_results ?: number;
   num_outbound_links_per_serp_result ?: number;
+  serp_google_tbs_qdr ?: string;
+  serp_google_tbs_sbd ?: number;
+  serp_google_tbs ?: string;
+  serp_google_tbm ?: 'isch'|'vid'|'nws'|'shop';
+  // 
+  seed_text ?: string; // keywords to search
+  output_format ?: string; // text,markdown,html
   rewrite ?: boolean;
 }
 export interface ArticleGeneratorResponse {

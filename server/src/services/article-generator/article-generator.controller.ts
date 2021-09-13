@@ -29,6 +29,10 @@ const writeProductsReviewArticle = async (
   const configs = {
     numSerpResults: req.body.num_serp_results || 3,
     numOutboundLinksPerSerpResult: req.body.num_outbound_links_per_serp_result || 3,
+    serpGoogleTbsQdr: req.body.serp_google_tbs_qdr || undefined,
+    serpGoogleTbsSbd: req.body.serp_google_tbs_sbd || undefined,
+    serpGoogleTbs: req.body.serp_google_tbs || undefined,
+    serpGoogleTbm: req.body.serp_google_tbm || undefined,
     outputFormat: req.body.output_format || 'text',
     rewrite: req.body.rewrite === false ? false : true, // rewrite param's default value is true
   } as ArticleGeneratorConfigs;
@@ -64,14 +68,31 @@ const writeProductsReviewArticle = async (
   try {
     // call serpapi to get google search result with the seed text
     const search = new GoogleSearchAsync(SERPAPI_API_KEY);
+    const tbsParams = [];
+    if (configs.serpGoogleTbsQdr) {
+      tbsParams.push('qdr:' + configs.serpGoogleTbsQdr);
+    }
+    if (configs.serpGoogleTbsSbd) {
+      if (!configs.serpGoogleTbsQdr) {
+        tbsParams.push('qdr:all');
+      }
+      tbsParams.push('sbd:1');
+    }
+    if (!configs.serpGoogleTbs && tbsParams.length > 0) {
+      configs.serpGoogleTbs = tbsParams.join(',');
+    }
+
     const searchParams = {
       engine: 'google',
       q: seedText,
       google_domain: 'google.com',
       gl: 'us',
       hl: 'en',
+      tbm: configs.serpGoogleTbm || undefined,
+      tbs: configs.serpGoogleTbs || undefined,
     } as GoogleSearchParameters;
     const searchResult = await search.json_async(searchParams);
+    console.debug('Google Search Request for SerpAPI', searchParams);
     console.debug('Google Search Result from SerpAPI', searchResult);
 
     const paragraphs: Array<ArticleParagraph> = [];

@@ -46,6 +46,10 @@ const fetchHtmlFromUrl = async (url: string): Promise<string> => {
   return await axios
     .get(enforceHttpsUrl(url), {
       timeout: 10000, // milliseconds
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36',
+      },
     })
     .then((response) => response.data)
     .catch((error) => {
@@ -59,7 +63,7 @@ const fetchHtmlFromUrl = async (url: string): Promise<string> => {
  */
 const parseTextFromUrl = async (
   url: string,
-  _outputFormat: 'text'|'markdown' = 'text'
+  outputFormat: 'text' | 'markdown' = 'text',
 ): Promise<{ title: string; description: string; text: string; html: string }> => {
   const html = await fetchHtmlFromUrl(url);
 
@@ -117,16 +121,12 @@ const parseTextFromUrl = async (
 
     if ($el.children().length == 0) {
       const txt = $el.text().trim();
-      if (
-        txt == '' ||
-        ( // simple social share links
-          txt.indexOf('.') < 0 &&
-          (
-            /Share (on|via) (Twitter|Facebook|Email|LinkedIn|WhatsApp|Messenger|Reddit|Tumblr|Pinterest|Pocket)/gi.test(txt) ||
-            /^Read more/gi.test(txt)
-          )
-        )
-      ) {
+      const socialLinksRegex = /Share (on|via) (Twitter|Facebook|Email|LinkedIn|WhatsApp|Messenger|Reddit|Tumblr|Pinterest|Pocket)/gi;
+      const otherRegex = /^Read more/gi;
+
+      // Article texts typically contains social sharing links or some buttons like "Read more"
+      // within the main content container (div or section, whatever)
+      if (txt == '' || (txt.indexOf('.') < 0 && (socialLinksRegex.test(txt) || otherRegex.test(txt)))) {
         $el.remove();
       }
     }

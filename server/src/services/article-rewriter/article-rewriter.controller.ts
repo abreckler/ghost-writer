@@ -59,16 +59,24 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction): 
       text = params.text;
     }
 
-    if (text) {
+    if (!text) {
+      throw new Error('Could not get the text to rewrite');
+    }
+
+    if (params.rewrite === false) {
+      // No rewrite?
+      res.status(200).json({
+        language: 'en',
+        rewrite: text,
+        text: text,
+        url: params.url,
+      });
+    } else {
       const texts = splitText(text, 9999); // Smodin API restricts input length to 10000
       const para = [];
       for (let i = 0; i < texts.length; i++) {
-        if (params.rewrite === false) {
-          para.push(texts[i]);
-        } else {
-          // if "rewrite" param is set, rewrite the paragraph
-          para.push(await paraphraser(texts[i]));
-        }
+        // if "rewrite" param is set, rewrite the paragraph
+        para.push(await paraphraser(texts[i]));
       }
       res.status(200).json({
         language: 'en',
@@ -76,11 +84,9 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction): 
         text: text,
         url: params.url,
       });
-    } else {
-      throw new Error('Invalid argument');
     }
   } catch (err) {
-    console.error('RapidAPI - Text Rewrite API by Smodin failed with error', err);
+    console.error('Article Rewriter failed with error', err);
     next(err);
   }
 };

@@ -3,10 +3,15 @@ import { ZackproserUrlIntelligenceApiClient, ZombieBestAmazonProductsApiClient }
 import { extractAmazonAsin, extractUrls, parseTextFromUrl } from '../../lib/utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
-
 interface ArticleGeneratorConfigs {
+  // SERP API params
   numSerpResults: number;
   numOutboundLinksPerSerpResult: number;
+  serpGoogleTbsQdr?: string; // 'y' | 'm' | 'w' | 'd' | 'h',
+  serpGoogleTbsSbd?: boolean; // sort by date ?
+  serpGoogleTbs?: string;
+  serpGoogleTbm?: 'isch' | 'vid' | 'nws' | 'shop';
+  //
   outputFormat: string;
   rewrite?: boolean;
 }
