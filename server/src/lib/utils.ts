@@ -107,7 +107,7 @@ const parseTextFromUrl = async (
   $('[style*="display:none"i]').remove();
 
   while ($(':empty').length > 0) {
-    console.log('Removing empty elements');
+    // console.log('Removing empty elements');
     $(':empty').remove();
   }
 

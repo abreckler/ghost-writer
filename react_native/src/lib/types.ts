@@ -111,7 +111,7 @@ export interface ArticleGeneratorRequest {
   num_serp_results ?: number;
   num_outbound_links_per_serp_result ?: number;
   serp_google_tbs_qdr ?: string;
-  serp_google_tbs_sbd ?: number;
+  serp_google_tbs_sbd ?: "1" | "0";
   serp_google_tbs ?: string;
   serp_google_tbm ?: 'isch'|'vid'|'nws'|'shop';
   // 

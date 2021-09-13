@@ -9,6 +9,7 @@ import {
 } from './article-generator.service';
 import { isAmazonDomain } from '../../lib/utils';
 import { paraphraser } from '../../lib/composites';
+import { config } from 'winston';
 
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
 
@@ -65,22 +66,23 @@ const writeProductsReviewArticle = async (
     configs.numOutboundLinksPerSerpResult = 3;
   }
 
+  const tbsParams = [];
+  if (configs.serpGoogleTbsQdr) {
+    tbsParams.push('qdr:' + configs.serpGoogleTbsQdr);
+  }
+  if (configs.serpGoogleTbsSbd == '1') {
+    if (!configs.serpGoogleTbsQdr) {
+      tbsParams.push('qdr:all');
+    }
+    tbsParams.push('sbd:1');
+  }
+  if (!configs.serpGoogleTbs && tbsParams.length > 0) {
+    configs.serpGoogleTbs = tbsParams.join(',');
+  }
+
   try {
     // call serpapi to get google search result with the seed text
     const search = new GoogleSearchAsync(SERPAPI_API_KEY);
-    const tbsParams = [];
-    if (configs.serpGoogleTbsQdr) {
-      tbsParams.push('qdr:' + configs.serpGoogleTbsQdr);
-    }
-    if (configs.serpGoogleTbsSbd) {
-      if (!configs.serpGoogleTbsQdr) {
-        tbsParams.push('qdr:all');
-      }
-      tbsParams.push('sbd:1');
-    }
-    if (!configs.serpGoogleTbs && tbsParams.length > 0) {
-      configs.serpGoogleTbs = tbsParams.join(',');
-    }
 
     const searchParams = {
       engine: 'google',
@@ -88,31 +90,50 @@ const writeProductsReviewArticle = async (
       google_domain: 'google.com',
       gl: 'us',
       hl: 'en',
-      tbm: configs.serpGoogleTbm || undefined,
-      tbs: configs.serpGoogleTbs || undefined,
     } as GoogleSearchParameters;
+    if (configs.serpGoogleTbm) {
+      searchParams.tbm = configs.serpGoogleTbm;
+    }
+    if (configs.serpGoogleTbs) {
+      searchParams.tbs = configs.serpGoogleTbs;
+    }
+
     const searchResult = await search.json_async(searchParams);
     console.debug('Google Search Request for SerpAPI', searchParams);
-    console.debug('Google Search Result from SerpAPI', searchResult);
+    console.debug(`Google Search Result from SerpAPI: ${(searchResult.organic_results || []).length} results`);
 
     const paragraphs: Array<ArticleParagraph> = [];
 
+    const paragraphFromSingleUrl = async (url: string) => {
+      try {
+        const internalHostname = new URL(url).hostname;
+        let p: ArticleParagraph | null = null;
+        if (isAmazonDomain(url)) {
+          p = await paragraphForAmazonProduct(url, { rewrite: configs.rewrite });
+        } else if (otherShoppingDomains.indexOf(internalHostname) >= 0) {
+          p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
+        } else {
+          p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
+        }
+
+        if (p) {
+          if (p.external_links.length > configs.numOutboundLinksPerSerpResult) {
+            p.external_links = p.external_links.slice(0, configs.numOutboundLinksPerSerpResult);
+          }
+          paragraphs.push(p);
+        }
+      } catch {
+        console.error(`Fail to fetch paragraph for URL: ${url}`);
+      }
+    };
+
+    const paragraphFetchPromises = [];
     for (let i = 0; i < (searchResult.organic_results || []).length && i < configs.numSerpResults; i++) {
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
       const url = r.link || '';
       if (url) {
-        const internalHostname = new URL(url).hostname;
-        if (isAmazonDomain(url)) {
-          const p = await paragraphForAmazonProduct(url, { rewrite: configs.rewrite });
-          p && paragraphs.push(p);
-        } else if (otherShoppingDomains.indexOf(internalHostname) >= 0) {
-          const p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
-          p && paragraphs.push(p);
-        } else {
-          const p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
-          p && paragraphs.push(p);
-        }
+        paragraphFetchPromises.push(paragraphFromSingleUrl(url));
       } else {
         // invalid url, skip processing
         console.debug('No valid url is found from search result, skip processing', r);
@@ -120,10 +141,7 @@ const writeProductsReviewArticle = async (
       }
     }
 
-    paragraphs.forEach((p, i, ary) => {
-      if (p.external_links.length > configs.numOutboundLinksPerSerpResult)
-        ary[i].external_links = p.external_links.slice(0, configs.numOutboundLinksPerSerpResult);
-    });
+    await Promise.all(paragraphFetchPromises);
 
     // Title generation from seed text
     let generatedTitle;

@@ -29,7 +29,7 @@ const ArticleGeneratorConfig: FC<ArticleGeneratorConfigProps> = (props) => {
   const [num_outbound_links_per_serp_result, setNumOutboundLinksPerSerpResult]  = useState(props.initValue?.num_outbound_links_per_serp_result || props.value?.num_outbound_links_per_serp_result || 3);
   const [serp_google_tbm, setSerpGoogleTbm] = useState(props.initValue?.serp_google_tbm || props.value?.serp_google_tbm || '');
   const [serp_google_tbs_qdr, setSerpGoogleTbsQdr] = useState('');
-  const [serp_google_tbs_sbd, setSerpGoogleTbsSbd] = useState(props.initValue?.serp_google_tbs_sbd === 1 ? 1 : 0);
+  const [serp_google_tbs_sbd, setSerpGoogleTbsSbd] = useState(props.initValue?.serp_google_tbs_sbd === "1" ? "1" : "0");
   const [output_format, setOutputFormat]  = useState(props.initValue?.output_format || props.value?.output_format || 'text');
   const [rewrite, setRewrite] = useState(props.initValue?.rewrite === true ? true : false);
 
@@ -68,22 +68,22 @@ const ArticleGeneratorConfig: FC<ArticleGeneratorConfigProps> = (props) => {
       <View style={layoutStyles.inputGroupContainer}>
         <Text style={layoutStyles.inputGroupLabel}>Type of Search</Text>
         <Picker style={[styles.picker, layoutStyles.inputGroupInputContainer]}
-            selectedValue={output_format.toString()}
+            selectedValue={serp_google_tbm.toString()}
             itemStyle={styles.pickerItemStyle}
             mode='dropdown'
             onValueChange={ v => { setStateWithValueChange({ serp_google_tbm: v }, ['serp_google_tbm']); }}>
-          <Picker.Item label="Not specified" value={undefined} />
+          <Picker.Item label="Not specified" value="" />
           <Picker.Item label="Google News API" value={GoogleSearchParamTbm.GoogleNewsAPI} />
         </Picker>
       </View>
       <View style={layoutStyles.inputGroupContainer}>
         <Text style={layoutStyles.inputGroupLabel}>Time Period</Text>
         <Picker style={[styles.picker, layoutStyles.inputGroupInputContainer]}
-            selectedValue={output_format.toString()}
+            selectedValue={serp_google_tbs_qdr.toString()}
             itemStyle={styles.pickerItemStyle}
             mode='dropdown'
             onValueChange={ v => { setStateWithValueChange({ serp_google_tbs_qdr: v }, ['serp_google_tbs_qdr']); }}>
-          <Picker.Item label="Not specified" value={undefined} />
+          <Picker.Item label="Not specified" value="" />
           <Picker.Item label="Past Year" value="y" />
           <Picker.Item label="Past Month" value="m" />
           <Picker.Item label="Past Week" value="w" />
@@ -94,12 +94,12 @@ const ArticleGeneratorConfig: FC<ArticleGeneratorConfigProps> = (props) => {
       <View style={layoutStyles.inputGroupContainer}>
         <Text style={layoutStyles.inputGroupLabel}>Sort By</Text>
         <Picker style={[styles.picker, layoutStyles.inputGroupInputContainer]}
-            selectedValue={output_format.toString()}
+            selectedValue={serp_google_tbs_sbd.toString()}
             itemStyle={styles.pickerItemStyle}
             mode='dropdown'
             onValueChange={ v => { setStateWithValueChange({ serp_google_tbs_sbd: v }, ['serp_google_tbs_sbd']); }}>
-          <Picker.Item label="Relevance" value={0} />
-          <Picker.Item label="Date" value={1} />
+          <Picker.Item label="Relevance" value="0" />
+          <Picker.Item label="Date" value="1" />
         </Picker>
       </View>
 

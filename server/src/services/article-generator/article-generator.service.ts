@@ -8,7 +8,7 @@ interface ArticleGeneratorConfigs {
   numSerpResults: number;
   numOutboundLinksPerSerpResult: number;
   serpGoogleTbsQdr?: string; // 'y' | 'm' | 'w' | 'd' | 'h',
-  serpGoogleTbsSbd?: boolean; // sort by date ?
+  serpGoogleTbsSbd?: string; // '1' | '0', sort by date ?
   serpGoogleTbs?: string;
   serpGoogleTbm?: 'isch' | 'vid' | 'nws' | 'shop';
   //
@@ -185,14 +185,14 @@ const paragraphForGeneralPages1 = async (
     // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
     try {
       const urlIntellResponse = await urlExtractorClient.rip(url);
-      console.debug('URL Intelligence API Result for ' + url, urlIntellResponse);
+      console.debug(`URL Intelligence API Result for ${url} : ${urlIntellResponse.hostnames.size} host names and ${(urlIntellResponse.links || []).length} links`);
       externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
     } catch (e) {
       console.error('RapidAPI - URL Intelligence API Failure: ', e);
     }
   }
   if (externalLinks.length == 0) {
-    console.debug('could not find valid external links. yet include it in the result.', url);
+    console.debug(`Could not find valid external links. yet include it in the result. ${url}`);
   }
 
   let rephrased;
@@ -271,7 +271,7 @@ const paragraphForGeneralPages2 = async (
     const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
     try {
       const urlIntellResponse = await urlExtractorClient.rip(url);
-      console.debug('URL Intelligence API Result for ' + url, urlIntellResponse);
+      console.debug(`URL Intelligence API Result for ${url} : ${urlIntellResponse.hostnames.size} host names and ${(urlIntellResponse.links || []).length} links`);
       externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
     } catch (e) {
       console.error('RapidAPI - URL Intelligence API Failure: ', e);

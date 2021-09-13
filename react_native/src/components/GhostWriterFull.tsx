@@ -186,10 +186,13 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
       else if (writingMode === GhostWriterModes.GENERATE_ARTICLE)
       {
         let params = {} as ArticleGeneratorRequest;
-        params.seed_text = text.trim();
-        params.output_format = articleGeneratorConfig?.output_format || 'text';
         params.num_serp_results = articleGeneratorConfig?.num_serp_results;
         params.num_outbound_links_per_serp_result = articleGeneratorConfig?.num_outbound_links_per_serp_result;
+        params.serp_google_tbm = articleGeneratorConfig?.serp_google_tbm;
+        params.serp_google_tbs_qdr = articleGeneratorConfig?.serp_google_tbs_qdr;
+        params.serp_google_tbs_sbd = articleGeneratorConfig?.serp_google_tbs_sbd;
+        params.seed_text = text.trim();
+        params.output_format = articleGeneratorConfig?.output_format || 'text';
         params.rewrite = articleGeneratorConfig?.rewrite == false ? false : true;
 
         let json = await apiClient.generateArticle(params);
