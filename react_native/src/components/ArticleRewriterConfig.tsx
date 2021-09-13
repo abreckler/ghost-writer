@@ -39,6 +39,21 @@ const ArticleRewriterConfig: FC<ArticleRewriterConfigProps> = (props) => {
 
   return (
     <View style={props.style}>
+      <View style={[layoutStyles.inputGroupContainer, { display: props.showRewriteOption ? 'flex' : 'none'}]}>
+        <Text style={layoutStyles.inputGroupLabel}>Re-write</Text>
+        {
+          CheckBox ?
+          (
+            <CheckBox value={rewrite}
+                onValueChange={(newValue) => setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
+          )
+          :
+          (
+            <CheckBoxLegacy value={rewrite}
+                onValueChange={(newValue) => setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
+          )
+        }
+      </View>
       <View style={layoutStyles.inputGroupContainer}>
         <Text style={layoutStyles.inputGroupLabel}>Language</Text>
         <Picker style={[styles.picker, layoutStyles.inputGroupInputContainer]}
@@ -65,21 +80,6 @@ const ArticleRewriterConfig: FC<ArticleRewriterConfigProps> = (props) => {
           <Picker.Item label="Medium" value="2" />
           <Picker.Item label="Basic" value="1" />
         </Picker>
-      </View>
-      <View style={[layoutStyles.inputGroupContainer, { display: props.showRewriteOption ? 'flex' : 'none'}]}>
-        <Text style={layoutStyles.inputGroupLabel}>Re-write</Text>
-        {
-          CheckBox ?
-          (
-            <CheckBox value={rewrite}
-                onValueChange={(newValue) => setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
-          )
-          :
-          (
-            <CheckBoxLegacy value={rewrite}
-                onValueChange={(newValue) => setStateWithValueChange({ rewrite: newValue }, ['rewrite'])} />
-          )
-        }
       </View>
     </View>
   );

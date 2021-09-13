@@ -117,7 +117,7 @@ const TextInputGroupWithValidityCheck: FC<TextInputWithValidityCheckProps> = (pr
         <TextInput
             multiline={props.multiline || false} numberOfLines={props.numberOfLines || 1}
             style={layoutStyles.inputGroupInput}
-            value={text}
+            defaultValue={text}
             onChange={ e => debounceTextChange(e.nativeEvent.text) } >
         </TextInput>
         <Text style={[styles.textSmall, styles.textError, { display: error ? 'flex' : 'none' }]}>{error}</Text>
