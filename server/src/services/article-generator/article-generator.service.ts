@@ -1,6 +1,11 @@
 import { paraphraser, summarizerText } from '../../lib/composites';
-import { ZackproserUrlIntelligenceApiClient, ZombieBestAmazonProductsApiClient } from '../../lib/rapidapi';
-import { extractAmazonAsin, extractUrls, parseTextFromUrl } from '../../lib/utils';
+import {
+  SocialgrepApiClient,
+  SocialgrepQueryParams,
+  ZackproserUrlIntelligenceApiClient,
+  ZombieBestAmazonProductsApiClient,
+} from '../../lib/rapidapi';
+import { breakdownRedditUrl, extractAmazonAsin, extractUrls, parseTextFromUrl } from '../../lib/utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 interface ArticleGeneratorConfigs {
@@ -185,7 +190,11 @@ const paragraphForGeneralPages1 = async (
     // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
     try {
       const urlIntellResponse = await urlExtractorClient.rip(url);
-      console.debug(`URL Intelligence API Result for ${url} : ${urlIntellResponse.hostnames.size} host names and ${(urlIntellResponse.links || []).length} links`);
+      console.debug(
+        `URL Intelligence API Result for ${url} : ${urlIntellResponse.hostnames.size} host names and ${
+          (urlIntellResponse.links || []).length
+        } links`,
+      );
       externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
     } catch (e) {
       console.error('RapidAPI - URL Intelligence API Failure: ', e);
@@ -271,7 +280,11 @@ const paragraphForGeneralPages2 = async (
     const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
     try {
       const urlIntellResponse = await urlExtractorClient.rip(url);
-      console.debug(`URL Intelligence API Result for ${url} : ${urlIntellResponse.hostnames.size} host names and ${(urlIntellResponse.links || []).length} links`);
+      console.debug(
+        `URL Intelligence API Result for ${url} : ${urlIntellResponse.hostnames.size} host names and ${
+          (urlIntellResponse.links || []).length
+        } links`,
+      );
       externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
     } catch (e) {
       console.error('RapidAPI - URL Intelligence API Failure: ', e);
@@ -296,7 +309,7 @@ const paragraphForGeneralPages2 = async (
     extractedText = extractorResponse.text;
   }
 
-  let rephrased;
+  let rephrased: string | undefined | null;
   if (options?.rewrite === false) {
     rephrased = extractedText;
   } else {
@@ -320,10 +333,77 @@ const paragraphForGeneralPages2 = async (
   } as ArticleParagraph;
 };
 
+/**
+ * Generate paragraph from a Reddit Page as a source
+ *
+ * @param url - Reddit Page URL
+ * @returns
+ */
+const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions): Promise<ArticleParagraph | null> => {
+  const socialgrepApiClient = new SocialgrepApiClient(RAPIDAPI_API_KEY);
+
+  const redditUrlParts = breakdownRedditUrl(url);
+
+  let extractedText = '';
+  try {
+    const socialgrepParam = new SocialgrepQueryParams();
+    if (redditUrlParts.subreddit) {
+      socialgrepParam.subreddit = redditUrlParts.subreddit;
+    }
+    if (redditUrlParts.post) {
+      socialgrepParam.post = redditUrlParts.post;
+    }
+    const socialgrepResponse = await socialgrepApiClient.commentSearch(socialgrepParam);
+    extractedText = (socialgrepResponse.data || [])
+      .map(function (d) {
+        return '' + d;
+      })
+      .join('\n\n');
+  } catch (e) {
+    console.error('Reddit API failed with error, skip further processing.', e);
+    return null;
+  }
+
+  const extractedTitle = (redditUrlParts.post_slug || '')
+    .replace(/_/g, ' ')
+    .replace(/\s(.)/g, function ($1) {
+      return $1.toUpperCase();
+    })
+    .replace(/^(.)/, function ($1) {
+      return $1.toUpperCase();
+    });
+
+  let rephrasedTitle: string | undefined | null;
+  let rephrased: string | undefined | null;
+  if (options?.rewrite === false) {
+    rephrased = extractedText;
+  } else {
+    rephrasedTitle = await paraphraser(extractedTitle);
+    rephrased = await paraphraser(extractedText);
+    if (!rephrased) return null;
+  }
+
+  return {
+    source_url: url,
+    source: {
+      title: extractedTitle,
+      description: '',
+      summary: extractedText,
+      tags: [],
+    },
+    generated: {
+      title: rephrasedTitle,
+      text: rephrased,
+    },
+    external_links: [],
+  } as ArticleParagraph;
+};
+
 export {
   ArticleGeneratorConfigs,
   ArticleParagraph,
   paragraphForAmazonProduct,
   paragraphForGeneralPages1,
   paragraphForGeneralPages2,
+  paragraphForReddit,
 };

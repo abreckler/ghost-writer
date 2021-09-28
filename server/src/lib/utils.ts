@@ -323,4 +323,42 @@ const extractAmazonAsin = (url: string): string | null => {
   return null;
 };
 
-export { extractUrls, fetchHtmlFromUrl, parseTextFromUrl, splitText, isAmazonDomain, extractAmazonAsin };
+const isRedditDomain = (url: string): boolean => {
+  const redditDomains = ['reddit.com'];
+  const internalHostname = new URL(url).hostname;
+  return redditDomains.indexOf(internalHostname) >= 0;
+};
+
+const breakdownRedditUrl = (url: string): { subreddit?: string; post?: string; post_slug?: string } => {
+  const u = new URL(url);
+  const subredditRegex = /\/r\/(.*)\//i;
+  const postidRegex = /\/comments\/(.*)\/(.*)?\//i;
+  const subredditMatches = subredditRegex.exec(u.pathname);
+  const postidMatches = postidRegex.exec(u.pathname);
+
+  const ret = {
+    subreddit: '',
+    post: '',
+    post_slug: '',
+  };
+  if (subredditMatches) {
+    ret.subreddit = subredditMatches[1];
+  }
+  if (postidMatches) {
+    ret.post = postidMatches[1];
+    ret.post_slug = postidMatches[2];
+  }
+
+  return ret;
+};
+
+export {
+  extractUrls,
+  fetchHtmlFromUrl,
+  parseTextFromUrl,
+  splitText,
+  isAmazonDomain,
+  extractAmazonAsin,
+  isRedditDomain,
+  breakdownRedditUrl,
+};

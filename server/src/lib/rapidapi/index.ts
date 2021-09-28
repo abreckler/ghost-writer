@@ -48,6 +48,14 @@ import {
   ZombieBestASINResponse,
 } from './amazon-products';
 
+import {
+  SocialgrepApiClient,
+  SocialgrepPostSearchRequest,
+  SocialgrepCommentSearchRequest,
+  SocialgrepQueryParams,
+  SocialgrepSearchResponse,
+} from './socialgrep';
+
 //
 // Export
 //
@@ -89,4 +97,10 @@ export {
   ZombieBestAmazonProductDetailResponse,
   ZombieBestASINRequest,
   ZombieBestASINResponse,
+  // Socialgrep
+  SocialgrepApiClient,
+  SocialgrepPostSearchRequest,
+  SocialgrepCommentSearchRequest,
+  SocialgrepQueryParams,
+  SocialgrepSearchResponse,
 };

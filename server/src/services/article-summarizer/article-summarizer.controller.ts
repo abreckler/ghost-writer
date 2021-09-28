@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { summarizerText, summarizerUrl } from '../../lib/composites';
+import { isRedditDomain } from '../../lib/utils';
+import { paragraphForReddit } from '../article-generator/article-generator.service';
 
 interface SummarizeArticleRequest {
   // basic params
@@ -22,6 +24,13 @@ interface SummarizeArticleResponse {
 const summarizeArticle = async (req: Request, res: Response, next: NextFunction): Promise<Response | void> => {
   try {
     const params = req.body as SummarizeArticleRequest;
+
+    if (params.url && isRedditDomain(params.url)) {
+      // for reddit url, we will extract post/comments and summarize them.
+      const redditText = await paragraphForReddit(params.url, { rewrite: false });
+      params.text = redditText?.generated.text;
+      params.url = undefined;
+    }
 
     if (params.url) {
       if (params.api === 'openai') {

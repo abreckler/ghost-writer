@@ -6,8 +6,9 @@ import {
   ArticleParagraph,
   paragraphForAmazonProduct,
   paragraphForGeneralPages2,
+  paragraphForReddit,
 } from './article-generator.service';
-import { isAmazonDomain } from '../../lib/utils';
+import { isAmazonDomain, isRedditDomain } from '../../lib/utils';
 import { paraphraser } from '../../lib/composites';
 import { config } from 'winston';
 
@@ -110,6 +111,8 @@ const writeProductsReviewArticle = async (
         let p: ArticleParagraph | null = null;
         if (isAmazonDomain(url)) {
           p = await paragraphForAmazonProduct(url, { rewrite: configs.rewrite });
+        } else if (isRedditDomain(url)) {
+          p = await paragraphForReddit(url, { rewrite: configs.rewrite });
         } else if (otherShoppingDomains.indexOf(internalHostname) >= 0) {
           p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
         } else {

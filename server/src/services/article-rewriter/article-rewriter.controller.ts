@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { paraphraser } from '../../lib/composites';
-import { isAmazonDomain, parseTextFromUrl, splitText } from '../../lib/utils';
-import { paragraphForAmazonProduct } from '../article-generator/article-generator.service';
+import { isAmazonDomain, parseTextFromUrl, splitText, isRedditDomain } from '../../lib/utils';
+import { paragraphForAmazonProduct, paragraphForReddit } from '../article-generator/article-generator.service';
 
 interface RewriteArticleRequest {
   text?: string;
@@ -22,6 +22,16 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction): 
     if (params.url && isAmazonDomain(params.url)) {
       // Amazon Product URL
       const para = await paragraphForAmazonProduct(params.url, { includeTitle: true, rewrite: params.rewrite });
+      res.status(200).json({
+        language: 'en',
+        rewrite: para?.generated?.text,
+        url: params.url,
+        text: (para?.source?.title ? para?.source?.title + '\n\n\n' : '') + para?.source?.description,
+      });
+      return;
+    } else if (params.url && isRedditDomain(params.url)) {
+      // Reddit URL
+      const para = await paragraphForReddit(params.url, { includeTitle: true, rewrite: params.rewrite });
       res.status(200).json({
         language: 'en',
         rewrite: para?.generated?.text,
