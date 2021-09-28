@@ -52,9 +52,40 @@ interface SocialgrepCommentSearchRequest {
   after?: string;
 }
 
-interface SocialgrepSearchResponse {
-  data?: [];
-  query?: string;
+interface SocialgrepSearchResponsePostItem {
+  type?: string; // post
+  id?: string;
+  subreddit?: {
+    id?: string;
+    name?: string;
+    nsfw?: boolean;
+  };
+  created_utc?: number;
+  permalink?: string;
+  domain?: string; // @see site_name param of query
+  title?: string;
+  selftext?: string;
+  url?: string | null;
+  score?: number;
+}
+
+interface SocialgrepSearchResponseCommentItem {
+  type?: string; // comment
+  id?: string;
+  subreddit?: {
+    id?: string;
+    name?: string;
+    nsfw?: boolean;
+  };
+  created_utc?: number;
+  permalink?: string;
+  body?: string;
+  sentiment?: number;
+}
+
+interface SocialgrepSearchResponse<T> {
+  data?: Array<T>;
+  query?: string; // query param used for this search
   sort_key?: Array<number>;
 }
 
@@ -63,20 +94,30 @@ class SocialgrepApiClient extends RapidApiClient {
     super(API_KEY, 'socialgrep.p.rapidapi.com', 'https://socialgrep.p.rapidapi.com/');
   }
 
-  public async postSearch(q: SocialgrepQueryParams): Promise<SocialgrepSearchResponse> {
+  public async postSearch(
+    q: SocialgrepQueryParams,
+  ): Promise<SocialgrepSearchResponse<SocialgrepSearchResponsePostItem>> {
     const params = {
       query: q.toRequestQueryParam(),
     } as SocialgrepPostSearchRequest;
 
-    return await this._doPostJson<SocialgrepPostSearchRequest, SocialgrepSearchResponse>('/search/posts', params);
+    return await this._doPostJson<
+      SocialgrepPostSearchRequest,
+      SocialgrepSearchResponse<SocialgrepSearchResponsePostItem>
+    >('/search/posts', params);
   }
 
-  public async commentSearch(q: SocialgrepQueryParams): Promise<SocialgrepSearchResponse> {
+  public async commentSearch(
+    q: SocialgrepQueryParams,
+  ): Promise<SocialgrepSearchResponse<SocialgrepSearchResponseCommentItem>> {
     const params = {
       query: q.toRequestQueryParam(),
     } as SocialgrepCommentSearchRequest;
 
-    return await this._doPostJson<SocialgrepCommentSearchRequest, SocialgrepSearchResponse>('/search/comments', params);
+    return await this._doPostJson<
+      SocialgrepCommentSearchRequest,
+      SocialgrepSearchResponse<SocialgrepSearchResponseCommentItem>
+    >('/search/comments', params);
   }
 }
 

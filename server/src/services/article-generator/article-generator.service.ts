@@ -353,10 +353,12 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
     if (redditUrlParts.post) {
       socialgrepParam.post = redditUrlParts.post;
     }
+
+    // extract comments for the post, and use the comments as a source text.
     const socialgrepResponse = await socialgrepApiClient.commentSearch(socialgrepParam);
     extractedText = (socialgrepResponse.data || [])
       .map(function (d) {
-        return '' + d;
+        return '' + d.body;
       })
       .join('\n\n');
   } catch (e) {
