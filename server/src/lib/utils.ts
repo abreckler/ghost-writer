@@ -331,8 +331,8 @@ const isRedditDomain = (url: string): boolean => {
 
 const breakdownRedditUrl = (url: string): { subreddit?: string; post?: string; post_slug?: string } => {
   const u = new URL(url);
-  const subredditRegex = /\/r\/(.*)\//i;
-  const postidRegex = /\/comments\/(.*)\/(.*)?\//i;
+  const subredditRegex = /\/r\/([^/]*)\//i;
+  const postidRegex = /\/comments\/([^/]*)\/(.*)?\//i;
   const subredditMatches = subredditRegex.exec(u.pathname);
   const postidMatches = postidRegex.exec(u.pathname);
 
