@@ -324,9 +324,9 @@ const extractAmazonAsin = (url: string): string | null => {
 };
 
 const isRedditDomain = (url: string): boolean => {
-  const redditDomains = ['reddit.com'];
+  const redditDomains = /(.+\.)?reddit\.com$/i;
   const internalHostname = new URL(url).hostname;
-  return redditDomains.indexOf(internalHostname) >= 0;
+  return redditDomains.test(internalHostname);
 };
 
 const breakdownRedditUrl = (url: string): { subreddit?: string; post?: string; post_slug?: string } => {
