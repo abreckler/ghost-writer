@@ -97,27 +97,15 @@ class SocialgrepApiClient extends RapidApiClient {
   public async postSearch(
     q: SocialgrepQueryParams,
   ): Promise<SocialgrepSearchResponse<SocialgrepSearchResponsePostItem>> {
-    const params = {
-      query: q.toRequestQueryParam(),
-    } as SocialgrepPostSearchRequest;
-
-    return await this._doPostJson<
-      SocialgrepPostSearchRequest,
-      SocialgrepSearchResponse<SocialgrepSearchResponsePostItem>
-    >('/search/posts', params);
+    const url = '/search/posts?query=' + encodeURIComponent(q.toRequestQueryParam());
+    return await this._doGet<SocialgrepSearchResponse<SocialgrepSearchResponsePostItem>>(url);
   }
 
   public async commentSearch(
     q: SocialgrepQueryParams,
   ): Promise<SocialgrepSearchResponse<SocialgrepSearchResponseCommentItem>> {
-    const params = {
-      query: q.toRequestQueryParam(),
-    } as SocialgrepCommentSearchRequest;
-
-    return await this._doPostJson<
-      SocialgrepCommentSearchRequest,
-      SocialgrepSearchResponse<SocialgrepSearchResponseCommentItem>
-    >('/search/comments', params);
+    const url = '/search/comments?query=' + encodeURIComponent(q.toRequestQueryParam());
+    return await this._doGet<SocialgrepSearchResponse<SocialgrepSearchResponseCommentItem>>(url);
   }
 }
 
