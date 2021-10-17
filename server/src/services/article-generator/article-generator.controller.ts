@@ -167,7 +167,7 @@ const writeArticleByKeywords = async (
 
     searchResults.forEach((value, index, array) => {
       if (value.status == 'success') {
-        result.generated_article += '\n\n' + value.generated_article;
+        result.generated_article += (result.generated_article ? '\n\n' : '') + value.generated_article;
       }
       else if(value.error) {
         result.error = result.error.concat(value.error);
