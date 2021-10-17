@@ -1,3 +1,4 @@
+import { GoogleSearchParameters } from 'google-search-results-nodejs';
 import { paraphraser, summarizerText } from '../../lib/composites';
 import {
   SocialgrepApiClient,
@@ -5,17 +6,21 @@ import {
   ZackproserUrlIntelligenceApiClient,
   ZombieBestAmazonProductsApiClient,
 } from '../../lib/rapidapi';
-import { breakdownRedditUrl, extractAmazonAsin, extractUrls, parseTextFromUrl } from '../../lib/utils';
+import { GoogleSearchAsync } from '../../lib/serpapi-async';
+import { breakdownRedditUrl, extractAmazonAsin, extractUrls, isAmazonDomain, isRedditDomain, parseTextFromUrl } from '../../lib/utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
+const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
+
 interface ArticleGeneratorConfigs {
   // SERP API params
   numSerpResults: number;
   numOutboundLinksPerSerpResult: number;
   serpGoogleTbsQdr?: string; // 'y' | 'm' | 'w' | 'd' | 'h',
   serpGoogleTbsSbd?: string; // '1' | '0', sort by date ?
-  serpGoogleTbs?: string;
-  serpGoogleTbm?: 'isch' | 'vid' | 'nws' | 'shop';
+  serpGoogleTbs?: string; // (to be searched) parameter defines advanced search parameters that aren't possible in the regular query field.
+                          // (e.g., advanced search for patents, dates, news, videos, images, apps, or text contents).
+  serpGoogleTbm?: 'isch' | 'vid' | 'nws' | 'shop'; // (to be matched) parameter defines the type of search you want to do.
   //
   outputFormat: string;
   rewrite?: boolean;
@@ -357,7 +362,7 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
     // extract comments for the post, and use the comments as a source text.
     const socialgrepResponse = await socialgrepApiClient.commentSearch(socialgrepParam);
     extractedText = (socialgrepResponse.data || [])
-      .map(function (d) {
+      .map(d => {
         return '' + d.body;
       })
       .join('\n\n');
@@ -368,10 +373,10 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
 
   const extractedTitle = (redditUrlParts.post_slug || '')
     .replace(/_/g, ' ')
-    .replace(/\s(.)/g, function ($1) {
+    .replace(/\s(.)/g, $1 => {
       return $1.toUpperCase();
     })
-    .replace(/^(.)/, function ($1) {
+    .replace(/^(.)/, $1 => {
       return $1.toUpperCase();
     });
 
@@ -401,6 +406,208 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
   } as ArticleParagraph;
 };
 
+/**
+ * Generate paragraph from top n (3, by default) post (search on
+ * google by restricting site, "site:reddit.com"),
+ * 
+ * @param keyword {string}
+ */
+const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConfigs) => {
+  const otherShoppingDomains = ['www.etsy.com', 'www.target.com', 'www.walmart.com', 'www.ebay.com'];
+  const error : Array<string> = [];
+
+  if (keyword.length < 5) {
+    error.push('"seed_text" param\'s length must be longer.');
+    return {
+      status: 'error',
+      generated_article: '',
+      error: error,
+    };
+  }
+
+  try {
+    // call serpapi to get google search result with the seed text
+    const search = new GoogleSearchAsync(SERPAPI_API_KEY);
+
+    const searchParams = {
+      engine: 'google',
+      q: keyword,
+      google_domain: 'google.com',
+      gl: 'us',
+      hl: 'en',
+    } as GoogleSearchParameters;
+    if (configs.serpGoogleTbm) {
+      searchParams.tbm = configs.serpGoogleTbm;
+    }
+    if (configs.serpGoogleTbs) {
+      searchParams.tbs = configs.serpGoogleTbs;
+    }
+
+    const searchResult = await search.json_async(searchParams);
+    console.debug('Google Search Request for SerpAPI', searchParams);
+    console.debug(`Google Search Result from SerpAPI: ${(searchResult.organic_results || []).length} results`);
+
+    const paragraphs: Array<ArticleParagraph> = [];
+
+    const paragraphFromSingleUrl = async (url: string) => {
+      try {
+        const internalHostname = new URL(url).hostname;
+        let p: ArticleParagraph | null = null;
+        if (isAmazonDomain(url)) {
+          p = await paragraphForAmazonProduct(url, { rewrite: configs.rewrite });
+        } else if (isRedditDomain(url)) {
+          p = await paragraphForReddit(url, { rewrite: configs.rewrite });
+        } else if (otherShoppingDomains.indexOf(internalHostname) >= 0) {
+          p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
+        } else {
+          p = await paragraphForGeneralPages2(url, { rewrite: configs.rewrite });
+        }
+
+        if (p) {
+          if (p.external_links.length > configs.numOutboundLinksPerSerpResult) {
+            p.external_links = p.external_links.slice(0, configs.numOutboundLinksPerSerpResult);
+          }
+          paragraphs.push(p);
+        }
+      } catch {
+        console.error(`Fail to fetch paragraph for URL: ${url}`);
+      }
+    };
+
+    const paragraphFetchPromises = [];
+    for (let i = 0; i < (searchResult.organic_results || []).length && i < configs.numSerpResults; i++) {
+      // article extraction and summarization
+      const r = (searchResult.organic_results || [])[i];
+      const url = r.link || '';
+      if (url) {
+        paragraphFetchPromises.push(paragraphFromSingleUrl(url));
+      } else {
+        // invalid url, skip processing
+        console.debug('No valid url is found from search result, skip processing', r);
+        continue;
+      }
+    }
+
+    await Promise.all(paragraphFetchPromises);
+
+    // Title generation from seed text
+    let generatedTitle;
+    if (configs.rewrite === false) {
+      generatedTitle = keyword;
+    } else {
+      generatedTitle = await paraphraser(keyword.replace(/(site:[^\s]+)/g, '').trim());
+    }
+
+    // Merge paragraphs to generate full article
+    let text = '';
+    if (configs.outputFormat === 'text') {
+      text =
+        (generatedTitle ? generatedTitle + '\n\n' : '') +
+        paragraphs
+          .map((a) => {
+            return (
+              (a.generated.title ? a.generated?.title + '\n' : '') +
+              a.generated?.text +
+              '\n' +
+              (a.external_links && a.external_links.length > 0
+                ? `Found ${a.external_links.length} Link(s) in total\n` +
+                  a.external_links.map((l) => '  • ' + l).join('\n') +
+                  '\n'
+                : '') +
+              (a.source_url ? `[Source: ${a.source_url}]\n` : '') +
+              (a.source.tags && a.source.tags.length > 0 ? 'Tags: ' + a.source.tags?.join(',') + '\n' : '')
+            );
+          })
+          .join('\n') +
+        '\n' +
+        (searchResult.related_searches && searchResult.related_searches.length > 0
+          ? 'Related searches:\n' + searchResult.related_searches.map((s) => '  - ' + s.query).join('\n') + '\n\n'
+          : '') +
+        (searchResult.related_questions && searchResult.related_questions.length > 0
+          ? 'Related questions:\n' + searchResult.related_questions.map((q) => '  - ' + q.question).join('\n') + '\n'
+          : '');
+    } else if (configs.outputFormat === 'markdown') {
+      text =
+        (generatedTitle ? `# ${generatedTitle}  \n\n` : '') +
+        paragraphs
+          .map((a) => {
+            return (
+              (a.generated.title ? `### ${a.generated.title}\n` : '') +
+              a.generated?.text?.replace('\n', '  \n') +
+              '  \n' +
+              (a.external_links && a.external_links.length > 0
+                ? `Found ${a.external_links.length} Link(s) in total\n` +
+                  a.external_links.map((l) => `  * [${l}](${l})`).join('\n') +
+                  '  \n'
+                : '') +
+              (a.source_url ? `[Source](${a.source_url})  \n` : '') +
+              (a.source.tags && a.source.tags.length > 0 ? 'Tags: ' + a.source.tags?.join(',') + '  \n' : '')
+            );
+          })
+          .join('  \n') +
+        '  \n' +
+        (searchResult.related_searches && searchResult.related_searches.length > 0
+          ? 'Related searches:  \n\n' + searchResult.related_searches.map((s) => '* ' + s.query).join('\n') + '  \n\n'
+          : '') +
+        (searchResult.related_questions && searchResult.related_questions.length > 0
+          ? 'Related questions:  \n\n' +
+            searchResult.related_questions.map((q) => '* ' + q.question).join('\n') +
+            '  \n\n'
+          : '');
+    } else if (configs.outputFormat === 'html') {
+      text =
+        (generatedTitle ? `<h1>${generatedTitle}</h1>\n` : '') +
+        paragraphs
+          .map((a) => {
+            return (
+              (a.generated.title ? `<h3>${a.generated?.title}</h3>\n` : '') +
+              '<p>' +
+              a.generated?.text?.replace('\n', '<br/>') +
+              '</p>\n' +
+              (a.external_links && a.external_links.length > 0
+                ? `<p>Found ${a.external_links.length} Link(s) in total\n` +
+                  '<ul>' +
+                  a.external_links.map((l) => `<li><a href="${l}">${l}</a></li>`).join('') +
+                  '</ul></p><br/>\n'
+                : '') +
+              (a.source_url ? `<p><a href="${a.source_url}">Source</a></p>\n` : '') +
+              (a.source.tags && a.source.tags.length > 0 ? '<p>Tags: ' + a.source.tags?.join(',') + '</p>\n' : '')
+            );
+          })
+          .join('<br/>\n') +
+        '<br/>' +
+        (searchResult.related_searches && searchResult.related_searches.length > 0
+          ? '<p>Related searches:\n' +
+            '<ul>' +
+            searchResult.related_searches.map((s) => '<li>' + s.query + '</li>').join('\n') +
+            '</ul></p><br/><br/>\n'
+          : '') +
+        (searchResult.related_questions && searchResult.related_questions.length > 0
+          ? '<p>Related questions:\n' +
+            '<ul>' +
+            searchResult.related_questions.map((q) => '<li>' + q.question + '</li>').join('\n') +
+            '</ul></p><br/><br/>\n'
+          : '');
+    }
+
+    return {
+      status: 'success',
+      generated_article: text,
+      error: error,
+      // 'related_searches' : searchResult.related_searches?.map(rs => rs.query),
+      // 'related_queries' : searchResult.related_questions?.map(rq => rq.question),
+    };
+  } catch (err) {
+    return {
+      status: 'error',
+      generated_article: null,
+      error: [ '' + err ] ,
+      // 'related_searches' : searchResult.related_searches?.map(rs => rs.query),
+      // 'related_queries' : searchResult.related_questions?.map(rq => rq.question),
+    };
+  }
+};
+
 export {
   ArticleGeneratorConfigs,
   ArticleParagraph,
@@ -408,4 +615,5 @@ export {
   paragraphForGeneralPages1,
   paragraphForGeneralPages2,
   paragraphForReddit,
+  paragraphByKeyword,
 };
