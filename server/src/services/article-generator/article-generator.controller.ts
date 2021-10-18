@@ -113,7 +113,7 @@ const writeArticleByKeywords = async (
     serpGoogleTbsSbd: req.body.serp_google_tbs_sbd || undefined,
     serpGoogleTbs: req.body.serp_google_tbs || undefined,
     serpGoogleTbm: req.body.serp_google_tbm || undefined,
-    outputFormat: req.body.output_format || 'text',
+    outputFormat: req.body.output_format || 'markdown',
     rewrite: req.body.rewrite === false ? false : true, // rewrite param's default value is true
   } as ArticleGeneratorConfigs;
 

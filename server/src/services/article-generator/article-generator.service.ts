@@ -386,7 +386,8 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
     rephrased = extractedText;
   } else {
     rephrasedTitle = await paraphraser(extractedTitle);
-    rephrased = await paraphraser(extractedText);
+    const summarized = await summarizerText(extractedText);
+    rephrased = summarized?.summary || summarized?.snippets?.join(' ');
     if (!rephrased) return null;
   }
 
