@@ -115,6 +115,8 @@ const writeArticleByKeywords = async (
     serpGoogleTbm: req.body.serp_google_tbm || undefined,
     outputFormat: req.body.output_format || 'markdown',
     rewrite: req.body.rewrite === false ? false : true, // rewrite param's default value is true
+    appendRelatedSearches: false,
+    appendRelatedQuestions: false,
   } as ArticleGeneratorConfigs;
 
   if (!Array.isArray(keywords) || keywords.length <= 0) {

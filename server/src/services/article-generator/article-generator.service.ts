@@ -22,6 +22,9 @@ interface ArticleGeneratorConfigs {
                           // (e.g., advanced search for patents, dates, news, videos, images, apps, or text contents).
   serpGoogleTbm?: 'isch' | 'vid' | 'nws' | 'shop'; // (to be matched) parameter defines the type of search you want to do.
   //
+  appendRelatedSearches?: boolean;
+  appendRelatedQuestions?: boolean;
+  //
   outputFormat: string;
   rewrite?: boolean;
 }
@@ -508,8 +511,7 @@ const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConf
           .map((a) => {
             return (
               (a.generated.title ? a.generated?.title + '\n' : '') +
-              a.generated?.text +
-              '\n' +
+              a.generated?.text + '\n' +
               (a.external_links && a.external_links.length > 0
                 ? `Found ${a.external_links.length} Link(s) in total\n` +
                   a.external_links.map((l) => '  • ' + l).join('\n') +
@@ -519,14 +521,14 @@ const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConf
               (a.source.tags && a.source.tags.length > 0 ? 'Tags: ' + a.source.tags?.join(',') + '\n' : '')
             );
           })
-          .join('\n') +
-        '\n' +
-        (searchResult.related_searches && searchResult.related_searches.length > 0
-          ? 'Related searches:\n' + searchResult.related_searches.map((s) => '  - ' + s.query).join('\n') + '\n\n'
-          : '') +
-        (searchResult.related_questions && searchResult.related_questions.length > 0
-          ? 'Related questions:\n' + searchResult.related_questions.map((q) => '  - ' + q.question).join('\n') + '\n'
-          : '');
+          .join('\n') + '\n';
+
+      if (configs.appendRelatedSearches !== false && searchResult.related_searches && searchResult.related_searches.length > 0) {
+        text = text + '\nRelated searches:\n' + searchResult.related_searches.map((s) => '  - ' + s.query).join('\n'); + '\n';
+      }
+      if (configs.appendRelatedQuestions !== false && searchResult.related_questions && searchResult.related_questions.length > 0) {
+        text = text + '\nRelated questions:\n' + searchResult.related_questions.map((q) => '  - ' + q.question).join('\n') + '\n';
+      }
     } else if (configs.outputFormat === 'markdown') {
       text =
         (generatedTitle ? `# ${generatedTitle}  \n\n` : '') +
@@ -534,8 +536,7 @@ const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConf
           .map((a) => {
             return (
               (a.generated.title ? `### ${a.generated.title}\n` : '') +
-              a.generated?.text?.replace('\n', '  \n') +
-              '  \n' +
+              a.generated?.text?.replace('\n', '  \n') + '  \n' +
               (a.external_links && a.external_links.length > 0
                 ? `Found ${a.external_links.length} Link(s) in total\n` +
                   a.external_links.map((l) => `  * [${l}](${l})`).join('\n') +
@@ -545,16 +546,14 @@ const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConf
               (a.source.tags && a.source.tags.length > 0 ? 'Tags: ' + a.source.tags?.join(',') + '  \n' : '')
             );
           })
-          .join('  \n') +
-        '  \n' +
-        (searchResult.related_searches && searchResult.related_searches.length > 0
-          ? 'Related searches:  \n\n' + searchResult.related_searches.map((s) => '* ' + s.query).join('\n') + '  \n\n'
-          : '') +
-        (searchResult.related_questions && searchResult.related_questions.length > 0
-          ? 'Related questions:  \n\n' +
-            searchResult.related_questions.map((q) => '* ' + q.question).join('\n') +
-            '  \n\n'
-          : '');
+          .join('  \n') + '  \n';
+      
+      if (configs.appendRelatedSearches !== false && searchResult.related_searches && searchResult.related_searches.length > 0) {
+        text = text + '  \nRelated searches:  \n' + searchResult.related_searches.map((s) => '* ' + s.query).join('\n'); + '  \n';
+      }
+      if (configs.appendRelatedQuestions !== false && searchResult.related_questions && searchResult.related_questions.length > 0) {
+        text = text + '  \nRelated questions:  \n' + searchResult.related_questions.map((q) => '* ' + q.question).join('\n') + '  \n';
+      }
     } else if (configs.outputFormat === 'html') {
       text =
         (generatedTitle ? `<h1>${generatedTitle}</h1>\n` : '') +
@@ -562,9 +561,7 @@ const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConf
           .map((a) => {
             return (
               (a.generated.title ? `<h3>${a.generated?.title}</h3>\n` : '') +
-              '<p>' +
-              a.generated?.text?.replace('\n', '<br/>') +
-              '</p>\n' +
+              '<p>' + a.generated?.text?.replace('\n', '<br/>') + '</p>\n' +
               (a.external_links && a.external_links.length > 0
                 ? `<p>Found ${a.external_links.length} Link(s) in total\n` +
                   '<ul>' +
@@ -575,20 +572,18 @@ const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConf
               (a.source.tags && a.source.tags.length > 0 ? '<p>Tags: ' + a.source.tags?.join(',') + '</p>\n' : '')
             );
           })
-          .join('<br/>\n') +
-        '<br/>' +
-        (searchResult.related_searches && searchResult.related_searches.length > 0
-          ? '<p>Related searches:\n' +
-            '<ul>' +
-            searchResult.related_searches.map((s) => '<li>' + s.query + '</li>').join('\n') +
-            '</ul></p><br/><br/>\n'
-          : '') +
-        (searchResult.related_questions && searchResult.related_questions.length > 0
-          ? '<p>Related questions:\n' +
-            '<ul>' +
-            searchResult.related_questions.map((q) => '<li>' + q.question + '</li>').join('\n') +
-            '</ul></p><br/><br/>\n'
-          : '');
+          .join('<br/>\n') + '\n';
+
+      if (configs.appendRelatedSearches !== false && searchResult.related_searches && searchResult.related_searches.length > 0) {
+        text = text + '<br/><p>Related searches:\n'+
+            '<ul>' + searchResult.related_searches.map((s) => '<li>' + s.query + '</li>').join('\n') + '</ul>' +
+            '</p><br/>\n';
+      }
+      if (configs.appendRelatedQuestions !== false && searchResult.related_questions && searchResult.related_questions.length > 0) {
+        text = text + '<br/><p>Related questions:\n' +
+            '<ul>' + searchResult.related_questions.map((q) => '<li>' + q.question + '</li>').join('\n') + '</ul>' +
+            '</p><br/>\n';
+      }
     }
 
     return {
