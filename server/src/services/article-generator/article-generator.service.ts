@@ -282,13 +282,13 @@ const paragraphForGeneralPages2 = async (
   const externalLinksFilter = externalLinksFilterFactory(internalHostname);
   let externalLinks = extractedUrls.links.filter(externalLinksFilter);
   if (externalLinks.length > 0) {
-    console.debug('URL Extraction Result for ' + url, extractedUrls);
+    console.error('URL Extraction Result for ' + url, extractedUrls);
   } else {
     // if simple extraction failed, use url-intelligence api to fetch more detailed site analysis result
     const urlExtractorClient = new ZackproserUrlIntelligenceApiClient(RAPIDAPI_API_KEY);
     try {
       const urlIntellResponse = await urlExtractorClient.rip(url);
-      console.debug(
+      console.error(
         `URL Intelligence API Result for ${url} : ${urlIntellResponse.hostnames.size} host names and ${
           (urlIntellResponse.links || []).length
         } links`,
@@ -299,17 +299,17 @@ const paragraphForGeneralPages2 = async (
     }
   }
   if (externalLinks.length == 0) {
-    console.debug('could not find valid external links. yet include it in the result.', url);
+    console.error('could not find valid external links. yet include it in the result.', url);
   }
 
   let extractedText = '';
   try {
     const keySentencesResponse = await summarizerText(extractorResponse.text);
-    if (!keySentencesResponse?.snippets || keySentencesResponse.snippets.length == 0) {
-      console.debug('Text Summarizer API returned invalid response, skip further processing.', url);
+    if (!keySentencesResponse?.summary && (!keySentencesResponse?.snippets || keySentencesResponse.snippets.length == 0)) {
+      console.error('Text Summarizer API returned invalid response, skip further processing.', url);
       return null;
     }
-    extractedText = keySentencesResponse?.snippets.join(' ');
+    extractedText = keySentencesResponse?.summary || keySentencesResponse?.snippets?.join(' ') || '';
   } catch (e) {
     // The Text summarizer API's availability doesn't look good.
     // Let's use article extractor/summarizer as a fallback
