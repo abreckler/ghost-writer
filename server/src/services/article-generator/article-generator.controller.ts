@@ -94,9 +94,11 @@ const writeProductsReviewArticle = async (
  * for the given keyword , e.g: site:reddit.com best greek islands
  * 
  * @param req.body.keywords {string[]}
+ * @param req.body.site {string} - limit site, like reddit.com
  * @param req.body.output_format {'text'|'markdown'|'html'}
  * @param req.body.num_serp_results {number?} - DEFAULT 3.
  * @param req.body.num_outbound_links_per_serp_result {number?} - DEFAULT 3.
+ * @param req.body.serp_google_tbs_qdr {'y' | 'm' | 'w' | 'd' | 'h'}
  * @param req.body.rewrite {boolean?} - DEFAULT true.
  */
 const writeArticleByKeywords = async (
@@ -105,11 +107,12 @@ const writeArticleByKeywords = async (
   next: NextFunction,
 ): Promise<Response | void> => {
   const keywords = req.body.keywords || [];
+  const site = req.body.site;
   const error = [];
   const configs = {
     numSerpResults: req.body.num_serp_results || 3,
     numOutboundLinksPerSerpResult: req.body.num_outbound_links_per_serp_result || 3,
-    serpGoogleTbsQdr: req.body.serp_google_tbs_qdr || 'm',
+    serpGoogleTbsQdr: req.body.serp_google_tbs_qdr || undefined,
     serpGoogleTbsSbd: req.body.serp_google_tbs_sbd || undefined,
     serpGoogleTbs: req.body.serp_google_tbs || undefined,
     serpGoogleTbm: req.body.serp_google_tbm || undefined,
@@ -153,7 +156,7 @@ const writeArticleByKeywords = async (
   try {
     const generatorPromises : Array<Promise<any>> = [];
     keywords.forEach((k: string) => {
-      generatorPromises.push(paragraphByKeyword('site:reddit.com ' + k, configs));
+      generatorPromises.push(paragraphByKeyword((site ? `site:${site} ` : '') + k, configs));
     });
 
     const searchResults = await Promise.all(generatorPromises);
