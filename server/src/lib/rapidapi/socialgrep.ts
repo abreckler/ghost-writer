@@ -81,6 +81,7 @@ interface SocialgrepSearchResponseCommentItem {
   permalink?: string;
   body?: string;
   sentiment?: number;
+  score?: number
 }
 
 interface SocialgrepSearchResponse<T> {

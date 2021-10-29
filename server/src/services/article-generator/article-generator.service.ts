@@ -355,6 +355,7 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
   let extractedText = '';
   try {
     const socialgrepParam = new SocialgrepQueryParams();
+    socialgrepParam.score = 3; // search comments with minimum 3 score
     if (redditUrlParts.subreddit) {
       socialgrepParam.subreddit = redditUrlParts.subreddit;
     }
@@ -364,11 +365,16 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
 
     // extract comments for the post, and use the comments as a source text.
     const socialgrepResponse = await socialgrepApiClient.commentSearch(socialgrepParam);
-    extractedText = (socialgrepResponse.data || [])
-      .map(d => {
-        return '' + d.body;
-      })
-      .join('\n\n');
+    // sort response by score in a descending order
+    socialgrepResponse.data = (socialgrepResponse.data || []).sort((a, b) => {
+      if (a.score == b.score)
+        return 0;
+      else if (a.score && a.score > (b.score || 0))
+        return -1;
+      else
+        return 1;
+    });
+    extractedText = (socialgrepResponse.data || []).map(d => '' + d.body).join('\n');
   } catch (e) {
     console.error('Reddit API failed with error, skip further processing.', e);
     return null;
