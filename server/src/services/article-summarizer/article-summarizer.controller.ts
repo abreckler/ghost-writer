@@ -33,23 +33,15 @@ const summarizeArticle = async (req: Request, res: Response, next: NextFunction)
     }
 
     if (params.url) {
-      if (params.api === 'openai') {
-        //
-      } else {
-        const summarizerResponse = await summarizerUrl(params.url, null, params.api);
-        res.status(200).json({
-          summary: summarizerResponse?.summary || (summarizerResponse?.snippets || []).join(' ').trim(),
-        } as SummarizeArticleResponse);
-      }
+      const summarizerResponse = await summarizerUrl(params.url, null, params.api);
+      res.status(200).json({
+        summary: summarizerResponse?.summary || (summarizerResponse?.snippets || []).join(' ').trim(),
+      } as SummarizeArticleResponse);
     } else if (params.text) {
-      if (params.api === 'openai') {
-        //
-      } else {
-        const summarizerResponse = await summarizerText(params.text, null, params.api);
-        res.status(200).json({
-          summary: summarizerResponse?.summary || (summarizerResponse?.snippets || []).join(' ').trim(),
-        } as SummarizeArticleResponse);
-      }
+      const summarizerResponse = await summarizerText(params.text, null, params.api);
+      res.status(200).json({
+        summary: summarizerResponse?.summary || (summarizerResponse?.snippets || []).join(' ').trim(),
+      } as SummarizeArticleResponse);
     }
   } catch (err) {
     console.error('Text Summarizer failed with error', err);

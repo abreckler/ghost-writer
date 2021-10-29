@@ -1,11 +1,14 @@
+import { CompletionParams, EngineID, OpenAiApiClient } from './openai';
 import {
   HealthyTechParaphraserApiClient,
   SmodinRewriterApiClient,
   TextAnalysisTextSummarizationApiClient,
   TextMonkeySummarizerApiClient,
 } from './rapidapi';
+import { parseTextFromUrl } from './utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
 const paraphraser = async (
   text: string,
@@ -27,6 +30,7 @@ const paraphraser = async (
         console.error('RapidAPI - Rephraser API Failure: ', e);
         return null;
       }
+
     case 'smodin':
       try {
         const rephraserClient = new SmodinRewriterApiClient(RAPIDAPI_API_KEY);
@@ -54,7 +58,7 @@ const paraphraser = async (
 const summarizerText = async (
   text: string,
   options: { sentnum?: number } | null = null,
-  apiName: 'textanalysis' | 'text-monkey' = 'textanalysis',
+  apiName: 'textanalysis' | 'text-monkey' | 'openai' = 'textanalysis',
 ): Promise<{ snippets?: Array<string>; summary?: string } | null> => {
   switch (apiName) {
     case 'textanalysis':
@@ -74,6 +78,7 @@ const summarizerText = async (
         console.error('RapidAPI - Summarizer API Failure: ', e);
         return null;
       }
+
     case 'text-monkey':
       try {
         const summarizerClient = new TextMonkeySummarizerApiClient(RAPIDAPI_API_KEY);
@@ -91,13 +96,38 @@ const summarizerText = async (
         console.error('RapidAPI - Summarizer API Failure: ', e);
         return null;
       }
+
+    case 'openai':
+      try {
+        const params = { // basic summary
+          prompt: text + '\n\ntl;dr:',
+          stop: ['\n'],
+          n: 1,
+          temperature: 0.3,
+          max_tokens: Math.min(Math.ceil(text.length / 4), 1024), // summary/extracted text should not be longer than the original text
+        } as CompletionParams;
+        params.n = 1;
+        params.temperature = 0.3;
+
+        const client = new OpenAiApiClient(OPENAI_API_KEY, EngineID.Curie);
+        const response = await client.completion(params);
+
+        return {
+          snippets: [],
+          summary: response.choices[0]?.text
+        };
+      }
+      catch (e) {
+        console.error('Text Summarizer through GPT-3 failed with error', e);
+        return null;
+      }
   }
 };
 
 const summarizerUrl = async (
   url: string,
   options: { sentnum?: number } | null = null,
-  apiName: 'textanalysis' | 'text-monkey' = 'textanalysis',
+  apiName: 'textanalysis' | 'text-monkey' | 'openai' = 'textanalysis',
 ): Promise<{ snippets?: Array<string>; summary?: string } | null> => {
   switch (apiName) {
     case 'textanalysis':
@@ -137,6 +167,17 @@ const summarizerUrl = async (
         }
       } catch (e) {
         console.error('RapidAPI - Text Monkey Summarizer API Failure: ', e);
+        return null;
+      }
+
+    case 'openai':
+      try {
+        const text = await parseTextFromUrl(url);
+
+        return await summarizerText(text.text, null, "openai");
+      }
+      catch (e) {
+        console.error('URL Summarizer through GPT-3 failed with error', e);
         return null;
       }
   }
