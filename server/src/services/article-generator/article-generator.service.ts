@@ -389,7 +389,7 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
     rephrased = extractedText;
   } else {
     rephrasedTitle = await paraphraser(extractedTitle);
-    const summarized = await summarizerText(extractedText);
+    const summarized = await summarizerText(extractedText, null, 'openai');
     rephrased = summarized?.summary || summarized?.snippets?.join(' ');
     if (!rephrased) return null;
   }
