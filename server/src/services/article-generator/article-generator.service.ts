@@ -422,7 +422,7 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
  * 
  * @param keyword {string}
  */
-const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConfigs) => {
+const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConfigs, skipUrls: Array<string>=[]) => {
   const otherShoppingDomains = ['www.etsy.com', 'www.target.com', 'www.walmart.com', 'www.ebay.com'];
   const error : Array<string> = [];
 
@@ -489,7 +489,8 @@ const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConf
       // article extraction and summarization
       const r = (searchResult.organic_results || [])[i];
       const url = r.link || '';
-      if (url) {
+      if (url && !skipUrls.includes(url)) {
+        skipUrls.push(url);
         paragraphFetchPromises.push(paragraphFromSingleUrl(url));
       } else {
         // invalid url, skip processing

@@ -155,8 +155,9 @@ const writeArticleByKeywords = async (
 
   try {
     const generatorPromises : Array<Promise<any>> = [];
+    const usedUrls: Array<string> = [];
     keywords.forEach((k: string) => {
-      generatorPromises.push(paragraphByKeyword((site ? `site:${site} ` : '') + k, configs));
+      generatorPromises.push(paragraphByKeyword((site ? `site:${site} ` : '') + k, configs, usedUrls));
     });
 
     const searchResults = await Promise.all(generatorPromises);
