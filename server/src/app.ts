@@ -16,7 +16,7 @@ const app = express();
 app.set('port', process.env.PORT || 3000);
 
 app.use(express.json()).use(helmet()).use(cors(corsOptions));
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }))
 app.use(middleware.setAPIVersion);
 
 export default app;
