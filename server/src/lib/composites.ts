@@ -99,12 +99,19 @@ const summarizerText = async (
 
     case 'openai':
       try {
+        const max_tokens = 2048 - text.length / 4; // OpenAI supports up to 2048 token
+                        // per request ( prompt text + output text)
+                        // single token is approximately 4 English characters
+        if (max_tokens <= 0) {
+          logError('Text Summarizer through GPT-3 failed with error due to too long prompt text.', null);
+        }
+
         const params = { // basic summary
           prompt: text + '\n\ntl;dr:',
           stop: ['\n'],
           n: 1,
           temperature: 0.3,
-          max_tokens: Math.min(Math.ceil(text.length / 4), 1024), // summary/extracted text should not be longer than the original text
+          max_tokens: max_tokens, // summary/extracted text should not be longer than the original text
         } as CompletionParams;
         params.n = 1;
         params.temperature = 0.3;

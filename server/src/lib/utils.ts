@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 import { DomNode, FormatOptions, htmlToText, HtmlToTextOptions, RecursiveCallback } from 'html-to-text';
 import cheerio from 'cheerio';
 import { BlockTextBuilder } from 'html-to-text/lib/block-text-builder';
+import {Response} from 'express';
 
 /**
  * Extracts URL links and hostnames from a string
@@ -367,6 +368,16 @@ const logError = (message: string, err: any) => {
   }
 }
 
+const responseWithError = (res: Response, status_code: number, message: string, data?: any) => {
+  res.status(status_code).json({
+    'success': false,
+    'error' : {
+      'message': message,
+      ...data
+    }
+  })
+}
+
 export {
   extractUrls,
   fetchHtmlFromUrl,
@@ -377,4 +388,5 @@ export {
   isRedditDomain,
   breakdownRedditUrl,
   logError,
+  responseWithError,
 };

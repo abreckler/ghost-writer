@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { exit } from 'process';
 import {
   OpenAiApiClient,
   EngineID,
@@ -7,7 +8,7 @@ import {
   ClassificationParams,
   CreateAnswerParams,
 } from '../../lib/openai';
-import { logError } from '../../lib/utils';
+import { logError, responseWithError } from '../../lib/utils';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -36,6 +37,22 @@ const completion = async (req: Request, res: Response, next: NextFunction) => {
     const engine = req.params.engine as EngineID;
     const params = req.body as CompletionParams;
     const client = new OpenAiApiClient(OPENAI_API_KEY, engine);
+
+    if (!params.prompt || params.prompt.trim() == '') {
+      responseWithError(res, 400, 'Empty prompt text');
+      return;
+    }
+
+    if (!params.max_tokens) {
+      // GPT-3 Engines supports up to 2048 tokens per request (prompt text + completion text)
+      params.max_tokens = 2048 - (params.prompt || '').length / 4;
+    }
+
+    if (params.max_tokens <= 0) {
+      responseWithError(res, 400, 'Invalid max token. Note that the GPT-3 engine supports up to 2048 tokens per request (prompt text + completion text). Try reduce the length of prompt text or completion text');
+      return;
+    }
+
     const response = await client.completion(params);
     res.status(200).json(response);
   } catch (err) {
