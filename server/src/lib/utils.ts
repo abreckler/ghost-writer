@@ -373,9 +373,9 @@ const responseWithError = (res: Response, status_code: number, message: string, 
     'success': false,
     'error' : {
       'message': message,
-      ...data
+      ...(data ? data : {})
     }
-  })
+  }).end();
 }
 
 export {
