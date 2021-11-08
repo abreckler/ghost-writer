@@ -1,4 +1,5 @@
 import Axios, { AxiosInstance } from 'axios';
+import { encode } from 'gpt-3-encoder';
 
 enum EngineID {
   Davinci = 'davinci',
@@ -7,6 +8,7 @@ enum EngineID {
   Ada = 'ada',
   DavinciInstruct = 'davinci-instruct-beta',
   CurieInstruct = 'curie-instruct-beta',
+  DavinciCodex = 'davinci-codex',
 }
 
 interface CompletionParams {
@@ -184,6 +186,16 @@ class OpenAiApiClient {
    */
   public async completion(params: CompletionParams): Promise<CompletionResponse> {
     const completionUrl = '/engines/' + this.DEFAULT_ENGINE + '/completions';
+
+    // @ref https://beta.openai.com/docs/api-reference/completions/create#completions/create-max_tokens
+    //
+    // The token count of your prompt plus max_tokens cannot exceed the model's context length.
+    // Most models have a context length of 2048 tokens (except davinci-codex, which supports 4096).
+    const encodedPrompt = encode(params.prompt || '');
+    const max_tokens = (this.DEFAULT_ENGINE == 'davinci-codex' ? 4096 : 2048) - encodedPrompt.length;
+    if ((params.max_tokens || 64) > max_tokens)
+      params.max_tokens = max_tokens;
+
     const json = await this._doPost<CompletionParams, CompletionResponse>(completionUrl, params);
 
     if (this.FILTER_EMPTY_COMPLETION_ANSWER)
