@@ -355,7 +355,10 @@ const breakdownRedditUrl = (url: string): { subreddit?: string; post?: string; p
 const logError = (message: string, err: any) => {
   if (err && err.isAxiosError) {
     let axiosError = err as AxiosError;
-    if (axiosError && axiosError.response && axiosError.response.data && axiosError.response.data.error) {
+    if (axiosError.response && axiosError.response.data && axiosError.response.data.error) {
+      console.error(message, JSON.stringify(axiosError.response.data.error));
+    }
+    else {
       console.error(message, axiosError.toJSON());
     }
   }

@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { summarizerText, summarizerUrl } from '../../lib/composites';
+import { logError } from '../../lib/utils';
 
 interface ExtractArticleRequest {
   text?: string; // either one of text and url must be provided
@@ -40,7 +41,7 @@ const extractArticle = async (req: Request, res: Response, next: NextFunction): 
       }
     }
   } catch (err) {
-    console.error('Text Summarizer failed with error', err);
+    logError('Text Summarizer failed with error', err);
     next(err);
   }
 };

@@ -299,7 +299,7 @@ const paragraphForGeneralPages2 = async (
     }
   }
   if (externalLinks.length == 0) {
-    console.error('could not find valid external links. yet include it in the result.', url);
+    console.error('Could not find valid external links. yet include it in the result.', url);
   }
 
   let extractedText = '';
