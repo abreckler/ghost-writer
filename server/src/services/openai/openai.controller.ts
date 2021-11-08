@@ -7,6 +7,7 @@ import {
   ClassificationParams,
   CreateAnswerParams,
 } from '../../lib/openai';
+import { logError } from '../../lib/utils';
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -20,7 +21,7 @@ const listEngines = async (_req: Request, res: Response, next: NextFunction) => 
     const response = await client.listEngines();
     res.status(200).json(response);
   } catch (err) {
-    console.error('OpenAI(a.k.a. GPT-3) - Listing Engines API failed with error', err);
+    logError('OpenAI(a.k.a. GPT-3) - Listing Engines API failed with error', err);
     next(err);
   }
 };
@@ -38,7 +39,7 @@ const completion = async (req: Request, res: Response, next: NextFunction) => {
     const response = await client.completion(params);
     res.status(200).json(response);
   } catch (err) {
-    console.error('OpenAI(a.k.a. GPT-3) - Text Completion API failed with error', err);
+    logError('OpenAI(a.k.a. GPT-3) - Text Completion API failed with error', err);
     next(err);
   }
 };
@@ -56,7 +57,7 @@ const search = async (req: Request, res: Response, next: NextFunction) => {
     const response = await client.search(params);
     res.status(200).json(response);
   } catch (err) {
-    console.error('OpenAI(a.k.a. GPT-3) - Search API failed with error', err);
+    logError('OpenAI(a.k.a. GPT-3) - Search API failed with error', err);
     next(err);
   }
 };
@@ -74,7 +75,7 @@ const classification = async (req: Request, res: Response, next: NextFunction) =
     const response = await client.classification(params);
     res.status(200).json(response);
   } catch (err) {
-    console.error('OpenAI(a.k.a. GPT-3) - Classification API failed with error', err);
+    logError('OpenAI(a.k.a. GPT-3) - Classification API failed with error', err);
     next(err);
   }
 };
@@ -92,7 +93,7 @@ const createAnswer = async (req: Request, res: Response, next: NextFunction) => 
     const response = await client.createAnswer(params);
     res.status(200).json(response);
   } catch (err) {
-    console.error('OpenAI(a.k.a. GPT-3) - Create Answer API failed with error', err);
+    logError('OpenAI(a.k.a. GPT-3) - Create Answer API failed with error', err);
     next(err);
   }
 };
@@ -103,7 +104,7 @@ const listFiles = async (_req: Request, res: Response, next: NextFunction) => {
     const response = await client.listFiles();
     res.status(200).json(response);
   } catch (err) {
-    console.error('OpenAI(a.k.a. GPT-3) - List Files API failed with error', err);
+    logError('OpenAI(a.k.a. GPT-3) - List Files API failed with error', err);
     next(err);
   }
 };
@@ -123,7 +124,7 @@ const runQA = async (req: Request, res: Response, next: NextFunction) => {
     const response = await client.completion(params);
     res.status(200).json(response);
   } catch (err) {
-    console.error('OpenAI(a.k.a. GPT-3) - Text Completion API failed with error', err);
+    logError('OpenAI(a.k.a. GPT-3) - Text Completion API failed with error', err);
     next(err);
   }
 };

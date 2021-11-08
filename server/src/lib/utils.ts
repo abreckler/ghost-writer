@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { DomNode, FormatOptions, htmlToText, HtmlToTextOptions, RecursiveCallback } from 'html-to-text';
 import cheerio from 'cheerio';
 import { BlockTextBuilder } from 'html-to-text/lib/block-text-builder';
@@ -352,6 +352,18 @@ const breakdownRedditUrl = (url: string): { subreddit?: string; post?: string; p
   return ret;
 };
 
+const logError = (message: string, err: any) => {
+  if (err && err.isAxiosError) {
+    let axiosError = err as AxiosError;
+    if (axiosError && axiosError.response && axiosError.response.data && axiosError.response.data.error) {
+      console.error(message, axiosError.toJSON());
+    }
+  }
+  else {
+    console.error(message, err);
+  }
+}
+
 export {
   extractUrls,
   fetchHtmlFromUrl,
@@ -361,4 +373,5 @@ export {
   extractAmazonAsin,
   isRedditDomain,
   breakdownRedditUrl,
+  logError,
 };

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { paraphraser } from '../../lib/composites';
-import { isAmazonDomain, parseTextFromUrl, splitText, isRedditDomain } from '../../lib/utils';
+import { isAmazonDomain, parseTextFromUrl, splitText, isRedditDomain, logError } from '../../lib/utils';
 import { paragraphForAmazonProduct, paragraphForReddit } from '../article-generator/article-generator.service';
 
 interface RewriteArticleRequest {
@@ -96,7 +96,7 @@ const rewriteArticle = async (req: Request, res: Response, next: NextFunction): 
       });
     }
   } catch (err) {
-    console.error('Article Rewriter failed with error', err);
+    logError('Article Rewriter failed with error', err);
     next(err);
   }
 };

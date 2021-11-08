@@ -5,7 +5,7 @@ import {
   TextAnalysisTextSummarizationApiClient,
   TextMonkeySummarizerApiClient,
 } from './rapidapi';
-import { parseTextFromUrl } from './utils';
+import { logError, parseTextFromUrl } from './utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
@@ -27,7 +27,7 @@ const paraphraser = async (
           return null;
         }
       } catch (e) {
-        console.error('RapidAPI - Rephraser API Failure: ', e);
+        logError('RapidAPI - Rephraser API Failure: ', e);
         return null;
       }
 
@@ -49,7 +49,7 @@ const paraphraser = async (
           return null;
         }
       } catch (e) {
-        console.error('RapidAPI - Rephraser API Failure: ', e);
+        logError('RapidAPI - Rephraser API Failure: ', e);
         return null;
       }
   }
@@ -74,8 +74,8 @@ const summarizerText = async (
           );
           return null;
         }
-      } catch (e) {
-        console.error('RapidAPI - Summarizer API Failure: ', e);
+      } catch (e: any) {
+        logError('RapidAPI - Summarizer API Failure: ', e);
         return null;
       }
 
@@ -92,8 +92,8 @@ const summarizerText = async (
           console.debug('Text Monkey - Summarizer API returned invalid response, skip further processing.', text);
           return null;
         }
-      } catch (e) {
-        console.error('RapidAPI - Summarizer API Failure: ', e);
+      } catch (e : any) {
+        logError('RapidAPI - Summarizer API Failure: ', e);
         return null;
       }
 
@@ -117,8 +117,8 @@ const summarizerText = async (
           summary: response.choices[0]?.text
         };
       }
-      catch (e) {
-        console.error('Text Summarizer through GPT-3 failed with error', e);
+      catch (e : any) {
+        logError('Text Summarizer through GPT-3 failed with error', e);
         return null;
       }
   }
@@ -146,7 +146,7 @@ const summarizerUrl = async (
           return null;
         }
       } catch (e) {
-        console.error('RapidAPI - Text Analysis URL Summarizer API Failure: ', e);
+        logError('RapidAPI - Text Analysis URL Summarizer API Failure: ', e);
         return null;
       }
     case 'text-monkey':
@@ -166,7 +166,7 @@ const summarizerUrl = async (
           return null;
         }
       } catch (e) {
-        console.error('RapidAPI - Text Monkey Summarizer API Failure: ', e);
+        logError('RapidAPI - Text Monkey Summarizer API Failure: ', e);
         return null;
       }
 
@@ -177,7 +177,7 @@ const summarizerUrl = async (
         return await summarizerText(text.text, null, "openai");
       }
       catch (e) {
-        console.error('URL Summarizer through GPT-3 failed with error', e);
+        logError('URL Summarizer through GPT-3 failed with error', e);
         return null;
       }
   }

@@ -7,7 +7,7 @@ import {
   ZombieBestAmazonProductsApiClient,
 } from '../../lib/rapidapi';
 import { GoogleSearchAsync } from '../../lib/serpapi-async';
-import { breakdownRedditUrl, extractAmazonAsin, extractUrls, isAmazonDomain, isRedditDomain, parseTextFromUrl } from '../../lib/utils';
+import { breakdownRedditUrl, extractAmazonAsin, extractUrls, isAmazonDomain, isRedditDomain, logError, parseTextFromUrl } from '../../lib/utils';
 
 const RAPIDAPI_API_KEY = process.env.RAPIDAPI_API_KEY || '';
 const SERPAPI_API_KEY = process.env.SERPAPI_API_KEY || '';
@@ -295,7 +295,7 @@ const paragraphForGeneralPages2 = async (
       );
       externalLinks = urlIntellResponse.links.filter(externalLinksFilter);
     } catch (e) {
-      console.error('RapidAPI - URL Intelligence API Failure: ', e);
+      logError('RapidAPI - URL Intelligence API Failure: ', e);
     }
   }
   if (externalLinks.length == 0) {
@@ -313,7 +313,7 @@ const paragraphForGeneralPages2 = async (
   } catch (e) {
     // The Text summarizer API's availability doesn't look good.
     // Let's use article extractor/summarizer as a fallback
-    console.error('Text Summarizer failure, skip further processing.', e);
+    logError('Text Summarizer failure, skip further processing.', e);
     extractedText = extractorResponse.text;
   }
 
@@ -376,7 +376,7 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
     });
     extractedText = (socialgrepResponse.data || []).map(d => '' + d.body).join('\n');
   } catch (e) {
-    console.error('Reddit API failed with error, skip further processing.', e);
+    logError('Reddit API failed with error, skip further processing.', e);
     return null;
   }
 
@@ -479,8 +479,8 @@ const paragraphByKeyword = async (keyword: string, configs: ArticleGeneratorConf
           }
           paragraphs.push(p);
         }
-      } catch {
-        console.error(`Fail to fetch paragraph for URL: ${url}`);
+      } catch (e) {
+        logError(`Fail to fetch paragraph for URL: ${url}`, e);
       }
     };
 
