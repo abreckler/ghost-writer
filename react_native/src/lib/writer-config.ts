@@ -55,8 +55,6 @@ class GhostWriterConfig {
       params.temperature = 0.5;
       params.n = 1;
       params.frequency_penalty = 0.3;
-      // rewrote text should be approximately the same length as the original text, gave 25% margin for variants
-      params.max_tokens = Math.min(Math.ceil(seedText.length / 3), 1024);
     }
     else if(writingMode === 'qa')
     { // QA mode
@@ -69,7 +67,6 @@ class GhostWriterConfig {
         params.prompt = seedText;
       }
       params.stop = [ '.\n' ];
-      params.max_tokens = 1024;
     }
     else if(writingMode == 'summary')
     { // generate summary
@@ -78,8 +75,6 @@ class GhostWriterConfig {
       params.stop = template.stop;
       params.n = 1;
       params.temperature = 0.3;
-      // summary/extracted text should not be longer than the original text
-      params.max_tokens = Math.min(Math.ceil(seedText.length / 4), 1024);
     }
     else
     { // autocomplete
@@ -95,10 +90,11 @@ class GhostWriterConfig {
       } else {
         params.prompt = seedText.trim();
         params.n = 1;
-        // length of autocomplete text will be proportional to the original text
-        params.max_tokens = Math.min(Math.ceil(seedText.length / 3), 1024);
       }
     }
+
+    // GPT-3 Engines supports up to 2048 tokens per request (prompt text + completion text)
+    params.max_tokens = 2048 - (params.prompt || '').length / 4;
   
     return params;
   }

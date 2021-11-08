@@ -242,8 +242,9 @@ const GhostWriterFull: FC<GhostWriterFullProps> = (props: GhostWriterFullProps) 
         }
       }
     }
-    catch
-    {}
+    catch (e: any) {
+      console.error(e);
+    }
 
     setButtonDisabled(false);
   };
