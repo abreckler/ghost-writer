@@ -396,7 +396,7 @@ const paragraphForReddit = async (url: string, options?: ArticleParagraphOptions
   } else {
     rephrasedTitle = await paraphraser(extractedTitle);
     const summarized = await summarizerText(extractedText);
-    rephrased = summarized?.summary || summarized?.snippets?.join(' ');
+    rephrased = summarized?.summary || (summarized?.snippets || []).join(' ');
     if (!rephrased) return null;
   }
 
